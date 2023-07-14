@@ -192,10 +192,10 @@ async function startLaunchPool(mint?: PublicKey) {
 }
 
 (async () => {
-  //   const accounts = await program.account.launchPool.all();
+  //   const accounts = await program.account.treasurer.all();
   //   console.log("Accounts: ", accounts);
   //   const mint = await createTokenMint();
   const mint = TOKEN_MINT;
-  await createLaunchPool(mint);
-  await startLaunchPool(mint);
+  //   await createLaunchPool(mint);
+  //   await startLaunchPool(mint);
 })();

@@ -33,6 +33,11 @@ pub struct StartLaunchPool<'info> {
 
 pub fn handler(ctx: Context<StartLaunchPool>) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
+
+    require!(
+        launch_pool.status == LaunchPoolState::Pending,
+        MyError::InvalidLaunchPoolStatus
+    );
     require!(
         launch_pool.authority == *ctx.accounts.authority.key,
         MyError::InvalidAuthority

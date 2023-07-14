@@ -39,6 +39,10 @@ pub mod renext_program {
             token_mint_decimals,
         )
     }
+
+    pub fn start_launch_pool(ctx: Context<StartLaunchPool>) -> ProgramResult {
+        instructions::start_launch_pool::handler(ctx)
+    }
 }
 
 #[derive(Accounts)]

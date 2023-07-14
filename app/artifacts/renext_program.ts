@@ -90,6 +90,57 @@ export type RenextProgram = {
           "type": "u8"
         }
       ]
+    },
+    {
+      "name": "startLaunchPool",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sourceTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -292,6 +343,28 @@ export type RenextProgram = {
           "index": false
         }
       ]
+    },
+    {
+      "name": "StartLaunchPoolEvent",
+      "fields": [
+        {
+          "name": "pool",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "creator",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "status",
+          "type": {
+            "defined": "LaunchPoolState"
+          },
+          "index": false
+        }
+      ]
     }
   ],
   "errors": [
@@ -465,6 +538,57 @@ export const IDL: RenextProgram = {
           "type": "u8"
         }
       ]
+    },
+    {
+      "name": "startLaunchPool",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sourceTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -657,6 +781,28 @@ export const IDL: RenextProgram = {
         {
           "name": "unlockDate",
           "type": "i64",
+          "index": false
+        },
+        {
+          "name": "status",
+          "type": {
+            "defined": "LaunchPoolState"
+          },
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "StartLaunchPoolEvent",
+      "fields": [
+        {
+          "name": "pool",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "creator",
+          "type": "publicKey",
           "index": false
         },
         {

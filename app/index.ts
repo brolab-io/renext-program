@@ -43,6 +43,7 @@ async function createTokenMint() {
     console.log("Mint created: ", mint.publicKey.toBase58());
 
     const tokenAccount = await mint.createAccount(anchorWallet.publicKey);
+    // const tokenAccount = anchorWallet.publicKey;
 
     await mint.mintTo(tokenAccount, anchorWallet.payer, [], 10000 * LAMPORTS_PER_SOL);
 
@@ -125,9 +126,43 @@ async function createLaunchPool(mint?: PublicKey) {
 }
 
 
+async function startLaunchPool(mint?: PublicKey) {
+    const launch_pool = findLaunchPoolAccount(anchorWallet.publicKey, TOKEN_MINT);
+    const source_token_account = await findMintTokenAccount(
+        anchorWallet.publicKey
+    );
+    const treasurer = findTreasurerAccount(launch_pool, mint || TOKEN_MINT);
+    const treasury = await findMintTokenAccount(treasurer);
+
+    console.log({
+        launch_pool: launch_pool.toBase58(),
+        source_token_account: source_token_account.toBase58(),
+        treasurer: treasurer.toBase58(),
+        treasury: treasury.toBase58(),
+    });
+    // await initializeAccount(treasurer, TOKEN_MINT, treasurer, provider);
+    // const tx = await program.methods
+    //     .startLaunchPool()
+    //     .accounts({
+    //         launchPool: launch_pool,
+    //         tokenMint: TOKEN_MINT,
+    //         sourceTokenAccount: source_token_account,
+    //         treasurer: treasurer,
+    //         treasury: treasury,
+    //         authority: anchorWallet.publicKey,
+    //         tokenProgram: TOKEN_PROGRAM_ID,
+    //         rent: web3.SYSVAR_RENT_PUBKEY,
+    //         systemProgram: web3.SystemProgram.programId,
+    //     })
+    //     .signers([anchorWallet.payer])
+    //     .rpc();
+    // console.log("Start launch pool in tx: ", tx);
+}
+
 (async () => {
     const accounts = await program.account.launchPool.all();
     console.log("Accounts: ", accounts);
-    // const mint = await createTokenMint();
-    await createLaunchPool()
+    const mint = await createTokenMint();
+    // await createLaunchPool()
+    // await startLaunchPool();
 })();

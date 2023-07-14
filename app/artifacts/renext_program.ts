@@ -141,6 +141,61 @@ export type RenextProgram = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "buyTokenWithNative",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "creator",
+          "type": "publicKey"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -225,6 +280,22 @@ export type RenextProgram = {
           }
         ]
       }
+    },
+    {
+      "name": "userPool",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "claimed",
+            "type": "u64"
+          }
+        ]
+      }
     }
   ],
   "types": [
@@ -278,6 +349,26 @@ export type RenextProgram = {
     }
   ],
   "events": [
+    {
+      "name": "BuyTokenWithNativeEvent",
+      "fields": [
+        {
+          "name": "buyer",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tokenAmount",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
     {
       "name": "CreateLaunchPoolEvent",
       "fields": [
@@ -589,6 +680,61 @@ export const IDL: RenextProgram = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "buyTokenWithNative",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "creator",
+          "type": "publicKey"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -673,6 +819,22 @@ export const IDL: RenextProgram = {
           }
         ]
       }
+    },
+    {
+      "name": "userPool",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "claimed",
+            "type": "u64"
+          }
+        ]
+      }
     }
   ],
   "types": [
@@ -726,6 +888,26 @@ export const IDL: RenextProgram = {
     }
   ],
   "events": [
+    {
+      "name": "BuyTokenWithNativeEvent",
+      "fields": [
+        {
+          "name": "buyer",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tokenAmount",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
     {
       "name": "CreateLaunchPoolEvent",
       "fields": [

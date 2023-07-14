@@ -24,13 +24,13 @@ pub struct CreateLaunchPool<'info> {
     #[
         account(
             init,
-            seeds = [b"launchpool", authority.key.as_ref(), token_mint.key().as_ref()],
+            seeds = [b"launchpool", authority.key().as_ref(), token_mint.key().as_ref()],
             bump,
             payer = authority,
             space = LaunchPool::LEN
         )
     ]
-    pub launch_pool: Account<'info, LaunchPool>,
+    pub launch_pool: Box<Account<'info, LaunchPool>>,
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[
         account(
@@ -41,7 +41,7 @@ pub struct CreateLaunchPool<'info> {
             space = Treasurer::LEN
         )
     ]
-    pub treasurer: Account<'info, Treasurer>,
+    pub treasurer: Box<Account<'info, Treasurer>>,
     #[account(
         init_if_needed,
         payer = authority,
@@ -74,11 +74,6 @@ pub fn handler(
     require!(
         unlock_date > 0 && unlock_date > Clock::get()?.unix_timestamp,
         MyError::InvalidUnlockDate
-    );
-
-    require!(
-        ctx.accounts.authority.key() == launch_pool.authority,
-        MyError::InvalidAuthority
     );
 
     treasurer.creator = *ctx.accounts.authority.key;

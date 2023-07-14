@@ -7,7 +7,7 @@ pub mod util;
 
 use instructions::*;
 
-declare_id!("B5sjnz2meRK9UHBZD9BDnDPESWKtv3T2jgp8JTmLwtjE");
+declare_id!("AAW7r9v5sEJ5pkxE8sX1fSLpSDLQSLyESQPCKdvT164S");
 
 #[program]
 pub mod renext_program {

@@ -7,7 +7,7 @@ pub mod util;
 
 use instructions::*;
 
-declare_id!("EMYWwdb9pf2mpsj5rSsR7SHvy37U2ajfw9BLE5TUK2et");
+declare_id!("9DCus6uoos9wSkXrDheJzFGRxD2fntUAnSofAk4sJCpm");
 
 #[program]
 pub mod renext_program {
@@ -50,6 +50,14 @@ pub mod renext_program {
         amount: u64,
     ) -> ProgramResult {
         instructions::buy_token_with_native::handler(ctx, creator, amount)
+    }
+
+    pub fn buy_token_with_token(
+        ctx: Context<BuyTokenWithToken>,
+        creator: Pubkey,
+        amount: u64,
+    ) -> ProgramResult {
+        instructions::buy_token_with_token::handler(ctx, creator, amount)
     }
 }
 

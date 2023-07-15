@@ -196,6 +196,76 @@ export type RenextProgram = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "buyTokenWithToken",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "launchPoolTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "creator",
+          "type": "publicKey"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -351,6 +421,26 @@ export type RenextProgram = {
   "events": [
     {
       "name": "BuyTokenWithNativeEvent",
+      "fields": [
+        {
+          "name": "buyer",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tokenAmount",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "BuyTokenWithTokenEvent",
       "fields": [
         {
           "name": "buyer",
@@ -735,6 +825,76 @@ export const IDL: RenextProgram = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "buyTokenWithToken",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "launchPoolTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "creator",
+          "type": "publicKey"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -890,6 +1050,26 @@ export const IDL: RenextProgram = {
   "events": [
     {
       "name": "BuyTokenWithNativeEvent",
+      "fields": [
+        {
+          "name": "buyer",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tokenAmount",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "BuyTokenWithTokenEvent",
       "fields": [
         {
           "name": "buyer",

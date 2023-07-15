@@ -43,6 +43,14 @@ pub mod renext_program {
     pub fn start_launch_pool(ctx: Context<StartLaunchPool>) -> ProgramResult {
         instructions::start_launch_pool::handler(ctx)
     }
+
+    pub fn buy_token_with_native(
+        ctx: Context<BuyTokenWithNative>,
+        creator: Pubkey,
+        amount: u64,
+    ) -> ProgramResult {
+        instructions::buy_token_with_native::handler(ctx, creator, amount)
+    }
 }
 
 #[derive(Accounts)]

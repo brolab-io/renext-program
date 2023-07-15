@@ -1,6 +1,7 @@
 import { Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
 import wallet from "../.wallets/renext.json";
+import buyer1 from "../.wallets/buyer1.json";
 import idl from "./artifacts/renext_program.json";
 import { RenextProgram } from "./artifacts/renext_program";
 import {
@@ -34,6 +35,7 @@ console.log("Wallet: ", SIGNER_WALLET.publicKey.toBase58());
 
 const connection = new web3.Connection(DEFAULT_RPC_ENDPOINT, "confirmed");
 const anchorWallet = new Wallet(SIGNER_WALLET);
+const buyer1Wallet = new Wallet(Keypair.fromSecretKey(new Uint8Array(buyer1)));
 const provider = new AnchorProvider(connection, anchorWallet, {
   preflightCommitment: "confirmed",
 });
@@ -191,11 +193,63 @@ async function startLaunchPool(mint?: PublicKey) {
   );
 }
 
+function findUserPoolAccount(
+  user: PublicKey,
+  pool: PublicKey,
+  mint = TOKEN_MINT
+) {
+  const [pda] = PublicKey.findProgramAddressSync(
+    [
+      Buffer.from("userpool"),
+      user.toBuffer(),
+      pool.toBuffer(),
+      mint.toBuffer(),
+    ],
+    program.programId
+  );
+  return pda;
+}
+
+async function buyWithRenec(amount, mint = TOKEN_MINT) {
+  const launch_pool = findLaunchPoolAccount(anchorWallet.publicKey, mint);
+  const treasurer = findTreasurerAccount(launch_pool, mint);
+
+  const user_pool = findUserPoolAccount(
+    buyer1Wallet.publicKey,
+    launch_pool,
+    mint
+  );
+
+  const tx = await program.methods
+    .buyTokenWithNative(
+      anchorWallet.publicKey,
+      new BN(amount * LAMPORTS_PER_SOL)
+    )
+    .accounts({
+      launchPool: launch_pool,
+      treasurer: treasurer,
+      userPool: user_pool,
+      user: buyer1Wallet.publicKey,
+      tokenMint: TOKEN_MINT,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: web3.SystemProgram.programId,
+      rent: web3.SYSVAR_RENT_PUBKEY,
+    })
+    .signers([buyer1Wallet.payer])
+    .rpc();
+
+  console.log("Buy with renec in tx: ", tx);
+
+  const data = await program.account.userPool.fetch(user_pool);
+  console.log("User pool account: ", data.amount.toNumber());
+}
+
 (async () => {
-  //   const accounts = await program.account.treasurer.all();
-  //   console.log("Accounts: ", accounts);
+  // const accounts = await program.account.launchPool.all();
+  // console.log("Accounts: ", accounts);
   //   const mint = await createTokenMint();
   const mint = TOKEN_MINT;
   //   await createLaunchPool(mint);
   //   await startLaunchPool(mint);
+  await buyWithRenec(1, mint);
 })();

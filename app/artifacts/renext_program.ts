@@ -226,6 +226,11 @@ export type RenextProgram = {
           "isSigner": false
         },
         {
+          "name": "currencyMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "launchPoolTokenAccount",
           "isMut": true,
           "isSigner": false
@@ -852,6 +857,11 @@ export const IDL: RenextProgram = {
         {
           "name": "userTokenAccount",
           "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "currencyMint",
+          "isMut": false,
           "isSigner": false
         },
         {

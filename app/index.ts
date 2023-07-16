@@ -48,7 +48,7 @@ const program = new Program(
 );
 console.log("Program loaded", program.programId.toBase58());
 
-async function createTokenMint() {
+async function createTokenMint(to: PublicKey = anchorWallet.publicKey) {
   const mint = await Token.createMint(
     connection,
     anchorWallet.payer,
@@ -257,12 +257,12 @@ async function buyWithReUSD(amount, mint = TOKEN_MINT) {
   const userTokenAccount = await findMintTokenAccount(
     buyer1Wallet.publicKey,
     REUSD_MINT
-  )
+  );
 
   const launchPoolTokenAccount = await findMintTokenAccount(
     launch_pool,
     REUSD_MINT
-  )
+  );
 
   console.log({
     launch_pool: launch_pool.toBase58(),
@@ -282,6 +282,7 @@ async function buyWithReUSD(amount, mint = TOKEN_MINT) {
       treasurer: treasurer,
       userPool: user_pool,
       user: buyer1Wallet.publicKey,
+      currencyMint: REUSD_MINT,
       userTokenAccount,
       launchPoolTokenAccount,
       tokenMint: TOKEN_MINT,
@@ -307,9 +308,7 @@ const mintToBuyer = async (to: PublicKey, mint: PublicKey, amount: number) => {
     anchorWallet.payer
   );
 
-  const tokenAccount = await token.getOrCreateAssociatedAccountInfo(
-    to
-  );
+  const tokenAccount = await token.getOrCreateAssociatedAccountInfo(to);
 
   await token.mintTo(
     tokenAccount.address,
@@ -319,19 +318,18 @@ const mintToBuyer = async (to: PublicKey, mint: PublicKey, amount: number) => {
   );
 
   console.log(`Token minted to ${tokenAccount.address.toBase58()}`);
-}
+};
 
 (async () => {
-
   // const mint = await createTokenMint();
   const mint = TOKEN_MINT;
   //   await createLaunchPool(0,mint);
   // await createLaunchPool(1, mint);
   // await startLaunchPool(mint);
-  // await buyWithRenec(1, mint); 
+  // await buyWithRenec(1, mint);
 
   // await mintToBuyer(buyer1Wallet.publicKey, REUSD_MINT, 1000);
-  await buyWithReUSD(1, mint);
+  // await buyWithReUSD(1, mint);
   // const accounts = await program.account.launchPool.all();
   // console.log("Accounts: ", accounts[0].account.currency);
 })();

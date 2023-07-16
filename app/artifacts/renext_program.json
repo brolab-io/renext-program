@@ -226,6 +226,11 @@
           "isSigner": false
         },
         {
+          "name": "currencyMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "launchPoolTokenAccount",
           "isMut": true,
           "isSigner": false

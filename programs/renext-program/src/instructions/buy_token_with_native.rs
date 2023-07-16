@@ -92,7 +92,7 @@ pub fn handler(ctx: Context<BuyTokenWithNative>, creator: Pubkey, amount: u64) -
     let ix = solana_program::system_instruction::transfer(
         &ctx.accounts.user.key(),
         &launch_pool.key(),
-        amount,
+        user_must_pay,
     );
 
     solana_program::program::invoke(

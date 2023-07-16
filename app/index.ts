@@ -30,6 +30,7 @@ const SIGNER_WALLET = Keypair.fromSecretKey(new Uint8Array(wallet));
 const PROGRAM_ID = new PublicKey(process.env.PROGRAM_ID);
 const TOKEN_MINT_DECIMALS = 9;
 const TOKEN_MINT = new PublicKey(process.env.TOKEN_MINT);
+const REUSD_MINT = new PublicKey(process.env.REUSD_MINT);
 
 console.log("Wallet: ", SIGNER_WALLET.publicKey.toBase58());
 
@@ -47,7 +48,7 @@ const program = new Program(
 );
 console.log("Program loaded", program.programId.toBase58());
 
-async function createTokenMint() {
+async function createTokenMint(to: PublicKey = anchorWallet.publicKey) {
   const mint = await Token.createMint(
     connection,
     anchorWallet.payer,
@@ -68,7 +69,7 @@ async function createTokenMint() {
     tokenAccount.address,
     anchorWallet.payer,
     [],
-    10000 * LAMPORTS_PER_SOL
+    1000000 * LAMPORTS_PER_SOL
   );
 
   console.log(`Token minted to ${tokenAccount.address.toBase58()}`);
@@ -107,12 +108,11 @@ async function findMintTokenAccount(owner: PublicKey, mint = TOKEN_MINT) {
   return token_account;
 }
 
-async function createLaunchPool(mint?: PublicKey) {
+async function createLaunchPool(currency = 0, mint?: PublicKey) {
   const unlock_date = new BN(dayjs().add(1, "day").unix());
   const pool_size = new BN(100 * LAMPORTS_PER_SOL);
   const minimum_token_amount = new BN(1 * LAMPORTS_PER_SOL);
   const maximum_token_amount = new BN(2 * LAMPORTS_PER_SOL);
-  const currency = 0;
   const pool_type = 0;
   const launch_pool = findLaunchPoolAccount(
     anchorWallet.publicKey,
@@ -244,12 +244,92 @@ async function buyWithRenec(amount, mint = TOKEN_MINT) {
   console.log("User pool account: ", data.amount.toNumber());
 }
 
+async function buyWithReUSD(amount, mint = TOKEN_MINT) {
+  const launch_pool = findLaunchPoolAccount(anchorWallet.publicKey, mint);
+  const treasurer = findTreasurerAccount(launch_pool, mint);
+
+  const user_pool = findUserPoolAccount(
+    buyer1Wallet.publicKey,
+    launch_pool,
+    mint
+  );
+
+  const userTokenAccount = await findMintTokenAccount(
+    buyer1Wallet.publicKey,
+    REUSD_MINT
+  );
+
+  const launchPoolTokenAccount = await findMintTokenAccount(
+    launch_pool,
+    REUSD_MINT
+  );
+
+  console.log({
+    launch_pool: launch_pool.toBase58(),
+    user_pool: user_pool.toBase58(),
+    treasurer: treasurer.toBase58(),
+    userTokenAccount: userTokenAccount.toBase58(),
+    launchPoolTokenAccount: launchPoolTokenAccount.toBase58(),
+  });
+
+  const tx = await program.methods
+    .buyTokenWithToken(
+      anchorWallet.publicKey,
+      new BN(amount * LAMPORTS_PER_SOL)
+    )
+    .accounts({
+      launchPool: launch_pool,
+      treasurer: treasurer,
+      userPool: user_pool,
+      user: buyer1Wallet.publicKey,
+      currencyMint: REUSD_MINT,
+      userTokenAccount,
+      launchPoolTokenAccount,
+      tokenMint: TOKEN_MINT,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: web3.SystemProgram.programId,
+      associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      rent: web3.SYSVAR_RENT_PUBKEY,
+    })
+    .signers([buyer1Wallet.payer])
+    .rpc();
+
+  console.log("Buy with ReUSD in tx: ", tx);
+
+  const data = await program.account.userPool.fetch(user_pool);
+  console.log("User pool account: ", data.amount.toNumber());
+}
+
+const mintToBuyer = async (to: PublicKey, mint: PublicKey, amount: number) => {
+  const token = new Token(
+    connection,
+    mint,
+    TOKEN_PROGRAM_ID,
+    anchorWallet.payer
+  );
+
+  const tokenAccount = await token.getOrCreateAssociatedAccountInfo(to);
+
+  await token.mintTo(
+    tokenAccount.address,
+    anchorWallet.payer,
+    [],
+    amount * LAMPORTS_PER_SOL
+  );
+
+  console.log(`Token minted to ${tokenAccount.address.toBase58()}`);
+};
+
 (async () => {
-  // const accounts = await program.account.launchPool.all();
-  // console.log("Accounts: ", accounts);
-  //   const mint = await createTokenMint();
+  // const mint = await createTokenMint();
   const mint = TOKEN_MINT;
-  //   await createLaunchPool(mint);
-  //   await startLaunchPool(mint);
-  await buyWithRenec(1, mint);
+  //   await createLaunchPool(0,mint);
+  // await createLaunchPool(1, mint);
+  // await startLaunchPool(mint);
+  // await buyWithRenec(1, mint);
+
+  // await mintToBuyer(buyer1Wallet.publicKey, REUSD_MINT, 1000);
+  // await buyWithReUSD(1, mint);
+  // const accounts = await program.account.launchPool.all();
+  // console.log("Accounts: ", accounts[0].account.currency);
 })();

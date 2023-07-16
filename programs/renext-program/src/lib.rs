@@ -51,6 +51,14 @@ pub mod renext_program {
     ) -> ProgramResult {
         instructions::buy_token_with_native::handler(ctx, creator, amount)
     }
+
+    pub fn buy_token_with_token(
+        ctx: Context<BuyTokenWithToken>,
+        creator: Pubkey,
+        amount: u64,
+    ) -> ProgramResult {
+        instructions::buy_token_with_token::handler(ctx, creator, amount)
+    }
 }
 
 #[derive(Accounts)]

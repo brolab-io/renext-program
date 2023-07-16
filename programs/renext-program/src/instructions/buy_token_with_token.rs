@@ -1,13 +1,12 @@
-use anchor_lang::{prelude::*, solana_program};
-use anchor_spl::token;
-
 use crate::{
     errors::MyError,
     state::{CurrencyType, LaunchPool, LaunchPoolState, Treasurer, UserPool},
 };
+use anchor_lang::prelude::*;
+use anchor_spl::{associated_token, token};
 
 #[event]
-pub struct BuyTokenWithNativeEvent {
+pub struct BuyTokenWithTokenEvent {
     pub buyer: Pubkey,
     pub amount: u64,
     pub token_amount: u64,
@@ -15,7 +14,7 @@ pub struct BuyTokenWithNativeEvent {
 
 #[derive(Accounts)]
 #[instruction(creator: Pubkey)]
-pub struct BuyTokenWithNative<'info> {
+pub struct BuyTokenWithToken<'info> {
     #[account(mut, seeds = [b"launchpool", creator.as_ref(), token_mint.key().as_ref()], bump)]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
     #[account(mut, seeds = [b"treasurer", launch_pool.key().as_ref(), token_mint.key().as_ref()], bump)]
@@ -23,20 +22,31 @@ pub struct BuyTokenWithNative<'info> {
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(
         init_if_needed,
-        seeds = [b"userpool", user.key().as_ref(), launch_pool.key().as_ref(),token_mint.key().as_ref()],
+        seeds = [b"userpool", user.key().as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
         bump,
         payer = user,
         space = UserPool::LEN
     )]
     pub user_pool: Box<Account<'info, UserPool>>,
     #[account(mut)]
+    pub user_token_account: Account<'info, token::TokenAccount>,
+    pub currency_mint: Box<Account<'info, token::Mint>>,
+    #[account(
+        init_if_needed,
+        payer = user,
+        associated_token::mint = currency_mint,
+        associated_token::authority = launch_pool
+    )]
+    pub launch_pool_token_account: Account<'info, token::TokenAccount>,
+    #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, token::Token>,
+    pub associated_token_program: Program<'info, associated_token::AssociatedToken>,
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn handler(ctx: Context<BuyTokenWithNative>, creator: Pubkey, amount: u64) -> ProgramResult {
+pub fn handler(ctx: Context<BuyTokenWithToken>, creator: Pubkey, amount: u64) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
     let user_pool = &mut ctx.accounts.user_pool;
     require!(launch_pool.authority == creator, MyError::InvalidCreator);
@@ -45,7 +55,7 @@ pub fn handler(ctx: Context<BuyTokenWithNative>, creator: Pubkey, amount: u64) -
         MyError::InvalidLaunchPoolStatus
     );
     require!(
-        launch_pool.currency == CurrencyType::RENEC,
+        launch_pool.currency == CurrencyType::ReUSD,
         MyError::InvalidCurrencyType
     );
     require!(
@@ -80,36 +90,37 @@ pub fn handler(ctx: Context<BuyTokenWithNative>, creator: Pubkey, amount: u64) -
         .unwrap();
 
     msg!("user_must_pay: {}", user_must_pay);
-    // let cpi_context = CpiContext::new(
-    //     ctx.accounts.system_program.to_account_info(),
-    //     system_program::Transfer {
-    //         from: ctx.accounts.user.to_account_info(),
-    //         to: launch_pool.to_account_info(),
-    //     },
-    // );
-    // system_program::transfer(cpi_context, user_must_pay)?;
-
-    let ix = solana_program::system_instruction::transfer(
-        &ctx.accounts.user.key(),
-        &launch_pool.key(),
-        amount,
+    let cpi_context = CpiContext::new(
+        ctx.accounts.token_program.to_account_info(),
+        token::Transfer {
+            from: ctx.accounts.user_token_account.to_account_info(),
+            to: ctx.accounts.launch_pool_token_account.to_account_info(),
+            authority: ctx.accounts.user.to_account_info(),
+        },
     );
+    token::transfer(cpi_context, user_must_pay)?;
 
-    solana_program::program::invoke(
-        &ix,
-        &[
-            ctx.accounts.user.to_account_info(),
-            launch_pool.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
-        ],
-    )?;
+    // let ix = solana_program::system_instruction::transfer(
+    //     &ctx.accounts.user.key(),
+    //     &launch_pool.key(),
+    //     amount,
+    // );
+
+    // solana_program::program::invoke(
+    //     &ix,
+    //     &[
+    //         ctx.accounts.user.to_account_info(),
+    //         launch_pool.to_account_info(),
+    //         ctx.accounts.system_program.to_account_info(),
+    //     ],
+    // );
 
     msg!("Transfered {} tokens to treasury", user_must_pay);
 
     user_pool.amount = user_pool.amount.checked_add(amount).unwrap();
     launch_pool.pool_size_remaining = launch_pool.pool_size_remaining.checked_sub(amount).unwrap();
 
-    emit!(BuyTokenWithNativeEvent {
+    emit!(BuyTokenWithTokenEvent {
         buyer: *ctx.accounts.user.key,
         amount,
         token_amount: user_pool.amount,

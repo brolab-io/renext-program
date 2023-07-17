@@ -2,6 +2,13 @@ use anchor_lang::prelude::*;
 
 use crate::constants::{DISCRIMINATOR_SIZE, I64_SIZE, PUBKEY_SIZE, U64_SIZE, U8_SIZE};
 
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Default, Copy)]
+pub struct LaunchPoolBumps {
+    pub launchpool_bump: u8,
+    pub treasurer_bump: u8,
+    pub vault_bump: u8,
+}
+
 // struct for launchpad token pool
 #[account]
 pub struct LaunchPool {
@@ -14,6 +21,7 @@ pub struct LaunchPool {
     pub token_mint: Pubkey,
     pub token_mint_decimals: u8,
     pub authority: Pubkey,
+    pub vault_amount: u64,
     pub currency: CurrencyType,
     pub pool_type: LaunchPoolType,
     pub status: LaunchPoolState,
@@ -73,6 +81,7 @@ impl LaunchPool {
         PUBKEY_SIZE +
         U8_SIZE + // token_mint_decimals
         PUBKEY_SIZE +
+        U64_SIZE +
         1 +
         1 + // enum CurrencyType
         1 +

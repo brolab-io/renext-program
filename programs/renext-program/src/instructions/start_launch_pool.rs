@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token;
 
 use crate::{
+    constants::{LAUNCH_POOL_SEED, TREASURER_SEED},
     errors::MyError,
     state::{LaunchPool, LaunchPoolState, Treasurer},
 };
@@ -15,12 +16,12 @@ pub struct StartLaunchPoolEvent {
 
 #[derive(Accounts)]
 pub struct StartLaunchPool<'info> {
-    #[account(mut, seeds = [b"launchpool", authority.key().as_ref(), token_mint.key().as_ref()], bump)]
+    #[account(mut, seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()], bump)]
     pub launch_pool: Account<'info, LaunchPool>,
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(mut)]
     pub source_token_account: Account<'info, token::TokenAccount>,
-    #[account(mut, seeds = [b"treasurer", launch_pool.key().as_ref(), token_mint.key().as_ref()], bump)]
+    #[account(mut, seeds = [TREASURER_SEED.as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()], bump)]
     pub treasurer: Box<Account<'info, Treasurer>>,
     #[account(mut, constraint = treasury.mint == launch_pool.token_mint)]
     pub treasury: Box<Account<'info, token::TokenAccount>>,

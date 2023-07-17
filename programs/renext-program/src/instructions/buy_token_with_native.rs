@@ -2,8 +2,9 @@ use anchor_lang::{prelude::*, solana_program};
 use anchor_spl::token;
 
 use crate::{
+    constants::{LAUNCH_POOL_SEED, USER_POOL_SEED, VAULT_SEED},
     errors::MyError,
-    state::{CurrencyType, LaunchPool, LaunchPoolState, Treasurer, UserPool},
+    state::{CurrencyType, LaunchPool, LaunchPoolState, UserPool},
 };
 
 #[event]
@@ -11,24 +12,34 @@ pub struct BuyTokenWithNativeEvent {
     pub buyer: Pubkey,
     pub amount: u64,
     pub token_amount: u64,
+    pub vault_amount: u64,
 }
 
 #[derive(Accounts)]
 #[instruction(creator: Pubkey)]
 pub struct BuyTokenWithNative<'info> {
-    #[account(mut, seeds = [b"launchpool", creator.as_ref(), token_mint.key().as_ref()], bump)]
+    #[account(mut, seeds = [LAUNCH_POOL_SEED.as_ref(), creator.as_ref(), token_mint.key().as_ref()], bump)]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
-    #[account(mut, seeds = [b"treasurer", launch_pool.key().as_ref(), token_mint.key().as_ref()], bump)]
-    pub treasurer: Box<Account<'info, Treasurer>>,
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(
         init_if_needed,
-        seeds = [b"userpool", user.key().as_ref(), launch_pool.key().as_ref(),token_mint.key().as_ref()],
+        seeds = [USER_POOL_SEED.as_ref(), user.key().as_ref(), launch_pool.key().as_ref(),token_mint.key().as_ref()],
         bump,
         payer = user,
         space = UserPool::LEN
     )]
     pub user_pool: Box<Account<'info, UserPool>>,
+    /// CHECK: Create a new vault for the launch pool
+    #[account(
+        mut,
+        seeds = [
+            VAULT_SEED.as_ref(),
+            launch_pool.key().as_ref(),
+            creator.key().as_ref()
+        ],
+        bump ,
+    )]
+    pub vault: AccountInfo<'info>,
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -39,6 +50,8 @@ pub struct BuyTokenWithNative<'info> {
 pub fn handler(ctx: Context<BuyTokenWithNative>, creator: Pubkey, amount: u64) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
     let user_pool = &mut ctx.accounts.user_pool;
+    let vault = &mut ctx.accounts.vault;
+
     require!(launch_pool.authority == creator, MyError::InvalidCreator);
     require!(
         launch_pool.status == LaunchPoolState::Active,
@@ -91,28 +104,30 @@ pub fn handler(ctx: Context<BuyTokenWithNative>, creator: Pubkey, amount: u64) -
 
     let ix = solana_program::system_instruction::transfer(
         &ctx.accounts.user.key(),
-        &launch_pool.key(),
-        amount,
+        &vault.key(),
+        user_must_pay,
     );
 
     solana_program::program::invoke(
         &ix,
         &[
             ctx.accounts.user.to_account_info(),
-            launch_pool.to_account_info(),
+            vault.to_account_info(),
             ctx.accounts.system_program.to_account_info(),
         ],
     )?;
 
-    msg!("Transfered {} tokens to treasury", user_must_pay);
+    msg!("Transfered {} tokens to vault", user_must_pay);
 
     user_pool.amount = user_pool.amount.checked_add(amount).unwrap();
     launch_pool.pool_size_remaining = launch_pool.pool_size_remaining.checked_sub(amount).unwrap();
+    launch_pool.vault_amount = launch_pool.vault_amount.checked_add(user_must_pay).unwrap();
 
     emit!(BuyTokenWithNativeEvent {
         buyer: *ctx.accounts.user.key,
         amount,
         token_amount: user_pool.amount,
+        vault_amount: launch_pool.vault_amount,
     });
 
     Ok(())

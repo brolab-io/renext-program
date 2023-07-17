@@ -8,7 +8,7 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token
 
 export async function createLaunchPool(creator: Wallet, mint: PublicKey, currency = 0, max = 10, min = 5) {
 
-    const unlock_date = new BN(dayjs().add(1, "day").unix());
+    const unlock_date = new BN(dayjs().add(5, "s").unix());
     const pool_size = new BN(100 * LAMPORTS_PER_SOL);
     const minimum_token_amount = new BN(min * LAMPORTS_PER_SOL);
     const maximum_token_amount = new BN(max * LAMPORTS_PER_SOL);

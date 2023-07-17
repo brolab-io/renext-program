@@ -70,6 +70,10 @@ pub mod renext_program {
     pub fn complete_launch_pool(ctx: Context<CompleteLaunchPool>) -> ProgramResult {
         instructions::complete_launch_pool::handler(ctx)
     }
+
+    pub fn claim_token(ctx: Context<ClaimToken>, creator: Pubkey, bump: u8) -> ProgramResult {
+        instructions::claim_token::handler(ctx, creator, bump)
+    }
 }
 
 #[derive(Accounts)]

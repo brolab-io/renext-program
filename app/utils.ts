@@ -89,3 +89,8 @@ export function findUserPoolAccount(
     );
 
 }
+
+export function delay(ms: number): Promise<void> {
+    console.log(`delaying ${ms} ms ...`)
+    return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}

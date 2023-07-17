@@ -24,7 +24,7 @@ pub struct WithdrawNativeLaunchPool<'info> {
     )]
     pub vault: AccountInfo<'info>,
     #[account(mut)]
-    /// CHECK: no need to be checked
+    /// CHECK: Just a pure account
     pub beneficiary: AccountInfo<'info>,
     #[account(mut)]
     pub authority: Signer<'info>,

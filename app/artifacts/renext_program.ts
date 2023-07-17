@@ -31,6 +31,11 @@ export type RenextProgram = {
           "isSigner": false
         },
         {
+          "name": "vault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "authority",
           "isMut": true,
           "isSigner": true
@@ -88,6 +93,12 @@ export type RenextProgram = {
         {
           "name": "tokenMintDecimals",
           "type": "u8"
+        },
+        {
+          "name": "bumps",
+          "type": {
+            "defined": "LaunchPoolBumps"
+          }
         }
       ]
     },
@@ -151,17 +162,17 @@ export type RenextProgram = {
           "isSigner": false
         },
         {
-          "name": "treasurer",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "tokenMint",
           "isMut": false,
           "isSigner": false
         },
         {
           "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vault",
           "isMut": true,
           "isSigner": false
         },
@@ -271,6 +282,78 @@ export type RenextProgram = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "withdrawNative",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "vault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "beneficiary",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "bump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "completeLaunchPool",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -314,6 +397,10 @@ export type RenextProgram = {
           {
             "name": "authority",
             "type": "publicKey"
+          },
+          {
+            "name": "vaultAmount",
+            "type": "u64"
           },
           {
             "name": "currency",
@@ -374,6 +461,26 @@ export type RenextProgram = {
     }
   ],
   "types": [
+    {
+      "name": "LaunchPoolBumps",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "launchpoolBump",
+            "type": "u8"
+          },
+          {
+            "name": "treasurerBump",
+            "type": "u8"
+          },
+          {
+            "name": "vaultBump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
     {
       "name": "CurrencyType",
       "type": {
@@ -439,6 +546,11 @@ export type RenextProgram = {
         },
         {
           "name": "tokenAmount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "vaultAmount",
           "type": "u64",
           "index": false
         }
@@ -665,6 +777,11 @@ export const IDL: RenextProgram = {
           "isSigner": false
         },
         {
+          "name": "vault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "authority",
           "isMut": true,
           "isSigner": true
@@ -722,6 +839,12 @@ export const IDL: RenextProgram = {
         {
           "name": "tokenMintDecimals",
           "type": "u8"
+        },
+        {
+          "name": "bumps",
+          "type": {
+            "defined": "LaunchPoolBumps"
+          }
         }
       ]
     },
@@ -785,17 +908,17 @@ export const IDL: RenextProgram = {
           "isSigner": false
         },
         {
-          "name": "treasurer",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "tokenMint",
           "isMut": false,
           "isSigner": false
         },
         {
           "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vault",
           "isMut": true,
           "isSigner": false
         },
@@ -905,6 +1028,78 @@ export const IDL: RenextProgram = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "withdrawNative",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "vault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "beneficiary",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "bump",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "completeLaunchPool",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -948,6 +1143,10 @@ export const IDL: RenextProgram = {
           {
             "name": "authority",
             "type": "publicKey"
+          },
+          {
+            "name": "vaultAmount",
+            "type": "u64"
           },
           {
             "name": "currency",
@@ -1008,6 +1207,26 @@ export const IDL: RenextProgram = {
     }
   ],
   "types": [
+    {
+      "name": "LaunchPoolBumps",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "launchpoolBump",
+            "type": "u8"
+          },
+          {
+            "name": "treasurerBump",
+            "type": "u8"
+          },
+          {
+            "name": "vaultBump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
     {
       "name": "CurrencyType",
       "type": {
@@ -1073,6 +1292,11 @@ export const IDL: RenextProgram = {
         },
         {
           "name": "tokenAmount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "vaultAmount",
           "type": "u64",
           "index": false
         }

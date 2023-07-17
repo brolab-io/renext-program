@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
+use crate::constants::{LAUNCH_POOL_SEED, TREASURER_SEED, VAULT_SEED};
 use crate::errors::*;
 use crate::state::*;
 
@@ -20,11 +21,12 @@ pub struct CreateLaunchPoolEvent {
 }
 
 #[derive(Accounts)]
+#[instruction(bumps: LaunchPoolBumps)]
 pub struct CreateLaunchPool<'info> {
     #[
         account(
             init,
-            seeds = [b"launchpool", authority.key().as_ref(), token_mint.key().as_ref()],
+            seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()],
             bump,
             payer = authority,
             space = LaunchPool::LEN
@@ -35,8 +37,8 @@ pub struct CreateLaunchPool<'info> {
     #[
         account(
             init,
-            seeds = [b"treasurer", launch_pool.key().as_ref(), token_mint.key().as_ref()],
-            bump,
+            seeds = [TREASURER_SEED.as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
+            bump ,
             payer = authority,
             space = Treasurer::LEN
         )
@@ -49,6 +51,17 @@ pub struct CreateLaunchPool<'info> {
         associated_token::authority = treasurer
     )]
     pub treasury: Box<Account<'info, token::TokenAccount>>,
+    /// CHECK: Create a new vault for the launch pool
+    #[account(
+        mut,
+        seeds = [
+            VAULT_SEED.as_ref(),
+            launch_pool.key().as_ref(),
+            authority.key().as_ref()
+        ],
+        bump ,
+    )]
+    pub vault: AccountInfo<'info>,
     #[account(mut)]
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -67,7 +80,10 @@ pub fn handler(
     pool_type: u8,
     rate: u64,
     token_mint_decimals: u8,
+    bumps: LaunchPoolBumps,
 ) -> ProgramResult {
+    msg!("Create launch pool {}", bumps.launchpool_bump);
+
     let launch_pool = &mut ctx.accounts.launch_pool;
     let treasurer = &mut ctx.accounts.treasurer;
 
@@ -91,6 +107,12 @@ pub fn handler(
     launch_pool.pool_type = LaunchPoolType::from(pool_type);
     launch_pool.status = LaunchPoolState::Pending;
     launch_pool.authority = *ctx.accounts.authority.key;
+    launch_pool.vault_amount = 0;
+
+    msg!(
+        "Creating launch pool {}",
+        launch_pool.to_account_info().key()
+    );
 
     emit!(CreateLaunchPoolEvent {
         creator: *ctx.accounts.authority.key,

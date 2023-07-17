@@ -5,9 +5,10 @@ pub mod instructions;
 pub mod state;
 pub mod util;
 
+use crate::state::LaunchPoolBumps;
 use instructions::*;
 
-declare_id!("EMYWwdb9pf2mpsj5rSsR7SHvy37U2ajfw9BLE5TUK2et");
+declare_id!("HHgVkhFDw5P4hobTrWePPrsZomMDJ4CqDRBaR49xEcBu");
 
 #[program]
 pub mod renext_program {
@@ -26,8 +27,9 @@ pub mod renext_program {
         pool_type: u8,
         rate: u64,
         token_mint_decimals: u8,
+        bumps: LaunchPoolBumps,
     ) -> ProgramResult {
-        instructions::create_launch_pool::handler(
+        instructions::create_native_launch_pool::handler(
             ctx,
             unlock_date,
             pool_size,
@@ -37,6 +39,7 @@ pub mod renext_program {
             pool_type,
             rate,
             token_mint_decimals,
+            bumps,
         )
     }
 
@@ -58,6 +61,14 @@ pub mod renext_program {
         amount: u64,
     ) -> ProgramResult {
         instructions::buy_token_with_token::handler(ctx, creator, amount)
+    }
+
+    pub fn withdraw_native(ctx: Context<WithdrawNativeLaunchPool>, bump: u8) -> ProgramResult {
+        instructions::withdraw_native_launch_pool::handler(ctx, bump)
+    }
+
+    pub fn complete_launch_pool(ctx: Context<CompleteLaunchPool>) -> ProgramResult {
+        instructions::complete_launch_pool::handler(ctx)
     }
 }
 

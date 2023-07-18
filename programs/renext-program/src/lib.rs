@@ -17,6 +17,30 @@ pub mod renext_program {
         Ok(())
     }
 
+    pub fn create_native_fairlaunch_pool(
+        ctx: Context<CreateNativeFairlaunchPool>,
+        unlock_date: i64,
+        pool_size: u64,
+        minimum_token_amount: u64,
+        maximum_token_amount: u64,
+        currency: u8,
+        pool_type: u8,
+        rate: u64,
+        token_mint_decimals: u8,
+    ) -> ProgramResult {
+        instructions::create_native_fairlaunch_pool::handler(
+            ctx,
+            unlock_date,
+            pool_size,
+            minimum_token_amount,
+            maximum_token_amount,
+            currency,
+            pool_type,
+            rate,
+            token_mint_decimals,
+        )
+    }
+
     pub fn create_launch_pool(
         ctx: Context<CreateLaunchPool>,
         unlock_date: i64,

@@ -93,14 +93,6 @@ pub fn handler(ctx: Context<BuyTokenWithNative>, creator: Pubkey, amount: u64) -
         .unwrap();
 
     msg!("user_must_pay: {}", user_must_pay);
-    // let cpi_context = CpiContext::new(
-    //     ctx.accounts.system_program.to_account_info(),
-    //     system_program::Transfer {
-    //         from: ctx.accounts.user.to_account_info(),
-    //         to: launch_pool.to_account_info(),
-    //     },
-    // );
-    // system_program::transfer(cpi_context, user_must_pay)?;
 
     let ix = solana_program::system_instruction::transfer(
         &ctx.accounts.user.key(),
@@ -120,6 +112,7 @@ pub fn handler(ctx: Context<BuyTokenWithNative>, creator: Pubkey, amount: u64) -
     msg!("Transfered {} tokens to vault", user_must_pay);
 
     user_pool.amount = user_pool.amount.checked_add(amount).unwrap();
+    user_pool.currency_amount = user_must_pay;
     launch_pool.pool_size_remaining = launch_pool.pool_size_remaining.checked_sub(amount).unwrap();
     launch_pool.vault_amount = launch_pool.vault_amount.checked_add(user_must_pay).unwrap();
 

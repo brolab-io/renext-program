@@ -25,15 +25,15 @@ pub struct BuyTokenWithToken<'info> {
         seeds = [b"userpool", user.key().as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
         bump,
         payer = user,
-        space = UserPool::LEN
+        space = UserPool::LEN,
+        constraint = user_pool.amount <= launch_pool.maximum_token_amount
     )]
     pub user_pool: Box<Account<'info, UserPool>>,
     #[account(mut)]
     pub user_token_account: Account<'info, token::TokenAccount>,
     pub currency_mint: Box<Account<'info, token::Mint>>,
     #[account(
-        init_if_needed,
-        payer = user,
+        mut,
         associated_token::mint = currency_mint,
         associated_token::authority = launch_pool
     )]

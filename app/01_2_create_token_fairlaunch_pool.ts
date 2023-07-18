@@ -3,10 +3,10 @@ import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
 import { findLaunchPoolAccount, findMintTokenAccount, findTreasurerAccount, getExplorerTxUrl } from "./utils";
 
-import { TOKEN_MINT_DECIMALS, program } from './00_init_program'
+import { REUSD_MINT, TOKEN_MINT_DECIMALS, program } from './00_init_program'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
-export async function createNativeFairlaunchPool(creator: Wallet, mint: PublicKey, max = 10, min = 5, rate = new BN(500)) {
+export async function createTokenFairlaunchPool(creator: Wallet, mint: PublicKey, max = 10, min = 5, rate = new BN(500)) {
 
     const unlock_date = new BN(dayjs().add(5, "s").unix());
     const pool_size = new BN(100 * LAMPORTS_PER_SOL);
@@ -17,7 +17,12 @@ export async function createNativeFairlaunchPool(creator: Wallet, mint: PublicKe
         mint,
         program.programId
     );
-    console.log(`launch_pool: ${launch_pool.toBase58()} creator: ${creator.publicKey.toBase58()} with mint: ${mint.toBase58()} creating ....`)
+
+    const launchPoolTokenAccount = await findMintTokenAccount(
+        launch_pool,
+        REUSD_MINT
+    );
+    console.log(`launch_pool: ${launch_pool.toBase58()} creator: ${creator.publicKey.toBase58()} currency ReUSD ${REUSD_MINT} with mint: ${mint.toBase58()} creating ....`)
     console.log('--------------------------------------')
 
 
@@ -25,7 +30,7 @@ export async function createNativeFairlaunchPool(creator: Wallet, mint: PublicKe
     const treasury = await findMintTokenAccount(treasurer, mint);
 
     const tx = await program.methods
-        .createNativeFairlaunchPool(
+        .createTokenFairlaunchPool(
             unlock_date,
             pool_size,
             minimum_token_amount,
@@ -39,6 +44,8 @@ export async function createNativeFairlaunchPool(creator: Wallet, mint: PublicKe
             tokenMint: mint,
             treasurer: treasurer,
             treasury: treasury,
+            currencyMint: REUSD_MINT,
+            launchPoolTokenAccount: launchPoolTokenAccount,
             rent: web3.SYSVAR_RENT_PUBKEY,
             systemProgram: web3.SystemProgram.programId,
             tokenProgram: TOKEN_PROGRAM_ID,

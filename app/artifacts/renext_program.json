@@ -8,6 +8,92 @@
       "args": []
     },
     {
+      "name": "createTokenFairlaunchPool",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "currencyMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "launchPoolTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "unlockDate",
+          "type": "i64"
+        },
+        {
+          "name": "poolSize",
+          "type": "u64"
+        },
+        {
+          "name": "minimumTokenAmount",
+          "type": "u64"
+        },
+        {
+          "name": "maximumTokenAmount",
+          "type": "u64"
+        },
+        {
+          "name": "rate",
+          "type": "u64"
+        },
+        {
+          "name": "tokenMintDecimals",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "createNativeFairlaunchPool",
       "accounts": [
         {
@@ -72,14 +158,6 @@
         {
           "name": "maximumTokenAmount",
           "type": "u64"
-        },
-        {
-          "name": "currency",
-          "type": "u8"
-        },
-        {
-          "name": "poolType",
-          "type": "u8"
         },
         {
           "name": "rate",
@@ -583,7 +661,7 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "creator",
+            "name": "authority",
             "type": "publicKey"
           },
           {
@@ -593,6 +671,10 @@
           {
             "name": "tokenMint",
             "type": "publicKey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
           }
         ]
       }
@@ -604,6 +686,10 @@
         "fields": [
           {
             "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "currencyAmount",
             "type": "u64"
           },
           {
@@ -785,28 +871,6 @@
         {
           "name": "unlockDate",
           "type": "i64",
-          "index": false
-        },
-        {
-          "name": "status",
-          "type": {
-            "defined": "LaunchPoolState"
-          },
-          "index": false
-        }
-      ]
-    },
-    {
-      "name": "StartLaunchPoolEvent",
-      "fields": [
-        {
-          "name": "pool",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "creator",
-          "type": "publicKey",
           "index": false
         },
         {

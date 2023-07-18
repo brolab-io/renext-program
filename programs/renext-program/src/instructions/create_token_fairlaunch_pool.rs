@@ -6,27 +6,23 @@ use crate::errors::*;
 use crate::state::*;
 
 #[derive(Accounts)]
-pub struct CreateNativeFairlaunchPool<'info> {
-    #[
-        account(
-            init,
-            seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()],
-            bump,
-            payer = authority,
-            space = LaunchPool::LEN
-        )
-    ]
+pub struct CreateTokenFairlaunchPool<'info> {
+    #[account(
+        init,
+        seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()],
+        bump,
+        payer = authority,
+        space = LaunchPool::LEN
+    )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
     pub token_mint: Box<Account<'info, token::Mint>>,
-    #[
-        account(
-            init,
-            seeds = [TREASURER_SEED.as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
-            bump ,
-            payer = authority,
-            space = Treasurer::LEN
-        )
-    ]
+    #[account(
+        init,
+        seeds = [TREASURER_SEED.as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
+        bump ,
+        payer = authority,
+        space = Treasurer::LEN
+    )]
     pub treasurer: Box<Account<'info, Treasurer>>,
     #[account(
         init,
@@ -35,6 +31,14 @@ pub struct CreateNativeFairlaunchPool<'info> {
         associated_token::authority = treasurer
     )]
     pub treasury: Box<Account<'info, token::TokenAccount>>,
+    pub currency_mint: Box<Account<'info, token::Mint>>,
+    #[account(
+        init,
+        payer = authority,
+        associated_token::mint = currency_mint,
+        associated_token::authority = launch_pool
+    )]
+    pub launch_pool_token_account: Account<'info, token::TokenAccount>,
     #[account(mut)]
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -44,7 +48,7 @@ pub struct CreateNativeFairlaunchPool<'info> {
 }
 
 pub fn handler(
-    ctx: Context<CreateNativeFairlaunchPool>,
+    ctx: Context<CreateTokenFairlaunchPool>,
     unlock_date: i64,
     pool_size: u64,
     minimum_token_amount: u64,
@@ -72,14 +76,15 @@ pub fn handler(
     launch_pool.token_mint = *ctx.accounts.token_mint.to_account_info().key;
     launch_pool.token_mint_decimals = token_mint_decimals;
     launch_pool.rate = rate;
-    launch_pool.currency = CurrencyType::RENEC;
+    launch_pool.currency = CurrencyType::ReUSD;
     launch_pool.pool_type = LaunchPoolType::FairLaunch;
     launch_pool.status = LaunchPoolState::Pending;
     launch_pool.authority = *ctx.accounts.authority.key;
     launch_pool.vault_amount = 0;
 
     msg!(
-        "Creating a native fairlaunch pool {} of token mint {} by {} with treasurer {} and treasury {}",
+        "Creating a token {} fairlaunch pool {} of token mint {} by {} with treasurer {} and treasury {}",
+        ctx.accounts.currency_mint.to_account_info().key(),
         launch_pool.to_account_info().key(),
         ctx.accounts.token_mint.to_account_info().key(),
         ctx.accounts.authority.key(),

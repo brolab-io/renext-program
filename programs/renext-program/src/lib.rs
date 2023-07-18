@@ -3,7 +3,6 @@ pub mod constants;
 pub mod errors;
 pub mod instructions;
 pub mod state;
-pub mod util;
 
 use crate::state::LaunchPoolBumps;
 use instructions::*;
@@ -17,14 +16,32 @@ pub mod renext_program {
         Ok(())
     }
 
+    pub fn create_token_fairlaunch_pool(
+        ctx: Context<CreateTokenFairlaunchPool>,
+        unlock_date: i64,
+        pool_size: u64,
+        minimum_token_amount: u64,
+        maximum_token_amount: u64,
+        rate: u64,
+        token_mint_decimals: u8,
+    ) -> ProgramResult {
+        instructions::create_token_fairlaunch_pool::handler(
+            ctx,
+            unlock_date,
+            pool_size,
+            minimum_token_amount,
+            maximum_token_amount,
+            rate,
+            token_mint_decimals,
+        )
+    }
+
     pub fn create_native_fairlaunch_pool(
         ctx: Context<CreateNativeFairlaunchPool>,
         unlock_date: i64,
         pool_size: u64,
         minimum_token_amount: u64,
         maximum_token_amount: u64,
-        currency: u8,
-        pool_type: u8,
         rate: u64,
         token_mint_decimals: u8,
     ) -> ProgramResult {
@@ -34,8 +51,6 @@ pub mod renext_program {
             pool_size,
             minimum_token_amount,
             maximum_token_amount,
-            currency,
-            pool_type,
             rate,
             token_mint_decimals,
         )

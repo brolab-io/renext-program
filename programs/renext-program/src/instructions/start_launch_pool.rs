@@ -7,13 +7,6 @@ use crate::{
     state::{LaunchPool, LaunchPoolState, Treasurer},
 };
 
-#[event]
-pub struct StartLaunchPoolEvent {
-    pub pool: Pubkey,
-    pub creator: Pubkey,
-    pub status: LaunchPoolState,
-}
-
 #[derive(Accounts)]
 pub struct StartLaunchPool<'info> {
     #[account(mut, seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()], bump)]
@@ -34,6 +27,7 @@ pub struct StartLaunchPool<'info> {
 
 pub fn handler(ctx: Context<StartLaunchPool>) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
+    let treasurer = &mut ctx.accounts.treasurer;
 
     require!(
         launch_pool.status == LaunchPoolState::Pending,
@@ -49,6 +43,8 @@ pub fn handler(ctx: Context<StartLaunchPool>) -> ProgramResult {
         MyError::InvalidTokenMint
     );
 
+    let transfer_amount = launch_pool.pool_size;
+
     let cpi_context = CpiContext::new(
         ctx.accounts.token_program.to_account_info(),
         token::Transfer {
@@ -57,17 +53,12 @@ pub fn handler(ctx: Context<StartLaunchPool>) -> ProgramResult {
             authority: ctx.accounts.authority.to_account_info(),
         },
     );
-    token::transfer(cpi_context, launch_pool.pool_size)?;
-    launch_pool.pool_size_remaining = launch_pool.pool_size;
-    msg!("Transfered {} tokens to treasury", launch_pool.pool_size);
+    token::transfer(cpi_context, transfer_amount)?;
+    launch_pool.pool_size_remaining = transfer_amount;
+    treasurer.amount = transfer_amount;
+    msg!("Transfered {} tokens to treasury", transfer_amount);
 
     launch_pool.status = LaunchPoolState::Active;
-
-    emit!(StartLaunchPoolEvent {
-        pool: launch_pool.key(),
-        creator: *ctx.accounts.authority.key,
-        status: launch_pool.status,
-    });
 
     Ok(())
 }

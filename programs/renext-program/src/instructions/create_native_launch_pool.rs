@@ -92,9 +92,10 @@ pub fn handler(
         MyError::InvalidUnlockDate
     );
 
-    treasurer.creator = *ctx.accounts.authority.key;
+    treasurer.authority = *ctx.accounts.authority.key;
     treasurer.launch_pool = *launch_pool.to_account_info().key;
     treasurer.token_mint = *ctx.accounts.token_mint.to_account_info().key;
+    treasurer.amount = 0;
 
     launch_pool.unlock_date = unlock_date;
     launch_pool.pool_size = pool_size;

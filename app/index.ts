@@ -32,7 +32,6 @@ const flowTokenFairlaunchPool = async () => {
 
   await createTokenFairlaunchPool(masterWallet, mint);
   await startLaunchPool(masterWallet, mint);
-  // await buyWithRenec(masterWallet.publicKey, mint, buyer1Wallet, 10);
 
   // await completeLaunchPool(masterWallet, mint);
   // await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);

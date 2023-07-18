@@ -1,6 +1,7 @@
 use crate::{
+    constants::{LAUNCH_POOL_SEED, USER_POOL_SEED},
     errors::MyError,
-    state::{CurrencyType, LaunchPool, LaunchPoolState, Treasurer, UserPool},
+    state::{CurrencyType, LaunchPool, LaunchPoolState, UserPool},
 };
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
@@ -15,14 +16,12 @@ pub struct BuyTokenWithTokenEvent {
 #[derive(Accounts)]
 #[instruction(creator: Pubkey)]
 pub struct BuyTokenWithToken<'info> {
-    #[account(mut, seeds = [b"launchpool", creator.as_ref(), token_mint.key().as_ref()], bump)]
+    #[account(mut, seeds = [LAUNCH_POOL_SEED.as_ref(), creator.as_ref(), token_mint.key().as_ref()], bump)]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
-    #[account(mut, seeds = [b"treasurer", launch_pool.key().as_ref(), token_mint.key().as_ref()], bump)]
-    pub treasurer: Box<Account<'info, Treasurer>>,
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(
         init_if_needed,
-        seeds = [b"userpool", user.key().as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
+        seeds = [USER_POOL_SEED.as_ref(), user.key().as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
         bump,
         payer = user,
         space = UserPool::LEN,

@@ -19,6 +19,8 @@ import { startLaunchPoolWithWhitelist } from "./02_2_0_start_launch_pool_with_wh
 import { addWalletsToWhitelist } from "./02_2_1_add_wallets_to_whitelist";
 import { removeWalletsToWhitelist } from "./02_2_2_remove_wallets_to_whitelist";
 import { buyWithRenecAndWhitelist } from "./03_3_buy_native_pool_whitelist";
+import { createTokenWhitelistPool } from "./01_4_create_token_whitelist_pool";
+import { buyWithReUSDAnWhitelist } from "./03_4_buy_token_pool_whitelist";
 dotenv.config();
 
 
@@ -50,7 +52,7 @@ const flowTokenFairlaunchPool = async () => {
   await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
 }
 
-const flowTokenFairlaunchPoolWithWhitelist = async () => {
+const flowNativeWhitelistPool = async () => {
   const mint = await createTokenMint(masterWallet, masterWallet.publicKey, 1000000);
 
   await createNativeWhitelistPool(masterWallet, mint, 20, 5, new BN(1000));
@@ -97,8 +99,57 @@ const flowTokenFairlaunchPoolWithWhitelist = async () => {
 
 }
 
+const flowTokenWhitelistPool = async () => {
+  const mint = await createTokenMint(masterWallet, masterWallet.publicKey, 1000000);
+
+  await createTokenWhitelistPool(masterWallet, mint, 20, 5, new BN(1000));
+  const wallets: PublicKey[] = [
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+  ];
+  await startLaunchPoolWithWhitelist(masterWallet, mint, wallets);
+
+  const wallets2: PublicKey[] = [
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+    buyer1Wallet.publicKey,
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+  ];
+
+  await addWalletsToWhitelist(masterWallet, mint, wallets2);
+
+  const removeWallets: PublicKey[] = [
+    wallets[
+    Math.floor(Math.random() * wallets.length)
+    ],
+    wallets[
+    Math.floor(Math.random() * wallets.length)
+    ],
+    wallets2[
+    Math.floor(Math.random() * wallets2.length)
+    ],
+  ];
+
+  await removeWalletsToWhitelist(masterWallet, mint, removeWallets);
+
+  await buyWithReUSDAnWhitelist(masterWallet.publicKey, mint, buyer1Wallet, 10);
+
+  await completeLaunchPool(masterWallet, mint);
+  await withdrawTokenPool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
+
+  await delay(6000);
+  await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
+
+}
+
+
 (async () => {
   // await flowNativeFairlaunchPool();
   // await flowTokenFairlaunchPool();
-  await flowTokenFairlaunchPoolWithWhitelist();
+  // await flowNativeWhitelistPool();
+  await flowTokenWhitelistPool();
 })();

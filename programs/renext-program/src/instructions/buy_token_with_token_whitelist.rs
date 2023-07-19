@@ -1,20 +1,13 @@
 use crate::{
     constants::{REUSD_MINT, USER_POOL_SEED},
     errors::MyError,
-    state::{CurrencyType, LaunchPool, LaunchPoolState, LaunchPoolType, UserPool},
+    state::{CurrencyType, LaunchPool, LaunchPoolState, LaunchPoolType, UserPool, Whitelist},
 };
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
-#[event]
-pub struct BuyTokenWithTokenEvent {
-    pub buyer: Pubkey,
-    pub amount: u64,
-    pub token_amount: u64,
-}
-
 #[derive(Accounts)]
-pub struct BuyTokenWithToken<'info> {
+pub struct BuyTokenWithTokenWhitelist<'info> {
     #[account(mut)]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
     pub token_mint: Box<Account<'info, token::Mint>>,
@@ -41,6 +34,11 @@ pub struct BuyTokenWithToken<'info> {
         associated_token::authority = launch_pool
     )]
     pub launch_pool_token_account: Account<'info, token::TokenAccount>,
+    #[account(
+        mut,
+        constraint = whitelist.launch_pool == launch_pool.key(),
+    )]
+    pub whitelist: Box<Account<'info, Whitelist>>,
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -49,7 +47,7 @@ pub struct BuyTokenWithToken<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn handler(ctx: Context<BuyTokenWithToken>, amount: u64) -> ProgramResult {
+pub fn handler(ctx: Context<BuyTokenWithTokenWhitelist>, amount: u64) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
     let user_pool = &mut ctx.accounts.user_pool;
 
@@ -58,7 +56,7 @@ pub fn handler(ctx: Context<BuyTokenWithToken>, amount: u64) -> ProgramResult {
         MyError::InvalidLaunchPoolStatus
     );
     require!(
-        launch_pool.pool_type == LaunchPoolType::FairLaunch,
+        launch_pool.pool_type == LaunchPoolType::WhiteList,
         MyError::InvalidLaunchPoolType
     );
     require!(
@@ -78,6 +76,14 @@ pub fn handler(ctx: Context<BuyTokenWithToken>, amount: u64) -> ProgramResult {
     require!(
         user_pool.amount.checked_add(amount).unwrap() <= launch_pool.maximum_token_amount,
         MyError::MaximumTokenAmountReached
+    );
+
+    require!(
+        ctx.accounts
+            .whitelist
+            .is_pubkey_in_list(&ctx.accounts.user.key())
+            == true,
+        MyError::UserNotInWhiteList
     );
 
     let pool_size_remaining = launch_pool.pool_size_remaining;

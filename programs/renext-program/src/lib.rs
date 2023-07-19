@@ -75,6 +75,26 @@ pub mod renext_program {
         )
     }
 
+    pub fn create_token_whitelist_pool(
+        ctx: Context<CreateTokenWhitelistPool>,
+        unlock_date: i64,
+        pool_size: u64,
+        minimum_token_amount: u64,
+        maximum_token_amount: u64,
+        rate: u64,
+        token_mint_decimals: u8,
+    ) -> ProgramResult {
+        instructions::create_token_whitelist_pool::handler(
+            ctx,
+            unlock_date,
+            pool_size,
+            minimum_token_amount,
+            maximum_token_amount,
+            rate,
+            token_mint_decimals,
+        )
+    }
+
     pub fn start_launch_pool(ctx: Context<StartLaunchPool>) -> ProgramResult {
         instructions::start_launch_pool::handler(ctx)
     }
@@ -114,6 +134,13 @@ pub mod renext_program {
         amount: u64,
     ) -> ProgramResult {
         instructions::buy_token_with_native_whitelist::handler(ctx, amount)
+    }
+
+    pub fn buy_token_with_token_whitelist(
+        ctx: Context<BuyTokenWithTokenWhitelist>,
+        amount: u64,
+    ) -> ProgramResult {
+        instructions::buy_token_with_token_whitelist::handler(ctx, amount)
     }
 
     pub fn withdraw_native(ctx: Context<WithdrawNativeLaunchPool>) -> ProgramResult {

@@ -57,6 +57,10 @@ pub enum MyError {
     WalletsMustNotBeEmpty,
     #[msg("Whitelist not enough space")]
     WhitelistNotEnoughSpace,
+    #[msg("Launch pool already completed")]
+    LaunchPoolAlreadyCompleted,
+    #[msg("User not in whitelist")]
+    UserNotInWhiteList,
 }
 
 impl From<TryFromIntError> for MyError {

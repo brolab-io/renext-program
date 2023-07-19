@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::{
-    constants::{DISCRIMINATOR_SIZE, I64_SIZE, PUBKEY_SIZE, U64_SIZE, U8_SIZE},
+    constants::{CURRENCY_DECIMALS, DISCRIMINATOR_SIZE, I64_SIZE, PUBKEY_SIZE, U64_SIZE, U8_SIZE},
     errors::MyError,
 };
 
@@ -124,5 +124,17 @@ impl LaunchPool {
         self.pool_type = pool_type;
         self.status = LaunchPoolState::Pending;
         Ok(())
+    }
+
+    pub fn calculate_user_must_pay(&self, amount: u64) -> u64 {
+        amount
+            .checked_mul(self.rate)
+            .unwrap()
+            .checked_div(10000)
+            .unwrap()
+            .checked_mul(10_i32.pow(CURRENCY_DECIMALS) as u64)
+            .unwrap()
+            .checked_div(10_i32.pow(self.token_mint_decimals as u32) as u64)
+            .unwrap()
     }
 }

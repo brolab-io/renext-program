@@ -537,6 +537,62 @@ export type RenextProgram = {
       ]
     },
     {
+      "name": "buyTokenWithNativeWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "withdrawNative",
       "accounts": [
         {
@@ -1106,6 +1162,16 @@ export type RenextProgram = {
       "code": 6025,
       "name": "WhitelistNotEnoughSpace",
       "msg": "Whitelist not enough space"
+    },
+    {
+      "code": 6026,
+      "name": "LaunchPoolAlreadyCompleted",
+      "msg": "Launch pool already completed"
+    },
+    {
+      "code": 6027,
+      "name": "UserNotInWhiteList",
+      "msg": "User not in whitelist"
     }
   ]
 };
@@ -1649,6 +1715,62 @@ export const IDL: RenextProgram = {
       ]
     },
     {
+      "name": "buyTokenWithNativeWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "withdrawNative",
       "accounts": [
         {
@@ -2218,6 +2340,16 @@ export const IDL: RenextProgram = {
       "code": 6025,
       "name": "WhitelistNotEnoughSpace",
       "msg": "Whitelist not enough space"
+    },
+    {
+      "code": 6026,
+      "name": "LaunchPoolAlreadyCompleted",
+      "msg": "Launch pool already completed"
+    },
+    {
+      "code": 6027,
+      "name": "UserNotInWhiteList",
+      "msg": "User not in whitelist"
     }
   ]
 };

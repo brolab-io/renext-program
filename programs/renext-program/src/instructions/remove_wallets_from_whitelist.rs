@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::{
     errors::MyError,
-    state::{LaunchPool, Whitelist},
+    state::{LaunchPool, LaunchPoolState, Whitelist},
 };
 
 #[derive(Accounts)]
@@ -22,6 +22,11 @@ pub struct RemoveWalletsFromWhitelist<'info> {
 
 pub fn handler(ctx: Context<RemoveWalletsFromWhitelist>, wallets: Vec<Pubkey>) -> ProgramResult {
     let whitelist = &mut ctx.accounts.whitelist;
+
+    require!(
+        ctx.accounts.launch_pool.status != LaunchPoolState::Completed,
+        MyError::LaunchPoolAlreadyCompleted
+    );
 
     require!(wallets.len() > 0, MyError::WalletsMustNotBeEmpty);
 

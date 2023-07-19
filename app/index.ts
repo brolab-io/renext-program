@@ -18,6 +18,7 @@ import { createNativeWhitelistPool } from "./01_3_create_native_whitelist_pool";
 import { startLaunchPoolWithWhitelist } from "./02_2_0_start_launch_pool_with_whitelist";
 import { addWalletsToWhitelist } from "./02_2_1_add_wallets_to_whitelist";
 import { removeWalletsToWhitelist } from "./02_2_2_remove_wallets_to_whitelist";
+import { buyWithRenecAndWhitelist } from "./03_3_buy_native_pool_whitelist";
 dotenv.config();
 
 
@@ -65,7 +66,7 @@ const flowTokenFairlaunchPoolWithWhitelist = async () => {
   const wallets2: PublicKey[] = [
     Keypair.generate().publicKey,
     Keypair.generate().publicKey,
-    Keypair.generate().publicKey,
+    buyer1Wallet.publicKey,
     Keypair.generate().publicKey,
     Keypair.generate().publicKey,
   ];
@@ -85,6 +86,14 @@ const flowTokenFairlaunchPoolWithWhitelist = async () => {
   ];
 
   await removeWalletsToWhitelist(masterWallet, mint, removeWallets);
+
+  await buyWithRenecAndWhitelist(masterWallet.publicKey, mint, buyer1Wallet, 10);
+
+  await completeLaunchPool(masterWallet, mint);
+  await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
+
+  await delay(6000);
+  await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
 
 }
 

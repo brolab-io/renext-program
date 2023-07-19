@@ -109,6 +109,13 @@ pub mod renext_program {
         instructions::buy_token_with_token::handler(ctx, amount)
     }
 
+    pub fn buy_token_with_native_whitelist(
+        ctx: Context<BuyTokenWithNativeWhitelist>,
+        amount: u64,
+    ) -> ProgramResult {
+        instructions::buy_token_with_native_whitelist::handler(ctx, amount)
+    }
+
     pub fn withdraw_native(ctx: Context<WithdrawNativeLaunchPool>) -> ProgramResult {
         instructions::withdraw_native_launch_pool::handler(ctx)
     }

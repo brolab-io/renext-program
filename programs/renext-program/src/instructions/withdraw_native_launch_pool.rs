@@ -84,6 +84,12 @@ pub fn handler(ctx: Context<WithdrawNativeLaunchPool>) -> ProgramResult {
     )?;
 
     launch_pool.vault_amount = 0;
+    msg!(
+        "Authority: {} withdraw {} to {}",
+        ctx.accounts.authority.key(),
+        amount,
+        ctx.accounts.beneficiary.key()
+    );
 
     Ok(())
 }

@@ -35,4 +35,6 @@ pub enum MyError {
     InvalidTreasurer,
     #[msg("Invalid vault")]
     InvalidVault,
+    #[msg("Invalid launch pool")]
+    InvalidLaunchPool,
 }

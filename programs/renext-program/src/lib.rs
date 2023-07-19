@@ -98,6 +98,10 @@ pub mod renext_program {
         instructions::withdraw_native_launch_pool::handler(ctx)
     }
 
+    pub fn withdraw_token(ctx: Context<WithdrawTokenLaunchPool>) -> ProgramResult {
+        instructions::withdraw_token_launch_pool::handler(ctx)
+    }
+
     pub fn complete_launch_pool(ctx: Context<CompleteLaunchPool>) -> ProgramResult {
         instructions::complete_launch_pool::handler(ctx)
     }

@@ -107,7 +107,12 @@ pub fn handler(ctx: Context<BuyTokenWithNative>, amount: u64) -> ProgramResult {
         ],
     )?;
 
-    msg!("Transfered {} tokens to vault", user_must_pay);
+    msg!(
+        "User buy {} token {} with {} RENEC",
+        amount,
+        launch_pool.token_mint,
+        user_must_pay
+    );
 
     user_pool.amount = user_pool.amount.checked_add(amount).unwrap();
     user_pool.currency_amount = user_must_pay;

@@ -479,6 +479,62 @@ export type RenextProgram = {
       "args": []
     },
     {
+      "name": "withdrawToken",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "currencyMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "launchPoolTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "beneficiary",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "completeLaunchPool",
       "accounts": [
         {
@@ -941,6 +997,11 @@ export type RenextProgram = {
       "code": 6016,
       "name": "InvalidVault",
       "msg": "Invalid vault"
+    },
+    {
+      "code": 6017,
+      "name": "InvalidLaunchPool",
+      "msg": "Invalid launch pool"
     }
   ]
 };
@@ -1426,6 +1487,62 @@ export const IDL: RenextProgram = {
       "args": []
     },
     {
+      "name": "withdrawToken",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "currencyMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "launchPoolTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "beneficiary",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "completeLaunchPool",
       "accounts": [
         {
@@ -1888,6 +2005,11 @@ export const IDL: RenextProgram = {
       "code": 6016,
       "name": "InvalidVault",
       "msg": "Invalid vault"
+    },
+    {
+      "code": 6017,
+      "name": "InvalidLaunchPool",
+      "msg": "Invalid launch pool"
     }
   ]
 };

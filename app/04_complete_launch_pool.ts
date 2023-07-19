@@ -1,6 +1,6 @@
 import { Wallet } from "@project-serum/anchor";
 import { PublicKey } from "@solana/web3.js";
-import { findLaunchPoolAccount } from "./utils";
+import { findLaunchPoolAccount, getExplorerTxUrl } from "./utils";
 import { program } from "./00_init_program";
 export async function completeLaunchPool(
     creator: Wallet,
@@ -17,6 +17,6 @@ export async function completeLaunchPool(
         tokenMint: mint,
     }).signers([creator.payer]).rpc();
 
-    console.log("Complete launch pool in tx: ", tx);
+    console.log("Complete launch pool in tx:", '\n', getExplorerTxUrl(tx));
     console.log('********************************')
 }

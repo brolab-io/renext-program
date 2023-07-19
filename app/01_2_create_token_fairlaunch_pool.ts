@@ -56,7 +56,7 @@ export async function createTokenFairlaunchPool(creator: Wallet, mint: PublicKey
         .rpc();
 
     console.log(
-        "Create a new launchpool in tx: ",
+        "Create a new launchpool in tx: ", '\n',
         getExplorerTxUrl(tx)
     );
     console.log('********************************')

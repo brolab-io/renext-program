@@ -86,20 +86,12 @@ pub mod renext_program {
         instructions::start_launch_pool::handler(ctx)
     }
 
-    pub fn buy_token_with_native(
-        ctx: Context<BuyTokenWithNative>,
-        creator: Pubkey,
-        amount: u64,
-    ) -> ProgramResult {
-        instructions::buy_token_with_native::handler(ctx, creator, amount)
+    pub fn buy_token_with_native(ctx: Context<BuyTokenWithNative>, amount: u64) -> ProgramResult {
+        instructions::buy_token_with_native::handler(ctx, amount)
     }
 
-    pub fn buy_token_with_token(
-        ctx: Context<BuyTokenWithToken>,
-        creator: Pubkey,
-        amount: u64,
-    ) -> ProgramResult {
-        instructions::buy_token_with_token::handler(ctx, creator, amount)
+    pub fn buy_token_with_token(ctx: Context<BuyTokenWithToken>, amount: u64) -> ProgramResult {
+        instructions::buy_token_with_token::handler(ctx, amount)
     }
 
     pub fn withdraw_native(ctx: Context<WithdrawNativeLaunchPool>, bump: u8) -> ProgramResult {

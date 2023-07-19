@@ -1,6 +1,6 @@
 import { Wallet } from "@project-serum/anchor";
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram } from "@solana/web3.js";
-import { findLaunchPoolAccount, findVaultAccount } from "./utils";
+import { findLaunchPoolAccount, findVaultAccount, getExplorerTxUrl } from "./utils";
 import { connection, program } from "./00_init_program";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
@@ -23,7 +23,7 @@ export async function withdrawNativePool(payer: Wallet, creator: PublicKey, mint
         systemProgram: SystemProgram.programId,
     }).signers([payer.payer]).rpc();
 
-    console.log("Withdraw native in tx: ", tx);
+    console.log("Withdraw native in tx: ", '\n', getExplorerTxUrl(tx));
     console.log('********************************')
 
 }

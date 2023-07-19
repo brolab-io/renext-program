@@ -361,10 +361,6 @@ export type RenextProgram = {
       ],
       "args": [
         {
-          "name": "creator",
-          "type": "publicKey"
-        },
-        {
           "name": "amount",
           "type": "u64"
         }
@@ -430,10 +426,6 @@ export type RenextProgram = {
         }
       ],
       "args": [
-        {
-          "name": "creator",
-          "type": "publicKey"
-        },
         {
           "name": "amount",
           "type": "u64"
@@ -1320,10 +1312,6 @@ export const IDL: RenextProgram = {
       ],
       "args": [
         {
-          "name": "creator",
-          "type": "publicKey"
-        },
-        {
           "name": "amount",
           "type": "u64"
         }
@@ -1389,10 +1377,6 @@ export const IDL: RenextProgram = {
         }
       ],
       "args": [
-        {
-          "name": "creator",
-          "type": "publicKey"
-        },
         {
           "name": "amount",
           "type": "u64"

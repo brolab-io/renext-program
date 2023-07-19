@@ -1,5 +1,5 @@
 use crate::{
-    constants::{LAUNCH_POOL_SEED, USER_POOL_SEED},
+    constants::USER_POOL_SEED,
     errors::MyError,
     state::{CurrencyType, LaunchPool, LaunchPoolState, UserPool},
 };
@@ -14,9 +14,8 @@ pub struct BuyTokenWithTokenEvent {
 }
 
 #[derive(Accounts)]
-#[instruction(creator: Pubkey)]
 pub struct BuyTokenWithToken<'info> {
-    #[account(mut, seeds = [LAUNCH_POOL_SEED.as_ref(), creator.as_ref(), token_mint.key().as_ref()], bump)]
+    #[account(mut)]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(
@@ -45,10 +44,10 @@ pub struct BuyTokenWithToken<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn handler(ctx: Context<BuyTokenWithToken>, creator: Pubkey, amount: u64) -> ProgramResult {
+pub fn handler(ctx: Context<BuyTokenWithToken>, amount: u64) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
     let user_pool = &mut ctx.accounts.user_pool;
-    require!(launch_pool.authority == creator, MyError::InvalidCreator);
+
     require!(
         launch_pool.status == LaunchPoolState::Active,
         MyError::InvalidLaunchPoolStatus

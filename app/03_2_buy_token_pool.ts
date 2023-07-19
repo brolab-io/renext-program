@@ -1,8 +1,8 @@
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
-import { findLaunchPoolAccount, findTreasurerAccount, findUserPoolAccount, findVaultAccount, getExplorerTxUrl } from "./utils";
-import { program } from "./00_init_program";
+import { findLaunchPoolAccount, findMintTokenAccount, findTreasurerAccount, findUserPoolAccount, findVaultAccount, getExplorerTxUrl } from "./utils";
+import { REUSD_MINT, program } from "./00_init_program";
 import { BN, Wallet, web3 } from "@project-serum/anchor";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
 export async function buyWithReUSD(creator: PublicKey, mint: PublicKey, buyer: Wallet, amount: number,) {
     const [launch_pool] = findLaunchPoolAccount(creator, mint, program.programId);
@@ -14,28 +14,39 @@ export async function buyWithReUSD(creator: PublicKey, mint: PublicKey, buyer: W
         program.programId
     );
 
-    const [vault] = findVaultAccount(launch_pool, creator, program.programId);
+    const userTokenAccount = await findMintTokenAccount(
+        buyer.publicKey,
+        REUSD_MINT
+    );
 
-    console.log(`buyer ${buyer.publicKey.toBase58()} want buy ${amount} token with renec at launch pool ${launch_pool.toBase58()}`);
+    const launchPoolTokenAccount = await findMintTokenAccount(
+        launch_pool,
+        REUSD_MINT
+    );
+
+    console.log(`buyer ${buyer.publicKey.toBase58()} want buy ${amount} token with ReUSD ${REUSD_MINT} at launch pool ${launch_pool.toBase58()}`);
     console.log('--------------------------------------')
     const tx = await program.methods
         .buyTokenWithToken(
-            creator,
             new BN(amount * LAMPORTS_PER_SOL)
         )
         .accounts({
             launchPool: launch_pool,
             userPool: user_pool,
+            userTokenAccount: userTokenAccount,
+            launchPoolTokenAccount: launchPoolTokenAccount,
+            currencyMint: REUSD_MINT,
             user: buyer.publicKey,
             tokenMint: mint,
             tokenProgram: TOKEN_PROGRAM_ID,
             systemProgram: web3.SystemProgram.programId,
+            associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
             rent: web3.SYSVAR_RENT_PUBKEY,
         })
         .signers([buyer.payer])
         .rpc();
 
-    console.log("Buy with renec in tx: ", getExplorerTxUrl(tx));
+    console.log("Buy with ReUSD in tx: ", '\n', getExplorerTxUrl(tx));
 
     const data = await program.account.userPool.fetch(user_pool);
     console.log("User pool account: ", data.amount.toNumber());

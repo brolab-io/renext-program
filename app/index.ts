@@ -10,6 +10,7 @@ import { withdrawNativePool } from "./05_withdraw_native_pool";
 import { buyWithRenec } from "./03_1_buy_native_pool";
 import { claimToken } from "./05_claim_token";
 import { createTokenFairlaunchPool } from "./01_2_create_token_fairlaunch_pool";
+import { buyWithReUSD } from "./03_2_buy_token_pool";
 dotenv.config();
 
 
@@ -32,8 +33,9 @@ const flowTokenFairlaunchPool = async () => {
 
   await createTokenFairlaunchPool(masterWallet, mint);
   await startLaunchPool(masterWallet, mint);
+  await buyWithReUSD(masterWallet.publicKey, mint, buyer1Wallet, 10);
 
-  // await completeLaunchPool(masterWallet, mint);
+  await completeLaunchPool(masterWallet, mint);
   // await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
 
   // await delay(6000);

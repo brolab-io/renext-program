@@ -47,7 +47,7 @@ export async function claimToken(
 
     }).signers([buyer.payer]).rpc();
 
-    console.log("Claim token in tx: ", getExplorerTxUrl(tx));
+    console.log("Claim token in tx: ", '\n', getExplorerTxUrl(tx));
     console.log('********************************')
 
 }

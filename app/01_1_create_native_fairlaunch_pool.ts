@@ -49,7 +49,7 @@ export async function createNativeFairlaunchPool(creator: Wallet, mint: PublicKe
         .rpc();
 
     console.log(
-        "Create a new launchpool in tx: ",
+        "Create a new launchpool in tx: ", '\n',
         getExplorerTxUrl(tx)
     );
     console.log('********************************')

@@ -20,7 +20,6 @@ export async function buyWithRenec(creator: PublicKey, mint: PublicKey, buyer: W
     console.log('--------------------------------------')
     const tx = await program.methods
         .buyTokenWithNative(
-            creator,
             new BN(amount * LAMPORTS_PER_SOL)
         )
         .accounts({
@@ -36,7 +35,7 @@ export async function buyWithRenec(creator: PublicKey, mint: PublicKey, buyer: W
         .signers([buyer.payer])
         .rpc();
 
-    console.log("Buy with renec in tx: ", getExplorerTxUrl(tx));
+    console.log("Buy with renec in tx: ", '\n', getExplorerTxUrl(tx));
 
     const data = await program.account.userPool.fetch(user_pool);
     console.log("User pool account: ", data.amount.toNumber());

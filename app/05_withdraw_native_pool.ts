@@ -13,7 +13,7 @@ export async function withdrawNativePool(payer: Wallet, creator: PublicKey, mint
 
     console.log(`User ${payer.publicKey.toBase58()} want withdraw ${accountInfo.lamports / LAMPORTS_PER_SOL} RENEC of launch pool ${launch_pool.toBase58()} with mint ${mint.toBase58()} from vault ${vault.toBase58()} to beneficiary ${beneficiary.toBase58()}`)
     console.log('--------------------------------------')
-    const tx = await program.methods.withdrawNative(vault_bump).accounts({
+    const tx = await program.methods.withdrawNative().accounts({
         launchPool: launch_pool,
         vault,
         authority: creator,

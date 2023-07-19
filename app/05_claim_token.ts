@@ -31,7 +31,7 @@ export async function claimToken(
     console.log('--------------------------------------')
 
     const tx = await program.methods.claimToken(
-        creator, treasurerBump
+
     ).accounts({
         launchPool: launch_pool,
         userPool: user_pool,

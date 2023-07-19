@@ -27,7 +27,11 @@ pub struct BuyTokenWithToken<'info> {
         constraint = user_pool.amount <= launch_pool.maximum_token_amount
     )]
     pub user_pool: Box<Account<'info, UserPool>>,
-    #[account(mut)]
+    #[account(
+        mut,
+        associated_token::mint = currency_mint,
+        associated_token::authority = user
+    )]
     pub user_token_account: Account<'info, token::TokenAccount>,
     pub currency_mint: Box<Account<'info, token::Mint>>,
     #[account(

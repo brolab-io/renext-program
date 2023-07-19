@@ -476,12 +476,7 @@ export type RenextProgram = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "bump",
-          "type": "u8"
-        }
-      ]
+      "args": []
     },
     {
       "name": "completeLaunchPool",
@@ -563,16 +558,7 @@ export type RenextProgram = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "creator",
-          "type": "publicKey"
-        },
-        {
-          "name": "bump",
-          "type": "u8"
-        }
-      ]
+      "args": []
     }
   ],
   "accounts": [
@@ -945,6 +931,16 @@ export type RenextProgram = {
       "code": 6014,
       "name": "PoolSizeRemainingNotEnough",
       "msg": "Pool size remaining not enough"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidTreasurer",
+      "msg": "Invalid treasurer"
+    },
+    {
+      "code": 6016,
+      "name": "InvalidVault",
+      "msg": "Invalid vault"
     }
   ]
 };
@@ -1427,12 +1423,7 @@ export const IDL: RenextProgram = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "bump",
-          "type": "u8"
-        }
-      ]
+      "args": []
     },
     {
       "name": "completeLaunchPool",
@@ -1514,16 +1505,7 @@ export const IDL: RenextProgram = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "creator",
-          "type": "publicKey"
-        },
-        {
-          "name": "bump",
-          "type": "u8"
-        }
-      ]
+      "args": []
     }
   ],
   "accounts": [
@@ -1896,6 +1878,16 @@ export const IDL: RenextProgram = {
       "code": 6014,
       "name": "PoolSizeRemainingNotEnough",
       "msg": "Pool size remaining not enough"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidTreasurer",
+      "msg": "Invalid treasurer"
+    },
+    {
+      "code": 6016,
+      "name": "InvalidVault",
+      "msg": "Invalid vault"
     }
   ]
 };

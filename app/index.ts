@@ -43,7 +43,8 @@ const flowTokenFairlaunchPool = async () => {
 }
 
 (async () => {
-  await flowTokenFairlaunchPool();
+  await flowNativeFairlaunchPool();
+  // await flowTokenFairlaunchPool();
 
   // await mintToBuyer(buyer1Wallet.publicKey, REUSD_MINT, 1000);
   // await buyWithReUSD(1, mint);

@@ -94,16 +94,16 @@ pub mod renext_program {
         instructions::buy_token_with_token::handler(ctx, amount)
     }
 
-    pub fn withdraw_native(ctx: Context<WithdrawNativeLaunchPool>, bump: u8) -> ProgramResult {
-        instructions::withdraw_native_launch_pool::handler(ctx, bump)
+    pub fn withdraw_native(ctx: Context<WithdrawNativeLaunchPool>) -> ProgramResult {
+        instructions::withdraw_native_launch_pool::handler(ctx)
     }
 
     pub fn complete_launch_pool(ctx: Context<CompleteLaunchPool>) -> ProgramResult {
         instructions::complete_launch_pool::handler(ctx)
     }
 
-    pub fn claim_token(ctx: Context<ClaimToken>, creator: Pubkey, bump: u8) -> ProgramResult {
-        instructions::claim_token::handler(ctx, creator, bump)
+    pub fn claim_token(ctx: Context<ClaimToken>) -> ProgramResult {
+        instructions::claim_token::handler(ctx)
     }
 }
 

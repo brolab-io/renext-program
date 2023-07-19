@@ -476,12 +476,7 @@
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "bump",
-          "type": "u8"
-        }
-      ]
+      "args": []
     },
     {
       "name": "completeLaunchPool",
@@ -563,16 +558,7 @@
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "creator",
-          "type": "publicKey"
-        },
-        {
-          "name": "bump",
-          "type": "u8"
-        }
-      ]
+      "args": []
     }
   ],
   "accounts": [
@@ -945,6 +931,16 @@
       "code": 6014,
       "name": "PoolSizeRemainingNotEnough",
       "msg": "Pool size remaining not enough"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidTreasurer",
+      "msg": "Invalid treasurer"
+    },
+    {
+      "code": 6016,
+      "name": "InvalidVault",
+      "msg": "Invalid vault"
     }
   ]
 }

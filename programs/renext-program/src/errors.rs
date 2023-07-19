@@ -31,4 +31,8 @@ pub enum MyError {
     InvalidCreator,
     #[msg("Pool size remaining not enough")]
     PoolSizeRemainingNotEnough,
+    #[msg("Invalid treasurer")]
+    InvalidTreasurer,
+    #[msg("Invalid vault")]
+    InvalidVault,
 }

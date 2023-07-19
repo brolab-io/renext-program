@@ -1,28 +1,12 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
-use crate::constants::{LAUNCH_POOL_SEED, TREASURER_SEED, VAULT_SEED};
+use crate::constants::{LAUNCH_POOL_SEED, TREASURER_SEED};
 use crate::errors::*;
 use crate::state::*;
 
-#[event]
-pub struct CreateLaunchPoolEvent {
-    pub creator: Pubkey,
-    pub pool: Pubkey,
-    pub token_mint: Pubkey,
-    pub treasury: Pubkey,
-    pub treasurer: Pubkey,
-    pub currency_type: CurrencyType,
-    pub launch_pool_type: LaunchPoolType,
-    pub pool_size: u64,
-    pub minimum_token_amount: u64,
-    pub unlock_date: i64,
-    pub status: LaunchPoolState,
-}
-
 #[derive(Accounts)]
-#[instruction(bumps: LaunchPoolBumps)]
-pub struct CreateLaunchPool<'info> {
+pub struct CreateNativeFairlaunchPool<'info> {
     #[
         account(
             init,
@@ -45,23 +29,12 @@ pub struct CreateLaunchPool<'info> {
     ]
     pub treasurer: Box<Account<'info, Treasurer>>,
     #[account(
-        init_if_needed,
+        init,
         payer = authority,
         associated_token::mint = token_mint,
         associated_token::authority = treasurer
     )]
     pub treasury: Box<Account<'info, token::TokenAccount>>,
-    /// CHECK: Create a new vault for the launch pool
-    #[account(
-        mut,
-        seeds = [
-            VAULT_SEED.as_ref(),
-            launch_pool.key().as_ref(),
-            authority.key().as_ref()
-        ],
-        bump ,
-    )]
-    pub vault: AccountInfo<'info>,
     #[account(mut)]
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -71,19 +44,14 @@ pub struct CreateLaunchPool<'info> {
 }
 
 pub fn handler(
-    ctx: Context<CreateLaunchPool>,
+    ctx: Context<CreateNativeFairlaunchPool>,
     unlock_date: i64,
     pool_size: u64,
     minimum_token_amount: u64,
     maximum_token_amount: u64,
-    currency: u8,
-    pool_type: u8,
     rate: u64,
     token_mint_decimals: u8,
-    bumps: LaunchPoolBumps,
 ) -> ProgramResult {
-    msg!("Create launch pool {}", bumps.launchpool_bump);
-
     let launch_pool = &mut ctx.accounts.launch_pool;
     let treasurer = &mut ctx.accounts.treasurer;
 
@@ -104,30 +72,20 @@ pub fn handler(
     launch_pool.token_mint = *ctx.accounts.token_mint.to_account_info().key;
     launch_pool.token_mint_decimals = token_mint_decimals;
     launch_pool.rate = rate;
-    launch_pool.currency = CurrencyType::from(currency);
-    launch_pool.pool_type = LaunchPoolType::from(pool_type);
+    launch_pool.currency = CurrencyType::RENEC;
+    launch_pool.pool_type = LaunchPoolType::FairLaunch;
     launch_pool.status = LaunchPoolState::Pending;
     launch_pool.authority = *ctx.accounts.authority.key;
     launch_pool.vault_amount = 0;
 
     msg!(
-        "Creating launch pool {}",
-        launch_pool.to_account_info().key()
+        "Creating a native fairlaunch pool {} of token mint {} by {} with treasurer {} and treasury {}",
+        launch_pool.to_account_info().key(),
+        ctx.accounts.token_mint.to_account_info().key(),
+        ctx.accounts.authority.key(),
+        treasurer.to_account_info().key(),
+        ctx.accounts.treasury.to_account_info().key()
     );
-
-    emit!(CreateLaunchPoolEvent {
-        creator: *ctx.accounts.authority.key,
-        pool: launch_pool.to_account_info().key(),
-        token_mint: *ctx.accounts.token_mint.to_account_info().key,
-        treasury: *ctx.accounts.treasury.to_account_info().key,
-        treasurer: *ctx.accounts.treasurer.to_account_info().key,
-        currency_type: launch_pool.currency,
-        launch_pool_type: launch_pool.pool_type,
-        pool_size: launch_pool.pool_size,
-        minimum_token_amount: launch_pool.minimum_token_amount,
-        unlock_date: launch_pool.unlock_date,
-        status: launch_pool.status,
-    });
 
     Ok(())
 }

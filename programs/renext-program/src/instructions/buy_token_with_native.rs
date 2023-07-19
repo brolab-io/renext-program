@@ -2,7 +2,7 @@ use anchor_lang::{prelude::*, solana_program};
 use anchor_spl::token;
 
 use crate::{
-    constants::{LAUNCH_POOL_SEED, USER_POOL_SEED, VAULT_SEED},
+    constants::{USER_POOL_SEED, VAULT_SEED},
     errors::MyError,
     state::{CurrencyType, LaunchPool, LaunchPoolState, UserPool},
 };
@@ -16,9 +16,8 @@ pub struct BuyTokenWithNativeEvent {
 }
 
 #[derive(Accounts)]
-#[instruction(creator: Pubkey)]
 pub struct BuyTokenWithNative<'info> {
-    #[account(mut, seeds = [LAUNCH_POOL_SEED.as_ref(), creator.as_ref(), token_mint.key().as_ref()], bump)]
+    #[account(mut)]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(
@@ -35,7 +34,7 @@ pub struct BuyTokenWithNative<'info> {
         seeds = [
             VAULT_SEED.as_ref(),
             launch_pool.key().as_ref(),
-            creator.key().as_ref()
+            launch_pool.authority.as_ref()
         ],
         bump ,
     )]
@@ -47,12 +46,11 @@ pub struct BuyTokenWithNative<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn handler(ctx: Context<BuyTokenWithNative>, creator: Pubkey, amount: u64) -> ProgramResult {
+pub fn handler(ctx: Context<BuyTokenWithNative>, amount: u64) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
     let user_pool = &mut ctx.accounts.user_pool;
     let vault = &mut ctx.accounts.vault;
 
-    require!(launch_pool.authority == creator, MyError::InvalidCreator);
     require!(
         launch_pool.status == LaunchPoolState::Active,
         MyError::InvalidLaunchPoolStatus
@@ -93,14 +91,6 @@ pub fn handler(ctx: Context<BuyTokenWithNative>, creator: Pubkey, amount: u64) -
         .unwrap();
 
     msg!("user_must_pay: {}", user_must_pay);
-    // let cpi_context = CpiContext::new(
-    //     ctx.accounts.system_program.to_account_info(),
-    //     system_program::Transfer {
-    //         from: ctx.accounts.user.to_account_info(),
-    //         to: launch_pool.to_account_info(),
-    //     },
-    // );
-    // system_program::transfer(cpi_context, user_must_pay)?;
 
     let ix = solana_program::system_instruction::transfer(
         &ctx.accounts.user.key(),
@@ -117,9 +107,15 @@ pub fn handler(ctx: Context<BuyTokenWithNative>, creator: Pubkey, amount: u64) -
         ],
     )?;
 
-    msg!("Transfered {} tokens to vault", user_must_pay);
+    msg!(
+        "User buy {} token {} with {} RENEC",
+        amount,
+        launch_pool.token_mint,
+        user_must_pay
+    );
 
     user_pool.amount = user_pool.amount.checked_add(amount).unwrap();
+    user_pool.currency_amount = user_must_pay;
     launch_pool.pool_size_remaining = launch_pool.pool_size_remaining.checked_sub(amount).unwrap();
     launch_pool.vault_amount = launch_pool.vault_amount.checked_add(user_must_pay).unwrap();
 

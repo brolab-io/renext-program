@@ -34,7 +34,7 @@ export async function startLaunchPool(creator: Wallet, mint: PublicKey) {
         .signers([creator.payer])
         .rpc();
     console.log(
-        "Start launch pool in tx: ",
+        "Start launch pool in tx: ", '\n',
         getExplorerTxUrl(tx)
     );
     console.log('********************************')

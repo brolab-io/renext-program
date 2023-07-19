@@ -3,7 +3,6 @@ pub mod constants;
 pub mod errors;
 pub mod instructions;
 pub mod state;
-pub mod util;
 
 use crate::state::LaunchPoolBumps;
 use instructions::*;
@@ -15,6 +14,46 @@ pub mod renext_program {
     use super::*;
     pub fn initialize(_ctx: Context<Initialize>) -> ProgramResult {
         Ok(())
+    }
+
+    pub fn create_token_fairlaunch_pool(
+        ctx: Context<CreateTokenFairlaunchPool>,
+        unlock_date: i64,
+        pool_size: u64,
+        minimum_token_amount: u64,
+        maximum_token_amount: u64,
+        rate: u64,
+        token_mint_decimals: u8,
+    ) -> ProgramResult {
+        instructions::create_token_fairlaunch_pool::handler(
+            ctx,
+            unlock_date,
+            pool_size,
+            minimum_token_amount,
+            maximum_token_amount,
+            rate,
+            token_mint_decimals,
+        )
+    }
+
+    pub fn create_native_fairlaunch_pool(
+        ctx: Context<CreateNativeFairlaunchPool>,
+        unlock_date: i64,
+        pool_size: u64,
+        minimum_token_amount: u64,
+        maximum_token_amount: u64,
+        rate: u64,
+        token_mint_decimals: u8,
+    ) -> ProgramResult {
+        instructions::create_native_fairlaunch_pool::handler(
+            ctx,
+            unlock_date,
+            pool_size,
+            minimum_token_amount,
+            maximum_token_amount,
+            rate,
+            token_mint_decimals,
+        )
     }
 
     pub fn create_launch_pool(
@@ -47,32 +86,28 @@ pub mod renext_program {
         instructions::start_launch_pool::handler(ctx)
     }
 
-    pub fn buy_token_with_native(
-        ctx: Context<BuyTokenWithNative>,
-        creator: Pubkey,
-        amount: u64,
-    ) -> ProgramResult {
-        instructions::buy_token_with_native::handler(ctx, creator, amount)
+    pub fn buy_token_with_native(ctx: Context<BuyTokenWithNative>, amount: u64) -> ProgramResult {
+        instructions::buy_token_with_native::handler(ctx, amount)
     }
 
-    pub fn buy_token_with_token(
-        ctx: Context<BuyTokenWithToken>,
-        creator: Pubkey,
-        amount: u64,
-    ) -> ProgramResult {
-        instructions::buy_token_with_token::handler(ctx, creator, amount)
+    pub fn buy_token_with_token(ctx: Context<BuyTokenWithToken>, amount: u64) -> ProgramResult {
+        instructions::buy_token_with_token::handler(ctx, amount)
     }
 
-    pub fn withdraw_native(ctx: Context<WithdrawNativeLaunchPool>, bump: u8) -> ProgramResult {
-        instructions::withdraw_native_launch_pool::handler(ctx, bump)
+    pub fn withdraw_native(ctx: Context<WithdrawNativeLaunchPool>) -> ProgramResult {
+        instructions::withdraw_native_launch_pool::handler(ctx)
+    }
+
+    pub fn withdraw_token(ctx: Context<WithdrawTokenLaunchPool>) -> ProgramResult {
+        instructions::withdraw_token_launch_pool::handler(ctx)
     }
 
     pub fn complete_launch_pool(ctx: Context<CompleteLaunchPool>) -> ProgramResult {
         instructions::complete_launch_pool::handler(ctx)
     }
 
-    pub fn claim_token(ctx: Context<ClaimToken>, creator: Pubkey, bump: u8) -> ProgramResult {
-        instructions::claim_token::handler(ctx, creator, bump)
+    pub fn claim_token(ctx: Context<ClaimToken>) -> ProgramResult {
+        instructions::claim_token::handler(ctx)
     }
 }
 

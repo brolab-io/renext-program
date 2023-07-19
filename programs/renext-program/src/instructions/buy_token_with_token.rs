@@ -1,6 +1,7 @@
 use crate::{
+    constants::USER_POOL_SEED,
     errors::MyError,
-    state::{CurrencyType, LaunchPool, LaunchPoolState, Treasurer, UserPool},
+    state::{CurrencyType, LaunchPool, LaunchPoolState, UserPool},
 };
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
@@ -13,27 +14,28 @@ pub struct BuyTokenWithTokenEvent {
 }
 
 #[derive(Accounts)]
-#[instruction(creator: Pubkey)]
 pub struct BuyTokenWithToken<'info> {
-    #[account(mut, seeds = [b"launchpool", creator.as_ref(), token_mint.key().as_ref()], bump)]
+    #[account(mut)]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
-    #[account(mut, seeds = [b"treasurer", launch_pool.key().as_ref(), token_mint.key().as_ref()], bump)]
-    pub treasurer: Box<Account<'info, Treasurer>>,
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(
         init_if_needed,
-        seeds = [b"userpool", user.key().as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
+        seeds = [USER_POOL_SEED.as_ref(), user.key().as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
         bump,
         payer = user,
-        space = UserPool::LEN
+        space = UserPool::LEN,
+        constraint = user_pool.amount <= launch_pool.maximum_token_amount
     )]
     pub user_pool: Box<Account<'info, UserPool>>,
-    #[account(mut)]
+    #[account(
+        mut,
+        associated_token::mint = currency_mint,
+        associated_token::authority = user
+    )]
     pub user_token_account: Account<'info, token::TokenAccount>,
     pub currency_mint: Box<Account<'info, token::Mint>>,
     #[account(
-        init_if_needed,
-        payer = user,
+        mut,
         associated_token::mint = currency_mint,
         associated_token::authority = launch_pool
     )]
@@ -46,10 +48,10 @@ pub struct BuyTokenWithToken<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn handler(ctx: Context<BuyTokenWithToken>, creator: Pubkey, amount: u64) -> ProgramResult {
+pub fn handler(ctx: Context<BuyTokenWithToken>, amount: u64) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
     let user_pool = &mut ctx.accounts.user_pool;
-    require!(launch_pool.authority == creator, MyError::InvalidCreator);
+
     require!(
         launch_pool.status == LaunchPoolState::Active,
         MyError::InvalidLaunchPoolStatus
@@ -100,31 +102,17 @@ pub fn handler(ctx: Context<BuyTokenWithToken>, creator: Pubkey, amount: u64) ->
     );
     token::transfer(cpi_context, user_must_pay)?;
 
-    // let ix = solana_program::system_instruction::transfer(
-    //     &ctx.accounts.user.key(),
-    //     &launch_pool.key(),
-    //     amount,
-    // );
-
-    // solana_program::program::invoke(
-    //     &ix,
-    //     &[
-    //         ctx.accounts.user.to_account_info(),
-    //         launch_pool.to_account_info(),
-    //         ctx.accounts.system_program.to_account_info(),
-    //     ],
-    // );
-
-    msg!("Transfered {} tokens to treasury", user_must_pay);
+    msg!(
+        "User buy {} token {} with {}",
+        amount,
+        launch_pool.token_mint,
+        user_must_pay
+    );
 
     user_pool.amount = user_pool.amount.checked_add(amount).unwrap();
+    user_pool.currency_amount = user_must_pay;
     launch_pool.pool_size_remaining = launch_pool.pool_size_remaining.checked_sub(amount).unwrap();
-
-    emit!(BuyTokenWithTokenEvent {
-        buyer: *ctx.accounts.user.key,
-        amount,
-        token_amount: user_pool.amount,
-    });
+    launch_pool.vault_amount = launch_pool.vault_amount.checked_add(user_must_pay).unwrap();
 
     Ok(())
 }

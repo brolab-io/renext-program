@@ -2,24 +2,17 @@ use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
 use crate::{
-    constants::{LAUNCH_POOL_SEED, TREASURER_SEED},
+    constants::TREASURER_SEED,
     errors::MyError,
     state::{LaunchPool, LaunchPoolState, Treasurer, UserPool},
 };
 
 #[derive(Accounts)]
-#[instruction(creator: Pubkey)]
 pub struct ClaimToken<'info> {
-    #[account(mut, seeds = [LAUNCH_POOL_SEED.as_ref(), creator.as_ref(), token_mint.key().as_ref()], bump)]
+    #[account(mut)]
     pub launch_pool: Account<'info, LaunchPool>,
     pub token_mint: Box<Account<'info, token::Mint>>,
-    #[
-        account(
-            mut,
-            seeds = [TREASURER_SEED.as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
-            bump
-        )
-    ]
+    #[account(mut)]
     pub treasurer: Box<Account<'info, Treasurer>>,
     #[account(
          mut,
@@ -43,9 +36,23 @@ pub struct ClaimToken<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn handler(ctx: Context<ClaimToken>, creator: Pubkey, bump: u8) -> ProgramResult {
+pub fn handler(ctx: Context<ClaimToken>) -> ProgramResult {
     let launch_pool = &ctx.accounts.launch_pool;
     let user_pool = &mut ctx.accounts.user_pool;
+
+    let (treasurer_pda, tbump) = Pubkey::find_program_address(
+        &[
+            TREASURER_SEED.as_ref(),
+            launch_pool.key().as_ref(),
+            ctx.accounts.token_mint.key().as_ref(),
+        ],
+        ctx.program_id,
+    );
+
+    require!(
+        treasurer_pda == *ctx.accounts.treasurer.to_account_info().key,
+        MyError::InvalidTreasurer
+    );
 
     require!(
         launch_pool.status == LaunchPoolState::Completed,
@@ -56,8 +63,6 @@ pub fn handler(ctx: Context<ClaimToken>, creator: Pubkey, bump: u8) -> ProgramRe
         launch_pool.unlock_date <= Clock::get()?.unix_timestamp,
         MyError::TimeLockNotExpired
     );
-
-    require!(launch_pool.authority == creator, MyError::InvalidAuthority);
 
     require!(user_pool.amount > 0, MyError::InvalidAmount);
 
@@ -73,18 +78,8 @@ pub fn handler(ctx: Context<ClaimToken>, creator: Pubkey, bump: u8) -> ProgramRe
         &TREASURER_SEED.as_ref()[..],
         lp_key.as_ref(),
         token_mint.as_ref(),
-        &[bump],
+        &[tbump],
     ];
-
-    // let cpi_context = CpiContext::new_with_signer(
-    //     ctx.accounts.token_program.to_account_info(),
-    //     token::Transfer {
-    //         from: ctx.accounts.treasury.to_account_info(),
-    //         to: ctx.accounts.user_token_account.to_account_info(),
-    //         authority: ctx.accounts.treasurer.to_account_info(),
-    //     },
-    //     &[&signer_seeds],
-    // );
 
     token::transfer(
         CpiContext::new_with_signer(

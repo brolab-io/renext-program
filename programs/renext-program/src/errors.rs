@@ -53,6 +53,10 @@ pub enum MyError {
     InvalidWhitelist,
     #[msg("Invalid launch pool type")]
     InvalidLaunchPoolType,
+    #[msg("Wallets must not be empty")]
+    WalletsMustNotBeEmpty,
+    #[msg("Whitelist not enough space")]
+    WhitelistNotEnoughSpace,
 }
 
 impl From<TryFromIntError> for MyError {

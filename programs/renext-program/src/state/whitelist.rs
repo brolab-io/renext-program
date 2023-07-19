@@ -34,8 +34,8 @@ impl Whitelist {
 
     pub fn add_pubkey(&mut self, pubkey: Pubkey) -> Result<()> {
         require!(
-            (self.wallets.len() as u8) <= self.max_size,
-            MyError::WhitelistFulled
+            (self.wallets.len() as u8) < self.max_size,
+            MyError::WhitelistNotEnoughSpace
         );
         require!(
             self.is_pubkey_in_list(&pubkey) == false,
@@ -69,12 +69,20 @@ impl Whitelist {
     pub fn add_list_pubkey(&mut self, wallets: Vec<Pubkey>) -> Result<()> {
         require!(
             self.wallets.len() + wallets.len() <= self.max_size as usize,
-            MyError::WhitelistFulled
+            MyError::WhitelistNotEnoughSpace
         );
 
         for wallet in wallets {
             self.add_pubkey(wallet)?;
             msg!("Added {} to whitelist", wallet);
+        }
+        Ok(())
+    }
+
+    pub fn remove_list_pubkey(&mut self, wallets: Vec<Pubkey>) -> Result<()> {
+        for wallet in wallets {
+            self.remove_pubkey(&wallet)?;
+            msg!("Removed {} from whitelist", wallet);
         }
         Ok(())
     }

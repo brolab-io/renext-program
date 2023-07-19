@@ -87,6 +87,20 @@ pub mod renext_program {
         instructions::start_launch_pool_with_whitelist::handler(ctx, max_size, wallets)
     }
 
+    pub fn add_wallets_to_whitelist(
+        ctx: Context<AddWalletsToWhitelist>,
+        wallets: Vec<Pubkey>,
+    ) -> ProgramResult {
+        instructions::add_wallets_to_whitelist::handler(ctx, wallets)
+    }
+
+    pub fn remove_wallets_from_whitelist(
+        ctx: Context<RemoveWalletsFromWhitelist>,
+        wallets: Vec<Pubkey>,
+    ) -> ProgramResult {
+        instructions::remove_wallets_from_whitelist::handler(ctx, wallets)
+    }
+
     pub fn buy_token_with_native(ctx: Context<BuyTokenWithNative>, amount: u64) -> ProgramResult {
         instructions::buy_token_with_native::handler(ctx, amount)
     }

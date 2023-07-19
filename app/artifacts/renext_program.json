@@ -364,6 +364,62 @@
       ]
     },
     {
+      "name": "addWalletsToWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "wallets",
+          "type": {
+            "vec": "publicKey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "removeWalletsFromWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "wallets",
+          "type": {
+            "vec": "publicKey"
+          }
+        }
+      ]
+    },
+    {
       "name": "buyTokenWithNative",
       "accounts": [
         {
@@ -1040,6 +1096,16 @@
       "code": 6023,
       "name": "InvalidLaunchPoolType",
       "msg": "Invalid launch pool type"
+    },
+    {
+      "code": 6024,
+      "name": "WalletsMustNotBeEmpty",
+      "msg": "Wallets must not be empty"
+    },
+    {
+      "code": 6025,
+      "name": "WhitelistNotEnoughSpace",
+      "msg": "Whitelist not enough space"
     }
   ]
 }

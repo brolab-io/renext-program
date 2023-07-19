@@ -15,7 +15,9 @@ import { withdrawTokenPool } from "./06_2_withdraw_token_pool";
 import { BN } from "@project-serum/anchor";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import { createNativeWhitelistPool } from "./01_3_create_native_whitelist_pool";
-import { startLaunchPoolWithWhitelist } from "./02_2_start_launch_pool_with_whitelist";
+import { startLaunchPoolWithWhitelist } from "./02_2_0_start_launch_pool_with_whitelist";
+import { addWalletsToWhitelist } from "./02_2_1_add_wallets_to_whitelist";
+import { removeWalletsToWhitelist } from "./02_2_2_remove_wallets_to_whitelist";
 dotenv.config();
 
 
@@ -59,6 +61,30 @@ const flowTokenFairlaunchPoolWithWhitelist = async () => {
     Keypair.generate().publicKey,
   ];
   await startLaunchPoolWithWhitelist(masterWallet, mint, wallets);
+
+  const wallets2: PublicKey[] = [
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+  ];
+
+  await addWalletsToWhitelist(masterWallet, mint, wallets2);
+
+  const removeWallets: PublicKey[] = [
+    wallets[
+    Math.floor(Math.random() * wallets.length)
+    ],
+    wallets[
+    Math.floor(Math.random() * wallets.length)
+    ],
+    wallets2[
+    Math.floor(Math.random() * wallets2.length)
+    ],
+  ];
+
+  await removeWalletsToWhitelist(masterWallet, mint, removeWallets);
 
 }
 

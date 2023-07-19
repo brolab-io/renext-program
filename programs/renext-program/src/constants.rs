@@ -1,3 +1,5 @@
+use solana_program::pubkey;
+
 use anchor_lang::prelude::Pubkey;
 
 pub const DISCRIMINATOR_SIZE: usize = std::mem::size_of::<u64>();
@@ -8,9 +10,11 @@ pub const U64_SIZE: usize = std::mem::size_of::<u64>();
 pub const U128_SIZE: usize = std::mem::size_of::<u128>();
 pub const I64_SIZE: usize = std::mem::size_of::<i64>();
 pub const BOOL_SIZE: usize = std::mem::size_of::<bool>();
-pub const VECTOR_OVERHEAD_SIZE: usize = 8;
+pub const VECTOR_OVERHEAD_SIZE: usize = 4;
 pub const STRING_PREFIX_SIZE: usize = 4;
 pub const LAUNCH_POOL_SEED: &[u8] = b"launchpool";
 pub const TREASURER_SEED: &[u8] = b"treasurer";
 pub const VAULT_SEED: &[u8] = b"vault";
 pub const USER_POOL_SEED: &[u8] = b"userpool";
+pub const WHITELIST_SEED: &[u8] = b"whitelist";
+pub const REUSD_MINT: Pubkey = pubkey!("AJABAYSrSuFCgmRnxTVBY2zfSpYx9gXrWPCP5QZ16TNu");

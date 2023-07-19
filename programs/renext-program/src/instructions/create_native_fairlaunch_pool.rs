@@ -60,23 +60,11 @@ pub fn handler(
         MyError::InvalidUnlockDate
     );
 
-    treasurer.authority = *ctx.accounts.authority.key;
-    treasurer.launch_pool = *launch_pool.to_account_info().key;
-    treasurer.token_mint = *ctx.accounts.token_mint.to_account_info().key;
-    treasurer.amount = 0;
-
-    launch_pool.unlock_date = unlock_date;
-    launch_pool.pool_size = pool_size;
-    launch_pool.minimum_token_amount = minimum_token_amount;
-    launch_pool.maximum_token_amount = maximum_token_amount;
-    launch_pool.token_mint = *ctx.accounts.token_mint.to_account_info().key;
-    launch_pool.token_mint_decimals = token_mint_decimals;
-    launch_pool.rate = rate;
-    launch_pool.currency = CurrencyType::RENEC;
-    launch_pool.pool_type = LaunchPoolType::FairLaunch;
-    launch_pool.status = LaunchPoolState::Pending;
-    launch_pool.authority = *ctx.accounts.authority.key;
-    launch_pool.vault_amount = 0;
+    treasurer.initialize(
+        *ctx.accounts.authority.key,
+        *launch_pool.to_account_info().key,
+        *ctx.accounts.token_mint.to_account_info().key,
+    );
 
     msg!(
         "Creating a native fairlaunch pool {} of token mint {} by {} with treasurer {} and treasury {}",
@@ -87,5 +75,16 @@ pub fn handler(
         ctx.accounts.treasury.to_account_info().key()
     );
 
-    Ok(())
+    Ok(launch_pool.initialize(
+        unlock_date,
+        pool_size,
+        minimum_token_amount,
+        maximum_token_amount,
+        rate,
+        token_mint_decimals,
+        *ctx.accounts.token_mint.to_account_info().key,
+        *ctx.accounts.authority.key,
+        CurrencyType::RENEC,
+        LaunchPoolType::FairLaunch,
+    )?)
 }

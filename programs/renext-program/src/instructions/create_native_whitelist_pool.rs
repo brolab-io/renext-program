@@ -1,28 +1,32 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
-use crate::constants::{LAUNCH_POOL_SEED, REUSD_MINT, TREASURER_SEED};
+use crate::constants::{LAUNCH_POOL_SEED, TREASURER_SEED};
 use crate::errors::*;
 use crate::state::*;
 
 #[derive(Accounts)]
-pub struct CreateTokenFairlaunchPool<'info> {
-    #[account(
-        init,
-        seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()],
-        bump,
-        payer = authority,
-        space = LaunchPool::LEN
-    )]
+pub struct CreateNativeWhitelistPool<'info> {
+    #[
+        account(
+            init,
+            seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()],
+            bump,
+            payer = authority,
+            space = LaunchPool::LEN
+        )
+    ]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
     pub token_mint: Box<Account<'info, token::Mint>>,
-    #[account(
-        init,
-        seeds = [TREASURER_SEED.as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
-        bump ,
-        payer = authority,
-        space = Treasurer::LEN
-    )]
+    #[
+        account(
+            init,
+            seeds = [TREASURER_SEED.as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
+            bump ,
+            payer = authority,
+            space = Treasurer::LEN
+        )
+    ]
     pub treasurer: Box<Account<'info, Treasurer>>,
     #[account(
         init,
@@ -31,15 +35,6 @@ pub struct CreateTokenFairlaunchPool<'info> {
         associated_token::authority = treasurer
     )]
     pub treasury: Box<Account<'info, token::TokenAccount>>,
-    pub currency_mint: Box<Account<'info, token::Mint>>,
-    #[account(
-        init,
-        payer = authority,
-        associated_token::mint = currency_mint,
-        associated_token::authority = launch_pool,
-        constraint = currency_mint.key() == REUSD_MINT
-    )]
-    pub launch_pool_token_account: Account<'info, token::TokenAccount>,
     #[account(mut)]
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -49,7 +44,7 @@ pub struct CreateTokenFairlaunchPool<'info> {
 }
 
 pub fn handler(
-    ctx: Context<CreateTokenFairlaunchPool>,
+    ctx: Context<CreateNativeWhitelistPool>,
     unlock_date: i64,
     pool_size: u64,
     minimum_token_amount: u64,
@@ -61,7 +56,7 @@ pub fn handler(
     let treasurer = &mut ctx.accounts.treasurer;
 
     require!(
-        unlock_date > 0 && unlock_date > Clock::get()?.unix_timestamp,
+        unlock_date > Clock::get()?.unix_timestamp,
         MyError::InvalidUnlockDate
     );
 
@@ -72,8 +67,7 @@ pub fn handler(
     );
 
     msg!(
-        "Creating a token {} fairlaunch pool {} of token mint {} by {} with treasurer {} and treasury {}",
-        ctx.accounts.currency_mint.to_account_info().key(),
+        "Creating a native whitelist pool {} of token mint {} by {} with treasurer {} and treasury {}",
         launch_pool.to_account_info().key(),
         ctx.accounts.token_mint.to_account_info().key(),
         ctx.accounts.authority.key(),
@@ -90,7 +84,7 @@ pub fn handler(
         token_mint_decimals,
         *ctx.accounts.token_mint.to_account_info().key,
         *ctx.accounts.authority.key,
-        CurrencyType::ReUSD,
-        LaunchPoolType::FairLaunch,
+        CurrencyType::RENEC,
+        LaunchPoolType::WhiteList,
     )?)
 }

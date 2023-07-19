@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 import { createNativeFairlaunchPool } from "./01_1_create_native_fairlaunch_pool";
 import { TOKEN_MINT, benWallet, buyer1Wallet, masterWallet, program } from "./00_init_program";
 import { createTokenMint, delay } from "./utils";
-import { startLaunchPool } from "./02_start_launch_pool";
+import { startLaunchPool } from "./02_1_start_launch_pool";
 import { completeLaunchPool } from "./04_complete_launch_pool";
 import { withdrawNativePool } from "./06_1_withdraw_native_pool";
 import { buyWithRenec } from "./03_1_buy_native_pool";
@@ -13,7 +13,9 @@ import { createTokenFairlaunchPool } from "./01_2_create_token_fairlaunch_pool";
 import { buyWithReUSD } from "./03_2_buy_token_pool";
 import { withdrawTokenPool } from "./06_2_withdraw_token_pool";
 import { BN } from "@project-serum/anchor";
-import { PublicKey } from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
+import { createNativeWhitelistPool } from "./01_3_create_native_whitelist_pool";
+import { startLaunchPoolWithWhitelist } from "./02_2_start_launch_pool_with_whitelist";
 dotenv.config();
 
 
@@ -45,7 +47,23 @@ const flowTokenFairlaunchPool = async () => {
   await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
 }
 
+const flowTokenFairlaunchPoolWithWhitelist = async () => {
+  const mint = await createTokenMint(masterWallet, masterWallet.publicKey, 1000000);
+
+  await createNativeWhitelistPool(masterWallet, mint, 20, 5, new BN(1000));
+  const wallets: PublicKey[] = [
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+    Keypair.generate().publicKey,
+  ];
+  await startLaunchPoolWithWhitelist(masterWallet, mint, wallets);
+
+}
+
 (async () => {
-  await flowNativeFairlaunchPool();
-  await flowTokenFairlaunchPool();
+  // await flowNativeFairlaunchPool();
+  // await flowTokenFairlaunchPool();
+  await flowTokenFairlaunchPoolWithWhitelist();
 })();

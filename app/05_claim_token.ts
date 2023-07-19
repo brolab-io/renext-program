@@ -26,6 +26,7 @@ export async function claimToken(
 
     const data = await program.account.userPool.fetch(user_pool);
     console.log("User pool account: ", data.amount.toNumber());
+    console.log("user payed: ", data.currencyAmount.toNumber());
 
     console.log(`buyer ${buyer.publicKey.toBase58()} want claim ${data.amount.toNumber()} token ${mint.toBase58()} at launch pool ${launch_pool.toBase58()}`);
     console.log('--------------------------------------')

@@ -4,7 +4,7 @@ use anchor_spl::token;
 use crate::{
     constants::{USER_POOL_SEED, VAULT_SEED},
     errors::MyError,
-    state::{CurrencyType, LaunchPool, LaunchPoolState, UserPool},
+    state::{CurrencyType, LaunchPool, LaunchPoolState, LaunchPoolType, UserPool},
 };
 
 #[event]
@@ -55,6 +55,11 @@ pub fn handler(ctx: Context<BuyTokenWithNative>, amount: u64) -> ProgramResult {
         launch_pool.status == LaunchPoolState::Active,
         MyError::InvalidLaunchPoolStatus
     );
+
+    require!(
+        launch_pool.pool_type == LaunchPoolType::FairLaunch,
+        MyError::InvalidLaunchPoolType
+    );
     require!(
         launch_pool.currency == CurrencyType::RENEC,
         MyError::InvalidCurrencyType
@@ -78,17 +83,9 @@ pub fn handler(ctx: Context<BuyTokenWithNative>, amount: u64) -> ProgramResult {
     require!(amount > 0, MyError::InvalidAmount);
     require!(pool_size_remaining >= amount, MyError::PoolNotEnough);
 
-    // 1 RENEC = 10 token
-    let rate = launch_pool.rate;
-    let user_must_pay = amount
-        .checked_mul(rate)
-        .unwrap()
-        .checked_div(10000)
-        .unwrap()
-        .checked_mul(10_i32.pow(9) as u64)
-        .unwrap()
-        .checked_div(10_i32.pow(launch_pool.token_mint_decimals as u32) as u64)
-        .unwrap();
+    let user_must_pay = launch_pool.calculate_user_must_pay(amount);
+
+    require!(user_must_pay > 0, MyError::InvalidAmount);
 
     msg!("user_must_pay: {}", user_must_pay);
 

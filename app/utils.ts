@@ -38,6 +38,14 @@ export function findVaultAccount(pool: PublicKey, creator: PublicKey, programId:
 
 }
 
+export function findWhitelistAccount(pool: PublicKey, programId: PublicKey) {
+    return PublicKey.findProgramAddressSync(
+        [Buffer.from("whitelist"), pool.toBuffer()],
+        programId
+    );
+
+}
+
 export function getExplorerTxUrl(tx: string) {
     return `${EXPLORER_URL}tx/${tx}?cluster=${NETWORK}`;
 }

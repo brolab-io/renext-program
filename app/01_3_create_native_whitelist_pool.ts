@@ -1,0 +1,56 @@
+import { BN, Wallet, web3 } from "@project-serum/anchor";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import dayjs from "dayjs";
+import { findLaunchPoolAccount, findMintTokenAccount, findTreasurerAccount, getExplorerTxUrl } from "./utils";
+
+import { TOKEN_MINT_DECIMALS, program } from './00_init_program'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+
+export async function createNativeWhitelistPool(creator: Wallet, mint: PublicKey, max = 10, min = 5, rate = new BN(500)) {
+
+    const unlock_date = new BN(dayjs().add(5, "s").unix());
+    const pool_size = new BN(1000 * LAMPORTS_PER_SOL);
+    const minimum_token_amount = new BN(min * LAMPORTS_PER_SOL);
+    const maximum_token_amount = new BN(max * LAMPORTS_PER_SOL);
+    const [launch_pool] = findLaunchPoolAccount(
+        creator.publicKey,
+        mint,
+        program.programId
+    );
+    console.log(`launch_pool: ${launch_pool.toBase58()} creator: ${creator.publicKey.toBase58()} with mint: ${mint.toBase58()} creating ....`)
+    console.log('--------------------------------------')
+
+
+    const [treasurer] = findTreasurerAccount(launch_pool, mint, program.programId);
+    const treasury = await findMintTokenAccount(treasurer, mint);
+
+    const tx = await program.methods
+        .createNativeWhitelistPool(
+            unlock_date,
+            pool_size,
+            minimum_token_amount,
+            maximum_token_amount,
+            rate,
+            TOKEN_MINT_DECIMALS
+        )
+        .accounts({
+            launchPool: launch_pool,
+            authority: creator.publicKey,
+            tokenMint: mint,
+            treasurer: treasurer,
+            treasury: treasury,
+            rent: web3.SYSVAR_RENT_PUBKEY,
+            systemProgram: web3.SystemProgram.programId,
+            tokenProgram: TOKEN_PROGRAM_ID,
+            associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        })
+        .signers([creator.payer])
+
+        .rpc();
+
+    console.log(
+        "Create a new launchpool in tx: ", '\n',
+        getExplorerTxUrl(tx)
+    );
+    console.log('********************************')
+}

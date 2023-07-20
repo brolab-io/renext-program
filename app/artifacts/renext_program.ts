@@ -170,7 +170,7 @@ export type RenextProgram = {
       ]
     },
     {
-      "name": "createLaunchPool",
+      "name": "createNativeWhitelistPool",
       "accounts": [
         {
           "name": "launchPool",
@@ -189,11 +189,6 @@ export type RenextProgram = {
         },
         {
           "name": "treasury",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "vault",
           "isMut": true,
           "isSigner": false
         },
@@ -241,12 +236,90 @@ export type RenextProgram = {
           "type": "u64"
         },
         {
-          "name": "currency",
-          "type": "u8"
+          "name": "rate",
+          "type": "u64"
         },
         {
-          "name": "poolType",
+          "name": "tokenMintDecimals",
           "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "createTokenWhitelistPool",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "currencyMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "launchPoolTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "unlockDate",
+          "type": "i64"
+        },
+        {
+          "name": "poolSize",
+          "type": "u64"
+        },
+        {
+          "name": "minimumTokenAmount",
+          "type": "u64"
+        },
+        {
+          "name": "maximumTokenAmount",
+          "type": "u64"
         },
         {
           "name": "rate",
@@ -255,12 +328,6 @@ export type RenextProgram = {
         {
           "name": "tokenMintDecimals",
           "type": "u8"
-        },
-        {
-          "name": "bumps",
-          "type": {
-            "defined": "LaunchPoolBumps"
-          }
         }
       ]
     },
@@ -314,6 +381,129 @@ export type RenextProgram = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "startLaunchPoolWithWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sourceTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxSize",
+          "type": "u8"
+        },
+        {
+          "name": "wallets",
+          "type": {
+            "vec": "publicKey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "addWalletsToWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "wallets",
+          "type": {
+            "vec": "publicKey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "removeWalletsFromWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "wallets",
+          "type": {
+            "vec": "publicKey"
+          }
+        }
+      ]
     },
     {
       "name": "buyTokenWithNative",
@@ -396,6 +586,133 @@ export type RenextProgram = {
         },
         {
           "name": "launchPoolTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "buyTokenWithNativeWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "buyTokenWithTokenWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "currencyMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "launchPoolTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
           "isMut": true,
           "isSigner": false
         },
@@ -727,6 +1044,32 @@ export type RenextProgram = {
           }
         ]
       }
+    },
+    {
+      "name": "whitelist",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "launchPool",
+            "type": "publicKey"
+          },
+          {
+            "name": "maxSize",
+            "type": "u8"
+          },
+          {
+            "name": "wallets",
+            "type": {
+              "vec": "publicKey"
+            }
+          }
+        ]
+      }
     }
   ],
   "types": [
@@ -844,72 +1187,6 @@ export type RenextProgram = {
           "index": false
         }
       ]
-    },
-    {
-      "name": "CreateLaunchPoolEvent",
-      "fields": [
-        {
-          "name": "creator",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "pool",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "tokenMint",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "treasury",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "treasurer",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "currencyType",
-          "type": {
-            "defined": "CurrencyType"
-          },
-          "index": false
-        },
-        {
-          "name": "launchPoolType",
-          "type": {
-            "defined": "LaunchPoolType"
-          },
-          "index": false
-        },
-        {
-          "name": "poolSize",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "minimumTokenAmount",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "unlockDate",
-          "type": "i64",
-          "index": false
-        },
-        {
-          "name": "status",
-          "type": {
-            "defined": "LaunchPoolState"
-          },
-          "index": false
-        }
-      ]
     }
   ],
   "errors": [
@@ -1002,6 +1279,56 @@ export type RenextProgram = {
       "code": 6017,
       "name": "InvalidLaunchPool",
       "msg": "Invalid launch pool"
+    },
+    {
+      "code": 6018,
+      "name": "WhitelistFulled",
+      "msg": "White list is full"
+    },
+    {
+      "code": 6019,
+      "name": "WalletAlreadyAdded",
+      "msg": "Wallet already added"
+    },
+    {
+      "code": 6020,
+      "name": "WalletNotInList",
+      "msg": "Wallet not in list"
+    },
+    {
+      "code": 6021,
+      "name": "NumberCastError",
+      "msg": "Unable to cast number into BigInt"
+    },
+    {
+      "code": 6022,
+      "name": "InvalidWhitelist",
+      "msg": "Invalid whitelist"
+    },
+    {
+      "code": 6023,
+      "name": "InvalidLaunchPoolType",
+      "msg": "Invalid launch pool type"
+    },
+    {
+      "code": 6024,
+      "name": "WalletsMustNotBeEmpty",
+      "msg": "Wallets must not be empty"
+    },
+    {
+      "code": 6025,
+      "name": "WhitelistNotEnoughSpace",
+      "msg": "Whitelist not enough space"
+    },
+    {
+      "code": 6026,
+      "name": "LaunchPoolAlreadyCompleted",
+      "msg": "Launch pool already completed"
+    },
+    {
+      "code": 6027,
+      "name": "UserNotInWhiteList",
+      "msg": "User not in whitelist"
     }
   ]
 };
@@ -1178,7 +1505,7 @@ export const IDL: RenextProgram = {
       ]
     },
     {
-      "name": "createLaunchPool",
+      "name": "createNativeWhitelistPool",
       "accounts": [
         {
           "name": "launchPool",
@@ -1197,11 +1524,6 @@ export const IDL: RenextProgram = {
         },
         {
           "name": "treasury",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "vault",
           "isMut": true,
           "isSigner": false
         },
@@ -1249,12 +1571,90 @@ export const IDL: RenextProgram = {
           "type": "u64"
         },
         {
-          "name": "currency",
-          "type": "u8"
+          "name": "rate",
+          "type": "u64"
         },
         {
-          "name": "poolType",
+          "name": "tokenMintDecimals",
           "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "createTokenWhitelistPool",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "currencyMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "launchPoolTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "unlockDate",
+          "type": "i64"
+        },
+        {
+          "name": "poolSize",
+          "type": "u64"
+        },
+        {
+          "name": "minimumTokenAmount",
+          "type": "u64"
+        },
+        {
+          "name": "maximumTokenAmount",
+          "type": "u64"
         },
         {
           "name": "rate",
@@ -1263,12 +1663,6 @@ export const IDL: RenextProgram = {
         {
           "name": "tokenMintDecimals",
           "type": "u8"
-        },
-        {
-          "name": "bumps",
-          "type": {
-            "defined": "LaunchPoolBumps"
-          }
         }
       ]
     },
@@ -1322,6 +1716,129 @@ export const IDL: RenextProgram = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "startLaunchPoolWithWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sourceTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxSize",
+          "type": "u8"
+        },
+        {
+          "name": "wallets",
+          "type": {
+            "vec": "publicKey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "addWalletsToWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "wallets",
+          "type": {
+            "vec": "publicKey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "removeWalletsFromWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "wallets",
+          "type": {
+            "vec": "publicKey"
+          }
+        }
+      ]
     },
     {
       "name": "buyTokenWithNative",
@@ -1404,6 +1921,133 @@ export const IDL: RenextProgram = {
         },
         {
           "name": "launchPoolTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "buyTokenWithNativeWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "buyTokenWithTokenWhitelist",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "currencyMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "launchPoolTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
           "isMut": true,
           "isSigner": false
         },
@@ -1735,6 +2379,32 @@ export const IDL: RenextProgram = {
           }
         ]
       }
+    },
+    {
+      "name": "whitelist",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "launchPool",
+            "type": "publicKey"
+          },
+          {
+            "name": "maxSize",
+            "type": "u8"
+          },
+          {
+            "name": "wallets",
+            "type": {
+              "vec": "publicKey"
+            }
+          }
+        ]
+      }
     }
   ],
   "types": [
@@ -1852,72 +2522,6 @@ export const IDL: RenextProgram = {
           "index": false
         }
       ]
-    },
-    {
-      "name": "CreateLaunchPoolEvent",
-      "fields": [
-        {
-          "name": "creator",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "pool",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "tokenMint",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "treasury",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "treasurer",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "currencyType",
-          "type": {
-            "defined": "CurrencyType"
-          },
-          "index": false
-        },
-        {
-          "name": "launchPoolType",
-          "type": {
-            "defined": "LaunchPoolType"
-          },
-          "index": false
-        },
-        {
-          "name": "poolSize",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "minimumTokenAmount",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "unlockDate",
-          "type": "i64",
-          "index": false
-        },
-        {
-          "name": "status",
-          "type": {
-            "defined": "LaunchPoolState"
-          },
-          "index": false
-        }
-      ]
     }
   ],
   "errors": [
@@ -2010,6 +2614,56 @@ export const IDL: RenextProgram = {
       "code": 6017,
       "name": "InvalidLaunchPool",
       "msg": "Invalid launch pool"
+    },
+    {
+      "code": 6018,
+      "name": "WhitelistFulled",
+      "msg": "White list is full"
+    },
+    {
+      "code": 6019,
+      "name": "WalletAlreadyAdded",
+      "msg": "Wallet already added"
+    },
+    {
+      "code": 6020,
+      "name": "WalletNotInList",
+      "msg": "Wallet not in list"
+    },
+    {
+      "code": 6021,
+      "name": "NumberCastError",
+      "msg": "Unable to cast number into BigInt"
+    },
+    {
+      "code": 6022,
+      "name": "InvalidWhitelist",
+      "msg": "Invalid whitelist"
+    },
+    {
+      "code": 6023,
+      "name": "InvalidLaunchPoolType",
+      "msg": "Invalid launch pool type"
+    },
+    {
+      "code": 6024,
+      "name": "WalletsMustNotBeEmpty",
+      "msg": "Wallets must not be empty"
+    },
+    {
+      "code": 6025,
+      "name": "WhitelistNotEnoughSpace",
+      "msg": "Whitelist not enough space"
+    },
+    {
+      "code": 6026,
+      "name": "LaunchPoolAlreadyCompleted",
+      "msg": "Launch pool already completed"
+    },
+    {
+      "code": 6027,
+      "name": "UserNotInWhiteList",
+      "msg": "User not in whitelist"
     }
   ]
 };

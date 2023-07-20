@@ -6,7 +6,7 @@ use crate::errors::*;
 use crate::state::*;
 
 #[derive(Accounts)]
-pub struct CreateTokenFairlaunchPool<'info> {
+pub struct CreateTokenWhitelistPool<'info> {
     #[account(
         init,
         seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()],
@@ -50,7 +50,7 @@ pub struct CreateTokenFairlaunchPool<'info> {
 }
 
 pub fn handler(
-    ctx: Context<CreateTokenFairlaunchPool>,
+    ctx: Context<CreateTokenWhitelistPool>,
     unlock_date: i64,
     pool_size: u64,
     minimum_token_amount: u64,
@@ -73,7 +73,7 @@ pub fn handler(
     );
 
     msg!(
-        "Creating a token {} fairlaunch pool {} of token mint {} by {} with treasurer {} and treasury {}",
+        "Creating a token {} whitelist pool {} of token mint {} by {} with treasurer {} and treasury {}",
         ctx.accounts.currency_mint.to_account_info().key(),
         launch_pool.to_account_info().key(),
         ctx.accounts.token_mint.to_account_info().key(),
@@ -92,6 +92,6 @@ pub fn handler(
         *ctx.accounts.token_mint.to_account_info().key,
         *ctx.accounts.authority.key,
         CurrencyType::ReUSD,
-        LaunchPoolType::FairLaunch,
+        LaunchPoolType::WhiteList,
     )?)
 }

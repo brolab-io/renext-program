@@ -15,6 +15,7 @@ pub mod remove_wallets_from_whitelist;
 pub mod start_launch_pool;
 pub mod start_launch_pool_with_whitelist;
 pub mod token;
+pub mod update_vesting_plan;
 pub mod withdraw_native_launch_pool;
 pub mod withdraw_token_launch_pool;
 
@@ -35,5 +36,6 @@ pub use remove_wallets_from_whitelist::*;
 pub use start_launch_pool::*;
 pub use start_launch_pool_with_whitelist::*;
 pub use token::*;
+pub use update_vesting_plan::*;
 pub use withdraw_native_launch_pool::*;
 pub use withdraw_token_launch_pool::*;

@@ -4,8 +4,11 @@ use anchor_spl::token;
 use crate::{
     constants::WHITELIST_SEED,
     errors::MyError,
-    state::{LaunchPool, LaunchPoolState, Treasurer, Whitelist,LaunchPoolType},
+    state::{LaunchPool, Treasurer, Whitelist,LaunchPoolType},
+    utils::pool,
 };
+
+
 
 #[derive(Accounts)]
 #[instruction(max_size: u8)]
@@ -47,24 +50,12 @@ pub fn handler(ctx: Context<StartLaunchPoolWithWhitelist>, max_size: u8, wallets
     let launch_pool = &mut ctx.accounts.launch_pool;
     let treasurer = &mut ctx.accounts.treasurer;
     let whitelist = &mut ctx.accounts.whitelist;
-
-    require!(
-        launch_pool.status == LaunchPoolState::Pending,
-        MyError::InvalidLaunchPoolStatus
-    );
-    require!(
-        launch_pool.authority == *ctx.accounts.authority.key,
-        MyError::InvalidAuthority
-    );
+    let source_token_account = &mut ctx.accounts.source_token_account;
+    let treasury = &mut ctx.accounts.treasury;
 
     require!(
         launch_pool.pool_type == LaunchPoolType::WhiteList,
         MyError::InvalidLaunchPoolType
-    );
-
-    require!(
-        ctx.accounts.token_mint.key() == launch_pool.token_mint,
-        MyError::InvalidTokenMint
     );
 
     require!(
@@ -79,22 +70,13 @@ pub fn handler(ctx: Context<StartLaunchPoolWithWhitelist>, max_size: u8, wallets
         wallets,
     );
 
-    let transfer_amount = launch_pool.pool_size;
-
-    let cpi_context = CpiContext::new(
-        ctx.accounts.token_program.to_account_info(),
-        token::Transfer {
-            from: ctx.accounts.source_token_account.to_account_info(),
-            to: ctx.accounts.treasury.to_account_info(),
-            authority: ctx.accounts.authority.to_account_info(),
-        },
-    );
-    token::transfer(cpi_context, transfer_amount)?;
-    launch_pool.pool_size_remaining = transfer_amount;
-    treasurer.amount = transfer_amount;
-    msg!("Transfered {} tokens to treasury", transfer_amount);
-
-    launch_pool.status = LaunchPoolState::Active;
-
-    Ok(())
+    Ok(pool::start_launch_pool(
+        &ctx.accounts.authority,
+        launch_pool,
+        source_token_account,
+        treasurer,
+        &ctx.accounts.token_mint,
+        treasury,
+        &ctx.accounts.token_program,
+    )?)
 }

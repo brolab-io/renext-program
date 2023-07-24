@@ -5,6 +5,7 @@ use crate::{
     constants::LAUNCH_POOL_SEED,
     errors::MyError,
     state::{LaunchPool, LaunchPoolState},
+    utils::pool,
 };
 
 #[derive(Accounts)]
@@ -38,52 +39,7 @@ pub struct WithdrawTokenLaunchPool<'info> {
 
 pub fn handler(ctx: Context<WithdrawTokenLaunchPool>) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
-
-    require!(
-        launch_pool.authority == *ctx.accounts.authority.key,
-        MyError::InvalidAuthority
-    );
-
-    require!(
-        launch_pool.status == LaunchPoolState::Completed,
-        MyError::InvalidLaunchPoolStatus
-    );
-
-    let (lp_pda, lbump) = Pubkey::find_program_address(
-        &[
-            LAUNCH_POOL_SEED.as_ref(),
-            ctx.accounts.authority.key.as_ref(),
-            launch_pool.token_mint.as_ref(),
-        ],
-        ctx.program_id,
-    );
-
-    require!(lp_pda == launch_pool.key(), MyError::InvalidLaunchPool);
-
     let amount = launch_pool.vault_amount;
-
-    let signer_seeds = [
-        &LAUNCH_POOL_SEED.as_ref()[..],
-        ctx.accounts.authority.key.as_ref(),
-        launch_pool.token_mint.as_ref(),
-        &[lbump],
-    ];
-
-    token::transfer(
-        CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
-            token::Transfer {
-                from: ctx.accounts.launch_pool_token_account.to_account_info(),
-                to: ctx.accounts.user_token_account.to_account_info(),
-                authority: launch_pool.to_account_info(),
-            },
-            &[&signer_seeds],
-        ),
-        amount,
-    )?;
-
-    launch_pool.vault_amount = 0;
-
     msg!(
         "Authority: {} withdraw {} to {}",
         ctx.accounts.authority.key(),
@@ -91,5 +47,66 @@ pub fn handler(ctx: Context<WithdrawTokenLaunchPool>) -> ProgramResult {
         ctx.accounts.beneficiary.key()
     );
 
-    Ok(())
+    Ok(pool::withdraw_token(
+        ctx.program_id,
+        &ctx.accounts.authority,
+        launch_pool,
+        &mut ctx.accounts.launch_pool_token_account,
+        &mut ctx.accounts.user_token_account,
+        &ctx.accounts.token_program,
+    )?)
+
+    // require!(
+    //     launch_pool.authority == *ctx.accounts.authority.key,
+    //     MyError::InvalidAuthority
+    // );
+
+    // require!(
+    //     launch_pool.status == LaunchPoolState::Completed,
+    //     MyError::InvalidLaunchPoolStatus
+    // );
+
+    // let (lp_pda, lbump) = Pubkey::find_program_address(
+    //     &[
+    //         LAUNCH_POOL_SEED.as_ref(),
+    //         ctx.accounts.authority.key.as_ref(),
+    //         launch_pool.token_mint.as_ref(),
+    //     ],
+    //     ctx.program_id,
+    // );
+
+    // require!(lp_pda == launch_pool.key(), MyError::InvalidLaunchPool);
+
+    // let amount = launch_pool.vault_amount;
+
+    // let signer_seeds = [
+    //     &LAUNCH_POOL_SEED.as_ref()[..],
+    //     ctx.accounts.authority.key.as_ref(),
+    //     launch_pool.token_mint.as_ref(),
+    //     &[lbump],
+    // ];
+
+    // token::transfer(
+    //     CpiContext::new_with_signer(
+    //         ctx.accounts.token_program.to_account_info(),
+    //         token::Transfer {
+    //             from: ctx.accounts.launch_pool_token_account.to_account_info(),
+    //             to: ctx.accounts.user_token_account.to_account_info(),
+    //             authority: launch_pool.to_account_info(),
+    //         },
+    //         &[&signer_seeds],
+    //     ),
+    //     amount,
+    // )?;
+
+    // launch_pool.vault_amount = 0;
+
+    // msg!(
+    //     "Authority: {} withdraw {} to {}",
+    //     ctx.accounts.authority.key(),
+    //     amount,
+    //     ctx.accounts.beneficiary.key()
+    // );
+
+    // Ok(())
 }

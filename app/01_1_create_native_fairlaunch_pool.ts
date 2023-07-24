@@ -25,13 +25,14 @@ export async function createNativeFairlaunchPool(creator: Wallet, mint: PublicKe
     const treasury = await findMintTokenAccount(treasurer, mint);
 
     const tx = await program.methods
-        .createNativeFairlaunchPool(
+        .createNativePool(
             unlock_date,
             pool_size,
             minimum_token_amount,
             maximum_token_amount,
             rate,
-            TOKEN_MINT_DECIMALS
+            TOKEN_MINT_DECIMALS,
+            0
         )
         .accounts({
             launchPool: launch_pool,

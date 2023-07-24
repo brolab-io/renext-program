@@ -8,6 +8,86 @@ export type RenextProgram = {
       "args": []
     },
     {
+      "name": "createNativePool",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "unlockDate",
+          "type": "i64"
+        },
+        {
+          "name": "poolSize",
+          "type": "u64"
+        },
+        {
+          "name": "minimumTokenAmount",
+          "type": "u64"
+        },
+        {
+          "name": "maximumTokenAmount",
+          "type": "u64"
+        },
+        {
+          "name": "rate",
+          "type": "u64"
+        },
+        {
+          "name": "tokenMintDecimals",
+          "type": "u8"
+        },
+        {
+          "name": "launchPoolType",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "createTokenFairlaunchPool",
       "accounts": [
         {
@@ -981,6 +1061,10 @@ export type RenextProgram = {
             "type": "u64"
           },
           {
+            "name": "isVesting",
+            "type": "bool"
+          },
+          {
             "name": "currency",
             "type": {
               "defined": "CurrencyType"
@@ -1046,6 +1130,26 @@ export type RenextProgram = {
       }
     },
     {
+      "name": "vestingPlan",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "launchPool",
+            "type": "publicKey"
+          },
+          {
+            "name": "schedule",
+            "type": {
+              "vec": {
+                "defined": "VestingSchedule"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "whitelist",
       "type": {
         "kind": "struct",
@@ -1089,6 +1193,22 @@ export type RenextProgram = {
           {
             "name": "vaultBump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VestingSchedule",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "releaseTime",
+            "type": "i64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
           }
         ]
       }
@@ -1329,6 +1449,16 @@ export type RenextProgram = {
       "code": 6027,
       "name": "UserNotInWhiteList",
       "msg": "User not in whitelist"
+    },
+    {
+      "code": 6028,
+      "name": "Overflow",
+      "msg": "Calculation overflow"
+    },
+    {
+      "code": 6029,
+      "name": "InvalidVestingPlan",
+      "msg": "Invalid vesting plan"
     }
   ]
 };
@@ -1343,6 +1473,86 @@ export const IDL: RenextProgram = {
       "args": []
     },
     {
+      "name": "createNativePool",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "unlockDate",
+          "type": "i64"
+        },
+        {
+          "name": "poolSize",
+          "type": "u64"
+        },
+        {
+          "name": "minimumTokenAmount",
+          "type": "u64"
+        },
+        {
+          "name": "maximumTokenAmount",
+          "type": "u64"
+        },
+        {
+          "name": "rate",
+          "type": "u64"
+        },
+        {
+          "name": "tokenMintDecimals",
+          "type": "u8"
+        },
+        {
+          "name": "launchPoolType",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "createTokenFairlaunchPool",
       "accounts": [
         {
@@ -2316,6 +2526,10 @@ export const IDL: RenextProgram = {
             "type": "u64"
           },
           {
+            "name": "isVesting",
+            "type": "bool"
+          },
+          {
             "name": "currency",
             "type": {
               "defined": "CurrencyType"
@@ -2381,6 +2595,26 @@ export const IDL: RenextProgram = {
       }
     },
     {
+      "name": "vestingPlan",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "launchPool",
+            "type": "publicKey"
+          },
+          {
+            "name": "schedule",
+            "type": {
+              "vec": {
+                "defined": "VestingSchedule"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "whitelist",
       "type": {
         "kind": "struct",
@@ -2424,6 +2658,22 @@ export const IDL: RenextProgram = {
           {
             "name": "vaultBump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VestingSchedule",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "releaseTime",
+            "type": "i64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
           }
         ]
       }
@@ -2664,6 +2914,16 @@ export const IDL: RenextProgram = {
       "code": 6027,
       "name": "UserNotInWhiteList",
       "msg": "User not in whitelist"
+    },
+    {
+      "code": 6028,
+      "name": "Overflow",
+      "msg": "Calculation overflow"
+    },
+    {
+      "code": 6029,
+      "name": "InvalidVestingPlan",
+      "msg": "Invalid vesting plan"
     }
   ]
 };

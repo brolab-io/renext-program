@@ -6,10 +6,10 @@ import { findLaunchPoolAccount, findMintTokenAccount, findTreasurerAccount, getE
 import { TOKEN_MINT_DECIMALS, program } from './00_init_program'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
-export async function createNativeWhitelistPool(creator: Wallet, mint: PublicKey, max = 10, min = 5, rate = new BN(500)) {
+export async function createNativeFairlaunchPoolVesting(creator: Wallet, mint: PublicKey, max = 10, min = 5, rate = new BN(500)) {
 
     const unlock_date = new BN(dayjs().add(5, "s").unix());
-    const pool_size = new BN(1000 * LAMPORTS_PER_SOL);
+    const pool_size = new BN(100 * LAMPORTS_PER_SOL);
     const minimum_token_amount = new BN(min * LAMPORTS_PER_SOL);
     const maximum_token_amount = new BN(max * LAMPORTS_PER_SOL);
     const [launch_pool] = findLaunchPoolAccount(
@@ -25,14 +25,13 @@ export async function createNativeWhitelistPool(creator: Wallet, mint: PublicKey
     const treasury = await findMintTokenAccount(treasurer, mint);
 
     const tx = await program.methods
-        .createNativePool(
+        .createNativeFairlaunchPool(
             unlock_date,
             pool_size,
             minimum_token_amount,
             maximum_token_amount,
             rate,
-            TOKEN_MINT_DECIMALS,
-            1
+            TOKEN_MINT_DECIMALS
         )
         .accounts({
             launchPool: launch_pool,

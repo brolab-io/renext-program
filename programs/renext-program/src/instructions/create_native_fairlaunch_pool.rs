@@ -2,8 +2,8 @@ use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
 use crate::constants::{LAUNCH_POOL_SEED, TREASURER_SEED};
-use crate::errors::*;
 use crate::state::*;
+use crate::utils::pool;
 
 #[derive(Accounts)]
 pub struct CreateNativeFairlaunchPool<'info> {
@@ -55,17 +55,6 @@ pub fn handler(
     let launch_pool = &mut ctx.accounts.launch_pool;
     let treasurer = &mut ctx.accounts.treasurer;
 
-    require!(
-        unlock_date > 0 && unlock_date > Clock::get()?.unix_timestamp,
-        MyError::InvalidUnlockDate
-    );
-
-    treasurer.initialize(
-        *ctx.accounts.authority.key,
-        *launch_pool.to_account_info().key,
-        *ctx.accounts.token_mint.to_account_info().key,
-    );
-
     msg!(
         "Creating a native fairlaunch pool {} of token mint {} by {} with treasurer {} and treasury {}",
         launch_pool.to_account_info().key(),
@@ -75,15 +64,17 @@ pub fn handler(
         ctx.accounts.treasury.to_account_info().key()
     );
 
-    Ok(launch_pool.initialize(
+    Ok(pool::init_launch_pool(
+        &ctx.accounts.authority,
+        launch_pool,
+        treasurer,
+        &ctx.accounts.token_mint,
         unlock_date,
         pool_size,
         minimum_token_amount,
         maximum_token_amount,
         rate,
         token_mint_decimals,
-        *ctx.accounts.token_mint.to_account_info().key,
-        *ctx.accounts.authority.key,
         CurrencyType::RENEC,
         LaunchPoolType::FairLaunch,
     )?)

@@ -2,7 +2,6 @@ use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
 use crate::constants::{LAUNCH_POOL_SEED, TREASURER_SEED, VAULT_SEED};
-use crate::errors::*;
 use crate::state::*;
 
 #[event]

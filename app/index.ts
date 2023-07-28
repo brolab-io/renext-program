@@ -21,6 +21,8 @@ import { removeWalletsToWhitelist } from "./02_2_2_remove_wallets_to_whitelist";
 import { buyWithRenecAndWhitelist } from "./03_3_buy_native_pool_whitelist";
 import { createTokenWhitelistPool } from "./01_4_create_token_whitelist_pool";
 import { buyWithReUSDAnWhitelist } from "./03_4_buy_token_pool_whitelist";
+import { updateVestingPlan } from "./07_update_vesting_plan";
+import dayjs from "dayjs";
 dotenv.config();
 
 
@@ -147,12 +149,38 @@ const flowTokenWhitelistPool = async () => {
 }
 
 
+const flowNativeFairlaunchPoolWithVesting = async () => {
+  const mint = await createTokenMint(masterWallet, masterWallet.publicKey, 1000000);
+
+  await createNativeFairlaunchPool(masterWallet, mint);
+  await updateVestingPlan(masterWallet, mint, [{
+    releaseTime: new BN(dayjs().add(5, 'second').unix()),
+    amount: new BN('150000'),
+  }, {
+    releaseTime: new BN(dayjs().add(10, 'second').unix()),
+    amount: new BN('500000'),
+  }, {
+    releaseTime: new BN(dayjs().add(15, 'second').unix()),
+    amount: new BN('250000'),
+  }]);
+  await startLaunchPool(masterWallet, mint);
+  await buyWithRenec(masterWallet.publicKey, mint, buyer1Wallet, 10);
+
+  await completeLaunchPool(masterWallet, mint);
+  await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
+
+  // await delay(6000);
+  // await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
+}
+
 (async () => {
-  await flowNativeFairlaunchPool();
+  // await flowNativeFairlaunchPool();
+  // await delay(1000);
+  // await flowTokenFairlaunchPool();
+  // await delay(1000);
+  // await flowNativeWhitelistPool();
+  // await delay(1000);
+  // await flowTokenWhitelistPool();
   await delay(1000);
-  await flowTokenFairlaunchPool();
-  await delay(1000);
-  await flowNativeWhitelistPool();
-  await delay(1000);
-  await flowTokenWhitelistPool();
+  await flowNativeFairlaunchPoolWithVesting();
 })();

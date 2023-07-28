@@ -778,6 +778,50 @@ export type RenextProgram = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "setVestingPlan",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vestingPlan",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "size",
+          "type": "u8"
+        },
+        {
+          "name": "schedule",
+          "type": {
+            "vec": {
+              "defined": "VestingSchedule"
+            }
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -1225,6 +1269,11 @@ export type RenextProgram = {
       "code": 6029,
       "name": "InvalidVestingPlan",
       "msg": "Invalid vesting plan"
+    },
+    {
+      "code": 6030,
+      "name": "InvalidScheduleSize",
+      "msg": "Invalid schedule size"
     }
   ]
 };
@@ -2009,6 +2058,50 @@ export const IDL: RenextProgram = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "setVestingPlan",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vestingPlan",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "size",
+          "type": "u8"
+        },
+        {
+          "name": "schedule",
+          "type": {
+            "vec": {
+              "defined": "VestingSchedule"
+            }
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -2456,6 +2549,11 @@ export const IDL: RenextProgram = {
       "code": 6029,
       "name": "InvalidVestingPlan",
       "msg": "Invalid vesting plan"
+    },
+    {
+      "code": 6030,
+      "name": "InvalidScheduleSize",
+      "msg": "Invalid schedule size"
     }
   ]
 };

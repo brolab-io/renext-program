@@ -6,6 +6,13 @@ import { TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 import { Wallet } from "@project-serum/anchor";
 import { connection } from './00_init_program'
 
+export function findVestingPlanAccount(pool: PublicKey, programId: PublicKey) {
+    return PublicKey.findProgramAddressSync(
+        [Buffer.from("vestingplan"), pool.toBuffer()],
+        programId
+    );
+}
+
 export function findLaunchPoolAccount(creator: PublicKey, mint: PublicKey, programId: PublicKey) {
     return findProgramAddressSync(
         [Buffer.from("launchpool"), creator.toBuffer(), mint.toBuffer()],

@@ -6,7 +6,7 @@ pub mod state;
 pub mod utils;
 
 use instructions::*;
-use state::LaunchPoolType;
+use state::{LaunchPoolType, VestingSchedule};
 
 declare_id!("HwG2Z2ji5xuB7THHNrwEMhYAwKi1CHJDWnP3J4HU6Svp");
 
@@ -126,27 +126,13 @@ pub mod renext_program {
         instructions::claim_token::handler(ctx)
     }
 
-    // pub fn create_native_fairlaunch_pool_vesting(
-    //     ctx: Context<CreateNativeFairlaunchPoolVesting>,
-    //     unlock_date: i64,
-    //     pool_size: u64,
-    //     minimum_token_amount: u64,
-    //     maximum_token_amount: u64,
-    //     rate: u64,
-    //     token_mint_decimals: u8,
-    //     vesting_schedule: Vec<VestingSchedule>,
-    // ) -> ProgramResult {
-    //     instructions::create_native_fairlaunch_pool_vesting::handler(
-    //         ctx,
-    //         unlock_date,
-    //         pool_size,
-    //         minimum_token_amount,
-    //         maximum_token_amount,
-    //         rate,
-    //         token_mint_decimals,
-    //         vesting_schedule,
-    //     )
-    // }
+    pub fn set_vesting_plan(
+        ctx: Context<UpdateVestingPlan>,
+        size: u8,
+        schedule: Vec<VestingSchedule>,
+    ) -> ProgramResult {
+        instructions::update_vesting_plan::handler(ctx, size, schedule)
+    }
 }
 
 #[derive(Accounts)]

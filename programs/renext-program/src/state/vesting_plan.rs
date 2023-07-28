@@ -22,6 +22,15 @@ impl VestingSchedule {
 impl VestingPlan {
     pub const LEN: usize = DISCRIMINATOR_SIZE + PUBKEY_SIZE + VECTOR_OVERHEAD_SIZE;
 
+    pub fn clear(&mut self) {
+        self.schedule.clear();
+    }
+
+    pub fn set_schedule(&mut self, schedule: Vec<VestingSchedule>) {
+        self.clear();
+        self.schedule = schedule;
+    }
+
     pub fn calculate_size(size: u8) -> usize {
         VestingPlan::LEN + ((size as usize) * VestingSchedule::LEN)
     }

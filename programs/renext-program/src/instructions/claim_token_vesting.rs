@@ -2,13 +2,13 @@ use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
 use crate::{
-    constants::TREASURER_SEED,
+    constants::{TREASURER_SEED, VESTING_PLAN_SEED},
     errors::MyError,
-    state::{LaunchPool, LaunchPoolState, Treasurer, UserPool},
+    state::{LaunchPool, LaunchPoolState, Treasurer, UserPool, VestingPlan},
 };
 
 #[derive(Accounts)]
-pub struct ClaimToken<'info> {
+pub struct ClaimTokenVesting<'info> {
     #[account(mut)]
     pub launch_pool: Account<'info, LaunchPool>,
     pub token_mint: Box<Account<'info, token::Mint>>,
@@ -28,6 +28,11 @@ pub struct ClaimToken<'info> {
         associated_token::authority = user
     )]
     pub user_token_account: Box<Account<'info, token::TokenAccount>>,
+    #[account(
+        mut,
+        constraint = vesting_plan.launch_pool == launch_pool.key()
+    )]
+    pub vesting_plan: Box<Account<'info, VestingPlan>>,
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -36,21 +41,10 @@ pub struct ClaimToken<'info> {
     pub rent: Sysvar<'info, Rent>,
 }
 
-pub fn handler(ctx: Context<ClaimToken>) -> ProgramResult {
+pub fn handler(ctx: Context<ClaimTokenVesting>) -> ProgramResult {
     let launch_pool = &ctx.accounts.launch_pool;
     let user_pool = &mut ctx.accounts.user_pool;
 
-    require!(launch_pool.is_vesting == false, MyError::ThisIsVestingPool);
-
-    require!(
-        launch_pool.status == LaunchPoolState::Completed,
-        MyError::InvalidLaunchPoolStatus
-    );
-
-    require!(
-        launch_pool.unlock_date <= Clock::get()?.unix_timestamp,
-        MyError::TimeLockNotExpired
-    );
     let (treasurer_pda, tbump) = Pubkey::find_program_address(
         &[
             TREASURER_SEED.as_ref(),
@@ -61,13 +55,40 @@ pub fn handler(ctx: Context<ClaimToken>) -> ProgramResult {
     );
 
     require!(
-        treasurer_pda == *ctx.accounts.treasurer.to_account_info().key,
+        treasurer_pda.eq(&*ctx.accounts.treasurer.to_account_info().key),
         MyError::InvalidTreasurer
+    );
+
+    require!(
+        LaunchPoolState::Completed.eq(&launch_pool.status),
+        MyError::InvalidLaunchPoolStatus
+    );
+
+    require!(
+        Clock::get()?.unix_timestamp.ge(&launch_pool.unlock_date),
+        MyError::TimeLockNotExpired
     );
 
     require!(user_pool.amount > 0, MyError::InvalidAmount);
 
-    let user_token_amount = user_pool.amount - user_pool.claimed;
+    let (vesting_pda, _) = Pubkey::find_program_address(
+        &[VESTING_PLAN_SEED.as_ref(), launch_pool.key().as_ref()],
+        ctx.program_id,
+    );
+
+    require!(
+        vesting_pda.eq(&*ctx.accounts.vesting_plan.to_account_info().key),
+        MyError::InvalidVestingPlan
+    );
+
+    let vesting_plan = &ctx.accounts.vesting_plan;
+
+    let user_token_amount = vesting_plan.calculate_amount_can_claim(
+        launch_pool.pool_size,
+        user_pool.amount,
+        user_pool.claimed,
+        launch_pool.token_mint_decimals,
+    )?;
 
     require!(user_token_amount > 0, MyError::InvalidAmount);
 

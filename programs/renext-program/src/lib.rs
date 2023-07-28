@@ -126,6 +126,10 @@ pub mod renext_program {
         instructions::claim_token::handler(ctx)
     }
 
+    pub fn claim_token_vesting(ctx: Context<ClaimTokenVesting>) -> ProgramResult {
+        instructions::claim_token_vesting::handler(ctx)
+    }
+
     pub fn set_vesting_plan(
         ctx: Context<UpdateVestingPlan>,
         size: u8,

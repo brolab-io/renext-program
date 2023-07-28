@@ -67,6 +67,10 @@ pub enum MyError {
     InvalidVestingPlan,
     #[msg("Invalid schedule size")]
     InvalidScheduleSize,
+    #[msg("Vesting plan account not found")]
+    VestingPlanAccountNotFound,
+    #[msg("This is vesting pool")]
+    ThisIsVestingPool,
 }
 
 impl From<TryFromIntError> for MyError {

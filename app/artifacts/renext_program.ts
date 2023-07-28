@@ -780,6 +780,72 @@ export type RenextProgram = {
       "args": []
     },
     {
+      "name": "claimTokenVesting",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vestingPlan",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "setVestingPlan",
       "accounts": [
         {
@@ -1274,6 +1340,16 @@ export type RenextProgram = {
       "code": 6030,
       "name": "InvalidScheduleSize",
       "msg": "Invalid schedule size"
+    },
+    {
+      "code": 6031,
+      "name": "VestingPlanAccountNotFound",
+      "msg": "Vesting plan account not found"
+    },
+    {
+      "code": 6032,
+      "name": "ThisIsVestingPool",
+      "msg": "This is vesting pool"
     }
   ]
 };
@@ -2060,6 +2136,72 @@ export const IDL: RenextProgram = {
       "args": []
     },
     {
+      "name": "claimTokenVesting",
+      "accounts": [
+        {
+          "name": "launchPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "treasurer",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userPool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "vestingPlan",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "setVestingPlan",
       "accounts": [
         {
@@ -2554,6 +2696,16 @@ export const IDL: RenextProgram = {
       "code": 6030,
       "name": "InvalidScheduleSize",
       "msg": "Invalid schedule size"
+    },
+    {
+      "code": 6031,
+      "name": "VestingPlanAccountNotFound",
+      "msg": "Vesting plan account not found"
+    },
+    {
+      "code": 6032,
+      "name": "ThisIsVestingPool",
+      "msg": "This is vesting pool"
     }
   ]
 };

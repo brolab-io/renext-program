@@ -3,7 +3,7 @@ import { associatedAddress } from "@project-serum/anchor/dist/cjs/utils/token";
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { EXPLORER_URL, NETWORK, TOKEN_MINT_DECIMALS } from "./00_init_program";
 import { TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
-import { Wallet } from "@project-serum/anchor";
+import { BN, Wallet } from "@project-serum/anchor";
 import { connection } from './00_init_program'
 
 export function findVestingPlanAccount(pool: PublicKey, programId: PublicKey) {
@@ -58,13 +58,13 @@ export function getExplorerTxUrl(tx: string) {
 }
 
 
-export async function createTokenMint(creator: Wallet, to: PublicKey, amount = 1000000) {
+export async function createTokenMint(creator: Wallet, to: PublicKey, amount = 1000000, decimal = 9) {
     const mint = await Token.createMint(
         connection,
         creator.payer,
         creator.publicKey,
         null,
-        TOKEN_MINT_DECIMALS,
+        decimal,
         TOKEN_PROGRAM_ID
     );
 
@@ -79,7 +79,7 @@ export async function createTokenMint(creator: Wallet, to: PublicKey, amount = 1
         tokenAccount.address,
         creator.payer,
         [],
-        amount * LAMPORTS_PER_SOL
+        new BN(amount).mul(new BN(10).pow(new BN(decimal))).toNumber()
     );
 
     console.log(`Token minted to ${tokenAccount.address.toBase58()}`);

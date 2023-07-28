@@ -1,7 +1,9 @@
 use anchor_lang::prelude::*;
 
 use crate::{
-    constants::{CURRENCY_DECIMALS, DISCRIMINATOR_SIZE, I64_SIZE, PUBKEY_SIZE, U64_SIZE, U8_SIZE},
+    constants::{
+        BOOL_SIZE, CURRENCY_DECIMALS, DISCRIMINATOR_SIZE, I64_SIZE, PUBKEY_SIZE, U64_SIZE, U8_SIZE,
+    },
     errors::MyError,
 };
 
@@ -25,6 +27,7 @@ pub struct LaunchPool {
     pub token_mint_decimals: u8,
     pub authority: Pubkey,
     pub vault_amount: u64,
+    pub is_vesting: bool,
     pub currency: CurrencyType,
     pub pool_type: LaunchPoolType,
     pub status: LaunchPoolState,
@@ -85,6 +88,7 @@ impl LaunchPool {
         U8_SIZE + // token_mint_decimals
         PUBKEY_SIZE +
         U64_SIZE +
+        BOOL_SIZE + // is_vesting
         1 +
         1 + // enum CurrencyType
         1 +
@@ -123,6 +127,7 @@ impl LaunchPool {
         self.currency = currency;
         self.pool_type = pool_type;
         self.status = LaunchPoolState::Pending;
+        self.is_vesting = false;
         Ok(())
     }
 

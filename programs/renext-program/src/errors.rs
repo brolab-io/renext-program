@@ -61,6 +61,12 @@ pub enum MyError {
     LaunchPoolAlreadyCompleted,
     #[msg("User not in whitelist")]
     UserNotInWhiteList,
+    #[msg("Calculation overflow")]
+    Overflow,
+    #[msg("Invalid vesting plan")]
+    InvalidVestingPlan,
+    #[msg("Invalid schedule size")]
+    InvalidScheduleSize,
 }
 
 impl From<TryFromIntError> for MyError {

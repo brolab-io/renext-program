@@ -3,10 +3,9 @@ use anchor_spl::{associated_token, token};
 
 use crate::constants::{LAUNCH_POOL_SEED, REUSD_MINT, TREASURER_SEED};
 use crate::state::*;
-use crate::utils::pool;
 
 #[derive(Accounts)]
-pub struct CreateTokenWhitelistPool<'info> {
+pub struct CreateTokenPool<'info> {
     #[account(
         init,
         seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()],
@@ -47,42 +46,4 @@ pub struct CreateTokenWhitelistPool<'info> {
     pub token_program: Program<'info, token::Token>,
     pub associated_token_program: Program<'info, associated_token::AssociatedToken>,
     pub rent: Sysvar<'info, Rent>,
-}
-
-pub fn handler(
-    ctx: Context<CreateTokenWhitelistPool>,
-    unlock_date: i64,
-    pool_size: u64,
-    minimum_token_amount: u64,
-    maximum_token_amount: u64,
-    rate: u64,
-    token_mint_decimals: u8,
-) -> ProgramResult {
-    let launch_pool = &mut ctx.accounts.launch_pool;
-    let treasurer = &mut ctx.accounts.treasurer;
-
-    msg!(
-        "Creating a token {} whitelist pool {} of token mint {} by {} with treasurer {} and treasury {}",
-        ctx.accounts.currency_mint.to_account_info().key(),
-        launch_pool.to_account_info().key(),
-        ctx.accounts.token_mint.to_account_info().key(),
-        ctx.accounts.authority.key(),
-        treasurer.to_account_info().key(),
-        ctx.accounts.treasury.to_account_info().key()
-    );
-
-    Ok(pool::init_launch_pool(
-        &ctx.accounts.authority,
-        launch_pool,
-        treasurer,
-        &ctx.accounts.token_mint,
-        unlock_date,
-        pool_size,
-        minimum_token_amount,
-        maximum_token_amount,
-        rate,
-        token_mint_decimals,
-        CurrencyType::ReUSD,
-        LaunchPoolType::WhiteList,
-    )?)
 }

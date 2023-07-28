@@ -3,10 +3,10 @@ import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import dayjs from "dayjs";
 import { findLaunchPoolAccount, findMintTokenAccount, findTreasurerAccount, getExplorerTxUrl } from "./utils";
 
-import { REUSD_MINT, TOKEN_MINT_DECIMALS, program } from './00_init_program'
+import { TOKEN_MINT_DECIMALS, program } from './00_init_program'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
-export async function createTokenFairlaunchPool(creator: Wallet, mint: PublicKey, max = 10, min = 5, rate = new BN(500)) {
+export async function createNativeFairlaunchPoolVesting(creator: Wallet, mint: PublicKey, max = 10, min = 5, rate = new BN(500)) {
 
     const unlock_date = new BN(dayjs().add(5, "s").unix());
     const pool_size = new BN(100 * LAMPORTS_PER_SOL);
@@ -17,12 +17,7 @@ export async function createTokenFairlaunchPool(creator: Wallet, mint: PublicKey
         mint,
         program.programId
     );
-
-    const launchPoolTokenAccount = await findMintTokenAccount(
-        launch_pool,
-        REUSD_MINT
-    );
-    console.log(`launch_pool: ${launch_pool.toBase58()} creator: ${creator.publicKey.toBase58()} currency ReUSD ${REUSD_MINT} with mint: ${mint.toBase58()} creating ....`)
+    console.log(`launch_pool: ${launch_pool.toBase58()} creator: ${creator.publicKey.toBase58()} with mint: ${mint.toBase58()} creating ....`)
     console.log('--------------------------------------')
 
 
@@ -30,14 +25,13 @@ export async function createTokenFairlaunchPool(creator: Wallet, mint: PublicKey
     const treasury = await findMintTokenAccount(treasurer, mint);
 
     const tx = await program.methods
-        .createTokenPool(
+        .createNativeFairlaunchPool(
             unlock_date,
             pool_size,
             minimum_token_amount,
             maximum_token_amount,
             rate,
-            TOKEN_MINT_DECIMALS,
-            0
+            TOKEN_MINT_DECIMALS
         )
         .accounts({
             launchPool: launch_pool,
@@ -45,8 +39,6 @@ export async function createTokenFairlaunchPool(creator: Wallet, mint: PublicKey
             tokenMint: mint,
             treasurer: treasurer,
             treasury: treasury,
-            currencyMint: REUSD_MINT,
-            launchPoolTokenAccount: launchPoolTokenAccount,
             rent: web3.SYSVAR_RENT_PUBKEY,
             systemProgram: web3.SystemProgram.programId,
             tokenProgram: TOKEN_PROGRAM_ID,

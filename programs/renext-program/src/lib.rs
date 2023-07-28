@@ -3,28 +3,32 @@ pub mod constants;
 pub mod errors;
 pub mod instructions;
 pub mod state;
+pub mod utils;
 
 use instructions::*;
+use state::{LaunchPoolType, VestingSchedule};
 
-declare_id!("HHgVkhFDw5P4hobTrWePPrsZomMDJ4CqDRBaR49xEcBu");
+declare_id!("HwG2Z2ji5xuB7THHNrwEMhYAwKi1CHJDWnP3J4HU6Svp");
 
 #[program]
 pub mod renext_program {
+
     use super::*;
     pub fn initialize(_ctx: Context<Initialize>) -> ProgramResult {
         Ok(())
     }
 
-    pub fn create_token_fairlaunch_pool(
-        ctx: Context<CreateTokenFairlaunchPool>,
+    pub fn create_token_pool(
+        ctx: Context<CreateTokenPool>,
         unlock_date: i64,
         pool_size: u64,
         minimum_token_amount: u64,
         maximum_token_amount: u64,
         rate: u64,
         token_mint_decimals: u8,
+        launch_pool_type: u8,
     ) -> ProgramResult {
-        instructions::create_token_fairlaunch_pool::handler(
+        instructions::token::create_token_pool::handler(
             ctx,
             unlock_date,
             pool_size,
@@ -32,19 +36,21 @@ pub mod renext_program {
             maximum_token_amount,
             rate,
             token_mint_decimals,
+            LaunchPoolType::from(launch_pool_type),
         )
     }
 
-    pub fn create_native_fairlaunch_pool(
-        ctx: Context<CreateNativeFairlaunchPool>,
+    pub fn create_native_pool(
+        ctx: Context<CreateNativePool>,
         unlock_date: i64,
         pool_size: u64,
         minimum_token_amount: u64,
         maximum_token_amount: u64,
         rate: u64,
         token_mint_decimals: u8,
+        launch_pool_type: u8,
     ) -> ProgramResult {
-        instructions::create_native_fairlaunch_pool::handler(
+        instructions::native::create_native_pool::handler(
             ctx,
             unlock_date,
             pool_size,
@@ -52,46 +58,7 @@ pub mod renext_program {
             maximum_token_amount,
             rate,
             token_mint_decimals,
-        )
-    }
-
-    pub fn create_native_whitelist_pool(
-        ctx: Context<CreateNativeWhitelistPool>,
-        unlock_date: i64,
-        pool_size: u64,
-        minimum_token_amount: u64,
-        maximum_token_amount: u64,
-        rate: u64,
-        token_mint_decimals: u8,
-    ) -> ProgramResult {
-        instructions::create_native_whitelist_pool::handler(
-            ctx,
-            unlock_date,
-            pool_size,
-            minimum_token_amount,
-            maximum_token_amount,
-            rate,
-            token_mint_decimals,
-        )
-    }
-
-    pub fn create_token_whitelist_pool(
-        ctx: Context<CreateTokenWhitelistPool>,
-        unlock_date: i64,
-        pool_size: u64,
-        minimum_token_amount: u64,
-        maximum_token_amount: u64,
-        rate: u64,
-        token_mint_decimals: u8,
-    ) -> ProgramResult {
-        instructions::create_token_whitelist_pool::handler(
-            ctx,
-            unlock_date,
-            pool_size,
-            minimum_token_amount,
-            maximum_token_amount,
-            rate,
-            token_mint_decimals,
+            LaunchPoolType::from(launch_pool_type),
         )
     }
 
@@ -157,6 +124,14 @@ pub mod renext_program {
 
     pub fn claim_token(ctx: Context<ClaimToken>) -> ProgramResult {
         instructions::claim_token::handler(ctx)
+    }
+
+    pub fn set_vesting_plan(
+        ctx: Context<UpdateVestingPlan>,
+        size: u8,
+        schedule: Vec<VestingSchedule>,
+    ) -> ProgramResult {
+        instructions::update_vesting_plan::handler(ctx, size, schedule)
     }
 }
 

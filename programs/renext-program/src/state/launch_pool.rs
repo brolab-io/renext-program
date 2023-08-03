@@ -1,3 +1,5 @@
+use std::ops::{Div, Mul};
+
 use anchor_lang::prelude::*;
 
 use crate::{
@@ -132,14 +134,12 @@ impl LaunchPool {
     }
 
     pub fn calculate_user_must_pay(&self, amount: u64) -> u64 {
+        // calculate the amount of tokens the user will receive
+
         amount
-            .checked_mul(self.rate)
-            .unwrap()
-            .checked_div(10000)
-            .unwrap()
-            .checked_mul(10_i32.pow(CURRENCY_DECIMALS) as u64)
-            .unwrap()
-            .checked_div(10_i32.pow(self.token_mint_decimals as u32) as u64)
-            .unwrap()
+            .div(10_i32.pow(self.token_mint_decimals as u32) as u64)
+            .mul(self.rate)
+            .mul(10_i32.pow(CURRENCY_DECIMALS) as u64)
+            .div(10000_u64)
     }
 }

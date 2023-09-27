@@ -78,19 +78,19 @@ const flowNativeWhitelistPool = async () => {
 
   await addWalletsToWhitelist(masterWallet, mint, wallets2);
 
-  const removeWallets: PublicKey[] = [
-    wallets[
-    Math.floor(Math.random() * wallets.length)
-    ],
-    wallets[
-    Math.floor(Math.random() * wallets.length)
-    ],
-    wallets2[
-    Math.floor(Math.random() * wallets2.length)
-    ],
-  ];
+  // const removeWallets: PublicKey[] = [
+  //   wallets[
+  //   Math.floor(Math.random() * wallets.length)
+  //   ],
+  //   wallets[
+  //   Math.floor(Math.random() * wallets.length)
+  //   ],
+  //   wallets2[
+  //   Math.floor(Math.random() * wallets2.length)
+  //   ],
+  // ];
 
-  await removeWalletsToWhitelist(masterWallet, mint, removeWallets);
+  // await removeWalletsToWhitelist(masterWallet, mint, removeWallets);
 
   await buyWithRenecAndWhitelist(masterWallet.publicKey, mint, buyer1Wallet, 10);
 
@@ -125,19 +125,19 @@ const flowTokenWhitelistPool = async () => {
 
   await addWalletsToWhitelist(masterWallet, mint, wallets2);
 
-  const removeWallets: PublicKey[] = [
-    wallets[
-    Math.floor(Math.random() * wallets.length)
-    ],
-    wallets[
-    Math.floor(Math.random() * wallets.length)
-    ],
-    wallets2[
-    Math.floor(Math.random() * wallets2.length)
-    ],
-  ];
+  // const removeWallets: PublicKey[] = [
+  //   wallets[
+  //   Math.floor(Math.random() * wallets.length)
+  //   ],
+  //   wallets[
+  //   Math.floor(Math.random() * wallets.length)
+  //   ],
+  //   wallets2[
+  //   Math.floor(Math.random() * wallets2.length)
+  //   ],
+  // ];
 
-  await removeWalletsToWhitelist(masterWallet, mint, removeWallets);
+  // await removeWalletsToWhitelist(masterWallet, mint, removeWallets);
 
   await buyWithReUSDAnWhitelist(masterWallet.publicKey, mint, buyer1Wallet, 10);
 
@@ -154,14 +154,15 @@ const flowNativeFairlaunchPoolWithVesting = async () => {
   const mint = await createTokenMint(masterWallet, masterWallet.publicKey, 1000000);
 
   await createNativeFairlaunchPool(masterWallet, mint, 1000000, 800000, 1, new BN(100000));
+  const current_time = dayjs();
   await updateVestingPlan(masterWallet, mint, [{
-    releaseTime: new BN(dayjs().add(1, 's').unix()),
-    amount: new BN('200000').mul(new BN(10).pow(new BN(9))),
+    releaseTime: new BN(current_time.add(10, 's').unix()),
+    amount: new BN('250000').mul(new BN(10).pow(new BN(9))),
   }, {
-    releaseTime: new BN(dayjs().add(15, 's').unix()),
-    amount: new BN('500000').mul(new BN(10).pow(new BN(9))),
+    releaseTime: new BN(current_time.add(15, 's').unix()),
+    amount: new BN('450000').mul(new BN(10).pow(new BN(9))),
   }, {
-    releaseTime: new BN(dayjs().add(30, 's').unix()),
+    releaseTime: new BN(current_time.add(30, 's').unix()),
     amount: new BN('300000').mul(new BN(10).pow(new BN(9))),
   }]);
   await startLaunchPool(masterWallet, mint);
@@ -170,10 +171,10 @@ const flowNativeFairlaunchPoolWithVesting = async () => {
   await completeLaunchPool(masterWallet, mint);
   await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
 
-  await delay(6000);
+  await delay(5000);
   await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
 
-  await delay(1000);
+  await delay(15000);
   await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
 }
 
@@ -187,4 +188,5 @@ const flowNativeFairlaunchPoolWithVesting = async () => {
   // await flowTokenWhitelistPool();
   // await delay(1000);
   await flowNativeFairlaunchPoolWithVesting();
+  // console.log(new BN(dayjs().add(1, 's').unix()).toString());
 })();

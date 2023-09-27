@@ -68,7 +68,7 @@ pub fn handler(ctx: Context<StartLaunchPoolWithWhitelist>, max_size: u8, wallets
         launch_pool.key(),
         max_size,
         wallets,
-    );
+    )?;
 
     Ok(pool::start_launch_pool(
         &ctx.accounts.authority,

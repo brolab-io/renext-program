@@ -23,6 +23,8 @@ pub enum MyError {
     PoolNotEnough,
     #[msg("Invalid amount")]
     InvalidAmount,
+    #[msg("Invalid user pool amount")]
+    InvalidUserPoolAmount,
     #[msg("Maximum token amount reached")]
     MaximumTokenAmountReached,
     #[msg("Time lock not expired")]
@@ -71,6 +73,8 @@ pub enum MyError {
     VestingPlanAccountNotFound,
     #[msg("This is vesting pool")]
     ThisIsVestingPool,
+    #[msg("Account is initialized")]
+    AccountIsInitialized,
 }
 
 impl From<TryFromIntError> for MyError {

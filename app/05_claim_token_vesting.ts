@@ -1,8 +1,9 @@
-import { Wallet, web3 } from "@project-serum/anchor";
-import { PublicKey } from "@solana/web3.js";
+import { BN, Wallet, web3 } from "@project-serum/anchor";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { findLaunchPoolAccount, findMintTokenAccount, findTreasurerAccount, findUserPoolAccount, findVestingPlanAccount, getExplorerTxUrl } from "./utils";
 import { program } from "./00_init_program";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import dayjs from "dayjs";
 
 export async function claimTokenVesting(
     creator: PublicKey,
@@ -29,8 +30,23 @@ export async function claimTokenVesting(
     console.log("User pool account: ", userData.amount.toNumber());
     console.log("user payed: ", userData.currencyAmount.toNumber());
 
-    console.log(`buyer ${buyer.publicKey.toBase58()} want claim ${userData.amount.toNumber()} token ${mint.toBase58()} at launch pool ${launch_pool.toBase58()}`);
+    console.log(`buyer ${buyer.publicKey.toBase58()} want claim ${userData.amount.toNumber() / LAMPORTS_PER_SOL} token ${mint.toBase58()} at launch pool ${launch_pool.toBase58()}`);
     console.log('--------------------------------------')
+
+
+    const vData = await program.account.vestingPlan.fetch(vesting_plan);
+    console.log({
+        vData: vData.schedule.map(el => ({
+            time: el.releaseTime.toString(),
+            amount: el.amount.toString()
+        })),
+        current: new BN(dayjs().unix()).toString(),
+        amout: vData.schedule.reduce((acc, el) => {
+            if (el.releaseTime <= new BN(dayjs().unix()))
+                acc = acc.add(el.amount)
+            return acc
+        }, new BN(0)).toString()
+    })
 
 
 

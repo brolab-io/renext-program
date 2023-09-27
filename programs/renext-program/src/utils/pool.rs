@@ -28,7 +28,7 @@ pub fn init_launch_pool<'info>(
         *authority.to_account_info().key,
         *launch_pool.to_account_info().key,
         *token_mint.to_account_info().key,
-    );
+    )?;
     Ok(launch_pool.initialize(
         unlock_date,
         pool_size,

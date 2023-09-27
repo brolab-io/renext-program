@@ -15,17 +15,26 @@ impl Whitelist {
     pub const LEN: usize =
         DISCRIMINATOR_SIZE + PUBKEY_SIZE + PUBKEY_SIZE + U8_SIZE + VECTOR_OVERHEAD_SIZE;
 
+    pub fn initialized(&self) -> bool {
+        self.authority.ne(&Pubkey::default())
+    }
+
     pub fn initialize(
         &mut self,
         authority: Pubkey,
         launch_pool: Pubkey,
         max_size: u8,
         wallets: Vec<Pubkey>,
-    ) {
+    ) -> ProgramResult {
+        require!(
+            self.authority == Pubkey::default(),
+            MyError::AccountIsInitialized
+        );
         self.authority = authority;
         self.launch_pool = launch_pool;
         self.max_size = max_size;
         self.wallets = wallets;
+        Ok(())
     }
 
     pub fn calculate_size(wallets: u8) -> usize {

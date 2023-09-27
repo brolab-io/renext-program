@@ -1133,6 +1133,9 @@
           },
           {
             "name": "Cancelled"
+          },
+          {
+            "name": "NotExist"
           }
         ]
       }
@@ -1233,123 +1236,133 @@
     },
     {
       "code": 6009,
+      "name": "InvalidUserPoolAmount",
+      "msg": "Invalid user pool amount"
+    },
+    {
+      "code": 6010,
       "name": "MaximumTokenAmountReached",
       "msg": "Maximum token amount reached"
     },
     {
-      "code": 6010,
+      "code": 6011,
       "name": "TimeLockNotExpired",
       "msg": "Time lock not expired"
     },
     {
-      "code": 6011,
+      "code": 6012,
       "name": "NoBump",
       "msg": "Cannot find treasurer account"
     },
     {
-      "code": 6012,
+      "code": 6013,
       "name": "MinimumTokenAmountNotReached",
       "msg": "Minimum token amount not reached"
     },
     {
-      "code": 6013,
+      "code": 6014,
       "name": "InvalidCreator",
       "msg": "Invalid creator"
     },
     {
-      "code": 6014,
+      "code": 6015,
       "name": "PoolSizeRemainingNotEnough",
       "msg": "Pool size remaining not enough"
     },
     {
-      "code": 6015,
+      "code": 6016,
       "name": "InvalidTreasurer",
       "msg": "Invalid treasurer"
     },
     {
-      "code": 6016,
+      "code": 6017,
       "name": "InvalidVault",
       "msg": "Invalid vault"
     },
     {
-      "code": 6017,
+      "code": 6018,
       "name": "InvalidLaunchPool",
       "msg": "Invalid launch pool"
     },
     {
-      "code": 6018,
+      "code": 6019,
       "name": "WhitelistFulled",
       "msg": "White list is full"
     },
     {
-      "code": 6019,
+      "code": 6020,
       "name": "WalletAlreadyAdded",
       "msg": "Wallet already added"
     },
     {
-      "code": 6020,
+      "code": 6021,
       "name": "WalletNotInList",
       "msg": "Wallet not in list"
     },
     {
-      "code": 6021,
+      "code": 6022,
       "name": "NumberCastError",
       "msg": "Unable to cast number into BigInt"
     },
     {
-      "code": 6022,
+      "code": 6023,
       "name": "InvalidWhitelist",
       "msg": "Invalid whitelist"
     },
     {
-      "code": 6023,
+      "code": 6024,
       "name": "InvalidLaunchPoolType",
       "msg": "Invalid launch pool type"
     },
     {
-      "code": 6024,
+      "code": 6025,
       "name": "WalletsMustNotBeEmpty",
       "msg": "Wallets must not be empty"
     },
     {
-      "code": 6025,
+      "code": 6026,
       "name": "WhitelistNotEnoughSpace",
       "msg": "Whitelist not enough space"
     },
     {
-      "code": 6026,
+      "code": 6027,
       "name": "LaunchPoolAlreadyCompleted",
       "msg": "Launch pool already completed"
     },
     {
-      "code": 6027,
+      "code": 6028,
       "name": "UserNotInWhiteList",
       "msg": "User not in whitelist"
     },
     {
-      "code": 6028,
+      "code": 6029,
       "name": "Overflow",
       "msg": "Calculation overflow"
     },
     {
-      "code": 6029,
+      "code": 6030,
       "name": "InvalidVestingPlan",
       "msg": "Invalid vesting plan"
     },
     {
-      "code": 6030,
+      "code": 6031,
       "name": "InvalidScheduleSize",
       "msg": "Invalid schedule size"
     },
     {
-      "code": 6031,
+      "code": 6032,
       "name": "VestingPlanAccountNotFound",
       "msg": "Vesting plan account not found"
     },
     {
-      "code": 6032,
+      "code": 6033,
       "name": "ThisIsVestingPool",
       "msg": "This is vesting pool"
+    },
+    {
+      "code": 6034,
+      "name": "AccountIsInitialized",
+      "msg": "Account is initialized"
     }
   ]
 }

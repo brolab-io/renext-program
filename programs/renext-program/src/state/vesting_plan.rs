@@ -73,11 +73,11 @@ impl VestingPlan {
 
         Ok(normalized_total
             .checked_mul(normalized_amount_user_buy)
-            .unwrap()
+            .ok_or(MyError::Overflow)?
             .checked_div(normalized_pool_size)
-            .unwrap()
+            .ok_or(MyError::Overflow)?
             .checked_sub(normalized_amount_user_claimed)
-            .unwrap()
+            .ok_or(MyError::Overflow)?
             .checked_mul(10_u64.pow(decimal.into()))
             .ok_or(MyError::Overflow)?)
     }

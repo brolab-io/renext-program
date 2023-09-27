@@ -1,6 +1,5 @@
-use std::ops::{Div, Mul};
-
 use anchor_lang::prelude::*;
+use std::ops::{Div, Mul};
 
 use crate::{
     constants::{
@@ -18,6 +17,7 @@ pub struct LaunchPoolBumps {
 
 // struct for launchpad token pool
 #[account]
+#[derive(Default)]
 pub struct LaunchPool {
     pub unlock_date: i64,
     pub pool_size: u64,
@@ -42,6 +42,12 @@ pub enum CurrencyType {
     ReUSD,
 }
 
+impl Default for CurrencyType {
+    fn default() -> Self {
+        CurrencyType::RENEC
+    }
+}
+
 impl From<u8> for CurrencyType {
     fn from(val: u8) -> Self {
         match val {
@@ -57,6 +63,12 @@ impl From<u8> for CurrencyType {
 pub enum LaunchPoolType {
     FairLaunch,
     WhiteList,
+}
+
+impl Default for LaunchPoolType {
+    fn default() -> Self {
+        LaunchPoolType::FairLaunch
+    }
 }
 
 impl From<u8> for LaunchPoolType {
@@ -76,6 +88,13 @@ pub enum LaunchPoolState {
     Active,
     Completed,
     Cancelled,
+    NotExist,
+}
+
+impl Default for LaunchPoolState {
+    fn default() -> Self {
+        LaunchPoolState::NotExist
+    }
 }
 
 impl LaunchPool {
@@ -98,6 +117,10 @@ impl LaunchPool {
         1 +
         1; // enum LaunchPoolState
 
+    pub fn initialized(&self) -> bool {
+        self.authority.ne(&Pubkey::default())
+    }
+
     pub fn initialize(
         &mut self,
         unlock_date: i64,
@@ -111,6 +134,11 @@ impl LaunchPool {
         currency: CurrencyType,
         pool_type: LaunchPoolType,
     ) -> ProgramResult {
+        require!(
+            self.authority == Pubkey::default(),
+            MyError::AccountIsInitialized
+        );
+
         require!(
             unlock_date.gt(&Clock::get()?.unix_timestamp),
             MyError::InvalidUnlockDate
@@ -144,5 +172,24 @@ impl LaunchPool {
         //     .mul(self.rate)
         //     .mul(10_i32.pow(CURRENCY_DECIMALS) as u64)
         //     .div(10000_u64)
+    }
+}
+
+#[cfg(test)]
+mod launch_pool_test {
+    // Note this useful idiom: importing names from outer (for mod tests) scope.
+    use super::*;
+
+    #[test]
+    fn test_launchpool_not_initialized() {
+        let launchpool = LaunchPool::default();
+        assert_eq!(launchpool.initialized(), false);
+    }
+
+    #[test]
+    fn test_launchpool_initialized() {
+        let mut launchpool = LaunchPool::default();
+        launchpool.authority = Pubkey::new_unique();
+        assert_eq!(launchpool.initialized(), true);
     }
 }

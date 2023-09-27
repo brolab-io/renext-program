@@ -135,11 +135,14 @@ impl LaunchPool {
 
     pub fn calculate_user_must_pay(&self, amount: u64) -> u64 {
         // calculate the amount of tokens the user will receive
-
-        amount
-            .div(10_i32.pow(self.token_mint_decimals as u32) as u64)
-            .mul(self.rate)
-            .mul(10_i32.pow(CURRENCY_DECIMALS) as u64)
-            .div(10000_u64)
+        ((amount
+            .div(self.rate)
+            .mul(10_i32.pow(CURRENCY_DECIMALS) as u64)) as u128)
+            .div(10_i32.pow(self.token_mint_decimals as u32) as u128) as u64
+        // amount
+        //     .div(10_i32.pow(self.token_mint_decimals as u32) as u64)
+        //     .mul(self.rate)
+        //     .mul(10_i32.pow(CURRENCY_DECIMALS) as u64)
+        //     .div(10000_u64)
     }
 }

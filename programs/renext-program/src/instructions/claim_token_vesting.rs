@@ -69,7 +69,7 @@ pub fn handler(ctx: Context<ClaimTokenVesting>) -> ProgramResult {
         MyError::TimeLockNotExpired
     );
 
-    require!(user_pool.amount > 0, MyError::InvalidAmount);
+    require!(user_pool.amount.gt(0), MyError::InvalidAmount);
 
     let (vesting_pda, _) = Pubkey::find_program_address(
         &[VESTING_PLAN_SEED.as_ref(), launch_pool.key().as_ref()],

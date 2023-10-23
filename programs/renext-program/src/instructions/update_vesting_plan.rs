@@ -20,6 +20,7 @@ pub struct UpdateVestingPlan<'info> {
         seeds = [VESTING_PLAN_SEED.as_ref(), launch_pool.key().as_ref()],
         bump,
         space = VestingPlan::calculate_size(size),
+        constraint = vesting_plan.launch_pool == launch_pool.key()
     )]
     pub vesting_plan: Box<Account<'info, VestingPlan>>,
     #[account(mut)]

@@ -117,7 +117,10 @@ pub fn handler(ctx: Context<BuyTokenWithNativeWhitelist>, amount: u64) -> Progra
     );
 
     user_pool.amount = user_pool.amount.checked_add(amount).unwrap();
-    user_pool.currency_amount = user_must_pay;
+    user_pool.currency_amount = user_pool
+        .currency_amount
+        .checked_add(user_must_pay)
+        .unwrap();
     launch_pool.pool_size_remaining = launch_pool.pool_size_remaining.checked_sub(amount).unwrap();
     launch_pool.vault_amount = launch_pool.vault_amount.checked_add(user_must_pay).unwrap();
 

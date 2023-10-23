@@ -44,7 +44,7 @@ pub struct CreateLaunchPool<'info> {
     ]
     pub treasurer: Box<Account<'info, Treasurer>>,
     #[account(
-        init_if_needed,
+        init,
         payer = authority,
         associated_token::mint = token_mint,
         associated_token::authority = treasurer

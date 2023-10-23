@@ -3,6 +3,7 @@ use anchor_lang::prelude::*;
 use crate::constants::{DISCRIMINATOR_SIZE, U64_SIZE};
 
 #[account]
+#[derive(Default)]
 pub struct UserPool {
     pub amount: u64,
     pub currency_amount: u64,

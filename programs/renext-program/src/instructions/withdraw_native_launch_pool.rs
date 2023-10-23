@@ -9,6 +9,7 @@ pub struct WithdrawNativeLaunchPool<'info> {
         mut,
         constraint = launch_pool.vault_amount > 0,
         constraint = launch_pool.authority == *authority.key,
+        has_one = token_mint
     )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
     pub token_mint: Box<Account<'info, token::Mint>>,

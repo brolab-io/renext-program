@@ -17,7 +17,10 @@ pub struct BuyTokenWithNativeEvent {
 
 #[derive(Accounts)]
 pub struct BuyTokenWithNative<'info> {
-    #[account(mut)]
+    #[account(
+        mut,
+        has_one = token_mint
+    )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(

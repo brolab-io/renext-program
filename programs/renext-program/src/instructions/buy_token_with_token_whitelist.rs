@@ -1,15 +1,23 @@
 use crate::{
-    constants::{REUSD_MINT, USER_POOL_SEED},
+    constants::{USER_POOL_SEED, LAUNCH_POOL_SEED},
     errors::MyError,
     state::{CurrencyType, LaunchPool, LaunchPoolState, LaunchPoolType, UserPool, Whitelist},
+    REUSD_MINT,
 };
 use anchor_lang::prelude::*;
-use anchor_spl::{associated_token, token};
+use anchor_spl::token;
 
 #[derive(Accounts)]
 pub struct BuyTokenWithTokenWhitelist<'info> {
-    #[account(mut)]
+    #[account(
+        mut, 
+        seeds = [LAUNCH_POOL_SEED.as_ref(), launch_pool.authority.as_ref(), token_mint.key().as_ref()], 
+        bump
+    )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
+    #[account(
+        address = launch_pool.token_mint,
+    )]
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(
         init_if_needed,
@@ -43,7 +51,6 @@ pub struct BuyTokenWithTokenWhitelist<'info> {
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, token::Token>,
-    pub associated_token_program: Program<'info, associated_token::AssociatedToken>,
     pub rent: Sysvar<'info, Rent>,
 }
 

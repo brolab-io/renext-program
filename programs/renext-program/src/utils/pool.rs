@@ -1,5 +1,6 @@
+use crate::REUSD_MINT;
 use crate::{
-    constants::{LAUNCH_POOL_SEED, REUSD_MINT, VAULT_SEED},
+    constants::{LAUNCH_POOL_SEED, VAULT_SEED},
     errors::MyError,
     state::{CurrencyType, LaunchPool, LaunchPoolState, LaunchPoolType, Treasurer},
 };

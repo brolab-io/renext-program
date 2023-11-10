@@ -1,7 +1,8 @@
 use crate::{
-    constants::{REUSD_MINT, USER_POOL_SEED, LAUNCH_POOL_SEED},
+    constants::{USER_POOL_SEED, LAUNCH_POOL_SEED},
     errors::MyError,
     state::{CurrencyType, LaunchPool, LaunchPoolState, LaunchPoolType, UserPool},
+    REUSD_MINT
 };
 use anchor_lang::prelude::*;
 use anchor_spl::{token};

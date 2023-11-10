@@ -39,7 +39,7 @@ if [[ "$PROGRAM_ID" != "$UPDATED_PROGRAM_ID" ]]; then
 fi
 
 # Build the program 
-anchor build 
+anchor build -- --features "for-testnet"
 
 # Copy the artifacts into the app's artifacts folder
 cp target/idl/$PROGRAM_NAME_UNDERSCORE.json app/artifacts/

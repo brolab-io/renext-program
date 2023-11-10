@@ -107,7 +107,7 @@ pub fn withdraw_native<'info>(
         MyError::InvalidCurrencyType
     );
 
-    let (vault_pda, vbump) = Pubkey::find_program_address(
+    let (_, vbump) = Pubkey::find_program_address(
         &[
             VAULT_SEED.as_ref(),
             launch_pool.to_account_info().key.as_ref(),
@@ -116,7 +116,7 @@ pub fn withdraw_native<'info>(
         program_id,
     );
 
-    require!(vault_pda == *vault.key, MyError::InvalidVault);
+    // require!(vault_pda == *vault.key, MyError::InvalidVault);
 
     let amount = launch_pool.vault_amount;
 

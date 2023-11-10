@@ -11,6 +11,9 @@ pub struct WithdrawNativeLaunchPool<'info> {
         constraint = launch_pool.authority == *authority.key,
     )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
+    #[account(
+        address = launch_pool.token_mint,
+    )]
     pub token_mint: Box<Account<'info, token::Mint>>,
     /// CHECK: Create a new vault for the launch pool
     #[account(

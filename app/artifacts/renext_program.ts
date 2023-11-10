@@ -1362,6 +1362,11 @@ export type RenextProgram = {
       "code": 6032,
       "name": "ThisIsVestingPool",
       "msg": "This is vesting pool"
+    },
+    {
+      "code": 6033,
+      "name": "WhitelistMaxSizeExceeded",
+      "msg": "Reached maximum whitelist size"
     }
   ]
 };
@@ -2730,6 +2735,11 @@ export const IDL: RenextProgram = {
       "code": 6032,
       "name": "ThisIsVestingPool",
       "msg": "This is vesting pool"
+    },
+    {
+      "code": 6033,
+      "name": "WhitelistMaxSizeExceeded",
+      "msg": "Reached maximum whitelist size"
     }
   ]
 };

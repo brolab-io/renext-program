@@ -2,7 +2,7 @@ use anchor_lang::{prelude::*, solana_program};
 use anchor_spl::token;
 
 use crate::{
-    constants::{USER_POOL_SEED, VAULT_SEED},
+    constants::{USER_POOL_SEED, VAULT_SEED, LAUNCH_POOL_SEED},
     errors::MyError,
     state::{CurrencyType, LaunchPool, LaunchPoolState, LaunchPoolType, UserPool},
 };
@@ -17,12 +17,19 @@ pub struct BuyTokenWithNativeEvent {
 
 #[derive(Accounts)]
 pub struct BuyTokenWithNative<'info> {
-    #[account(mut)]
+    #[account(
+        mut, 
+        seeds = [LAUNCH_POOL_SEED.as_ref(), launch_pool.authority.key().as_ref(), token_mint.key().as_ref()], 
+        bump
+    )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
+    #[account(
+        address = token_mint.key(),
+    )]
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(
         init_if_needed,
-        seeds = [USER_POOL_SEED.as_ref(), user.key().as_ref(), launch_pool.key().as_ref(),token_mint.key().as_ref()],
+        seeds = [USER_POOL_SEED.as_ref(), user.key().as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
         bump,
         payer = user,
         space = UserPool::LEN

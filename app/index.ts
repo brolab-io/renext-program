@@ -178,10 +178,10 @@ const flowNativeFairlaunchPoolWithVesting = async () => {
 }
 
 (async () => {
-  // await flowNativeFairlaunchPool();
-  // await delay(1000);
-  await flowTokenFairlaunchPool();
+  await flowNativeFairlaunchPool();
   await delay(1000);
+  // await flowTokenFairlaunchPool();
+  // await delay(1000);
   // await flowNativeWhitelistPool();
   // await delay(1000);
   // await flowTokenWhitelistPool();

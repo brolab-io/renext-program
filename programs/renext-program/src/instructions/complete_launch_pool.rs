@@ -4,12 +4,21 @@ use anchor_spl::token;
 use crate::{
     errors::MyError,
     state::{LaunchPool, LaunchPoolState},
+    constants::LAUNCH_POOL_SEED,
 };
 
 #[derive(Accounts)]
 pub struct CompleteLaunchPool<'info> {
-    #[account(mut)]
+    #[account(
+        mut, 
+        seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()], 
+        bump,
+        constraint = launch_pool.authority == authority.key()
+    )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
+    #[account(
+        address = launch_pool.token_mint,
+    )]
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(mut)]
     pub authority: Signer<'info>,

@@ -40,7 +40,7 @@ pub struct BuyTokenWithNativeWhitelist<'info> {
     pub vault: AccountInfo<'info>,
     #[account(
         mut,
-        constraint = whitelist.launch_pool == launch_pool.key(),
+        constraint = whitelist.launch_pool == launch_pool.key()
     )]
     pub whitelist: Box<Account<'info, Whitelist>>,
     #[account(mut)]

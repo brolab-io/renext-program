@@ -19,12 +19,12 @@ pub struct BuyTokenWithNativeEvent {
 pub struct BuyTokenWithNative<'info> {
     #[account(
         mut, 
-        seeds = [LAUNCH_POOL_SEED.as_ref(), launch_pool.authority.key().as_ref(), token_mint.key().as_ref()], 
+        seeds = [LAUNCH_POOL_SEED.as_ref(), launch_pool.authority.as_ref(), token_mint.key().as_ref()], 
         bump
     )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
     #[account(
-        address = token_mint.key(),
+        address = launch_pool.token_mint,
     )]
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(

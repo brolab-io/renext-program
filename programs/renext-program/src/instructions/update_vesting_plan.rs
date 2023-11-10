@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::{
-    constants::VESTING_PLAN_SEED,
+    constants::{LAUNCH_POOL_SEED, VESTING_PLAN_SEED},
     errors::MyError,
     state::{LaunchPool, VestingPlan, VestingSchedule},
 };
@@ -11,6 +11,7 @@ use crate::{
 pub struct UpdateVestingPlan<'info> {
     #[account(
         mut,
+        seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), launch_pool.token_mint.as_ref()], bump,
         constraint = launch_pool.authority == *authority.key,
     )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
@@ -41,7 +42,7 @@ pub fn handler(
     );
     launch_pool.is_vesting = true;
     vesting_plan.launch_pool = launch_pool.key();
-    vesting_plan.set_schedule(schedule);
+    vesting_plan.set_schedule(schedule)?;
 
     Ok(())
 }

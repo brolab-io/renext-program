@@ -1357,6 +1357,11 @@ export type RenextProgram = {
       "code": 6033,
       "name": "WhitelistMaxSizeExceeded",
       "msg": "Reached maximum whitelist size"
+    },
+    {
+      "code": 6034,
+      "name": "InvalidReleaseTime",
+      "msg": "Invalid release time"
     }
   ]
 };
@@ -2720,6 +2725,11 @@ export const IDL: RenextProgram = {
       "code": 6033,
       "name": "WhitelistMaxSizeExceeded",
       "msg": "Reached maximum whitelist size"
+    },
+    {
+      "code": 6034,
+      "name": "InvalidReleaseTime",
+      "msg": "Invalid release time"
     }
   ]
 };

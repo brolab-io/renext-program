@@ -19,4 +19,5 @@ pub const USER_POOL_SEED: &[u8] = b"userpool";
 pub const WHITELIST_SEED: &[u8] = b"whitelist";
 pub const VESTING_PLAN_SEED: &[u8] = b"vestingplan";
 pub const CURRENCY_DECIMALS: u32 = 9;
+
 pub const REUSD_MINT: Pubkey = pubkey!("AJABAYSrSuFCgmRnxTVBY2zfSpYx9gXrWPCP5QZ16TNu");

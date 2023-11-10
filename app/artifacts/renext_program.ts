@@ -1,6 +1,18 @@
 export type RenextProgram = {
   "version": "0.1.0",
   "name": "renext_program",
+  "constants": [
+    {
+      "name": "REUSD_MINT",
+      "type": "publicKey",
+      "value": "pubkey ! (\"4Q89182juiadeFgGw3fupnrwnnDmBhf7e7fHWxnUP3S3\")"
+    },
+    {
+      "name": "REUSD_MINT",
+      "type": "publicKey",
+      "value": "pubkey ! (\"AJABAYSrSuFCgmRnxTVBY2zfSpYx9gXrWPCP5QZ16TNu\")"
+    }
+  ],
   "instructions": [
     {
       "name": "initialize",
@@ -1357,6 +1369,18 @@ export type RenextProgram = {
 export const IDL: RenextProgram = {
   "version": "0.1.0",
   "name": "renext_program",
+  "constants": [
+    {
+      "name": "REUSD_MINT",
+      "type": "publicKey",
+      "value": "pubkey ! (\"4Q89182juiadeFgGw3fupnrwnnDmBhf7e7fHWxnUP3S3\")"
+    },
+    {
+      "name": "REUSD_MINT",
+      "type": "publicKey",
+      "value": "pubkey ! (\"AJABAYSrSuFCgmRnxTVBY2zfSpYx9gXrWPCP5QZ16TNu\")"
+    }
+  ],
   "instructions": [
     {
       "name": "initialize",

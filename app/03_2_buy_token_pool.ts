@@ -40,7 +40,6 @@ export async function buyWithReUSD(creator: PublicKey, mint: PublicKey, buyer: W
             tokenMint: mint,
             tokenProgram: TOKEN_PROGRAM_ID,
             systemProgram: web3.SystemProgram.programId,
-            associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
             rent: web3.SYSVAR_RENT_PUBKEY,
         })
         .signers([buyer.payer])

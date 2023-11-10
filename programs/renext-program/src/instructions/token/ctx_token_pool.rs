@@ -1,9 +1,9 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
-use crate::constants::{LAUNCH_POOL_SEED, REUSD_MINT, TREASURER_SEED};
+use crate::constants::{LAUNCH_POOL_SEED, TREASURER_SEED};
 use crate::state::*;
-
+use crate::REUSD_MINT;
 #[derive(Accounts)]
 pub struct CreateTokenPool<'info> {
     #[account(

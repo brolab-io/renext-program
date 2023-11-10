@@ -2,17 +2,29 @@ use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
 use crate::{
-    constants::{TREASURER_SEED, VESTING_PLAN_SEED},
+    constants::{TREASURER_SEED, VESTING_PLAN_SEED, LAUNCH_POOL_SEED, USER_POOL_SEED},
     errors::MyError,
     state::{LaunchPool, LaunchPoolState, Treasurer, UserPool, VestingPlan},
 };
 
 #[derive(Accounts)]
 pub struct ClaimTokenVesting<'info> {
-    #[account(mut)]
+    #[account(
+        mut, 
+        seeds = [LAUNCH_POOL_SEED.as_ref(), launch_pool.authority.as_ref(), token_mint.key().as_ref()], 
+        bump,
+    )]
     pub launch_pool: Account<'info, LaunchPool>,
+    #[account(
+        address = launch_pool.token_mint,
+    )]
     pub token_mint: Box<Account<'info, token::Mint>>,
-    #[account(mut)]
+    #[account(
+        mut,
+        seeds = [TREASURER_SEED.as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
+        bump,
+
+    )]
     pub treasurer: Box<Account<'info, Treasurer>>,
     #[account(
          mut,
@@ -20,7 +32,11 @@ pub struct ClaimTokenVesting<'info> {
          associated_token::authority = treasurer
     )]
     pub treasury: Box<Account<'info, token::TokenAccount>>,
-    #[account(mut)]
+    #[account(
+        mut,
+        seeds = [USER_POOL_SEED.as_ref(), user.key().as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
+        bump
+    )]
     pub user_pool: Box<Account<'info, UserPool>>,
     #[account(init_if_needed,
         payer = user,
@@ -30,6 +46,8 @@ pub struct ClaimTokenVesting<'info> {
     pub user_token_account: Box<Account<'info, token::TokenAccount>>,
     #[account(
         mut,
+        seeds = [VESTING_PLAN_SEED.as_ref(), launch_pool.key().as_ref()],
+        bump,
         constraint = vesting_plan.launch_pool == launch_pool.key()
     )]
     pub vesting_plan: Box<Account<'info, VestingPlan>>,
@@ -69,17 +87,17 @@ pub fn handler(ctx: Context<ClaimTokenVesting>) -> ProgramResult {
         MyError::TimeLockNotExpired
     );
 
-    require!(user_pool.amount.gt(0), MyError::InvalidAmount);
+    require!(user_pool.amount.gt(&0), MyError::InvalidAmount);
 
-    let (vesting_pda, _) = Pubkey::find_program_address(
-        &[VESTING_PLAN_SEED.as_ref(), launch_pool.key().as_ref()],
-        ctx.program_id,
-    );
+    // let (vesting_pda, _) = Pubkey::find_program_address(
+    //     &[VESTING_PLAN_SEED.as_ref(), launch_pool.key().as_ref()],
+    //     ctx.program_id,
+    // );
 
-    require!(
-        vesting_pda.eq(&*ctx.accounts.vesting_plan.to_account_info().key),
-        MyError::InvalidVestingPlan
-    );
+    // require!(
+    //     vesting_pda.eq(&*ctx.accounts.vesting_plan.to_account_info().key),
+    //     MyError::InvalidVestingPlan
+    // );
 
     let vesting_plan = &ctx.accounts.vesting_plan;
 
@@ -90,7 +108,7 @@ pub fn handler(ctx: Context<ClaimTokenVesting>) -> ProgramResult {
         launch_pool.token_mint_decimals,
     )?;
 
-    require!(user_token_amount > 0, MyError::InvalidAmount);
+    require!(user_token_amount.gt(&0), MyError::InvalidAmount);
 
     msg!("User token amount: {}", user_token_amount);
     let lp_key = launch_pool.key();

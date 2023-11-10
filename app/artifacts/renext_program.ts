@@ -1,6 +1,18 @@
 export type RenextProgram = {
   "version": "0.1.0",
   "name": "renext_program",
+  "constants": [
+    {
+      "name": "REUSD_MINT",
+      "type": "publicKey",
+      "value": "pubkey ! (\"4Q89182juiadeFgGw3fupnrwnnDmBhf7e7fHWxnUP3S3\")"
+    },
+    {
+      "name": "REUSD_MINT",
+      "type": "publicKey",
+      "value": "pubkey ! (\"AJABAYSrSuFCgmRnxTVBY2zfSpYx9gXrWPCP5QZ16TNu\")"
+    }
+  ],
   "instructions": [
     {
       "name": "initialize",
@@ -451,11 +463,6 @@ export type RenextProgram = {
           "isSigner": false
         },
         {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "rent",
           "isMut": false,
           "isSigner": false
@@ -574,11 +581,6 @@ export type RenextProgram = {
         },
         {
           "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
           "isMut": false,
           "isSigner": false
         },
@@ -1350,6 +1352,16 @@ export type RenextProgram = {
       "code": 6032,
       "name": "ThisIsVestingPool",
       "msg": "This is vesting pool"
+    },
+    {
+      "code": 6033,
+      "name": "WhitelistMaxSizeExceeded",
+      "msg": "Reached maximum whitelist size"
+    },
+    {
+      "code": 6034,
+      "name": "InvalidReleaseTime",
+      "msg": "Invalid release time"
     }
   ]
 };
@@ -1357,6 +1369,18 @@ export type RenextProgram = {
 export const IDL: RenextProgram = {
   "version": "0.1.0",
   "name": "renext_program",
+  "constants": [
+    {
+      "name": "REUSD_MINT",
+      "type": "publicKey",
+      "value": "pubkey ! (\"4Q89182juiadeFgGw3fupnrwnnDmBhf7e7fHWxnUP3S3\")"
+    },
+    {
+      "name": "REUSD_MINT",
+      "type": "publicKey",
+      "value": "pubkey ! (\"AJABAYSrSuFCgmRnxTVBY2zfSpYx9gXrWPCP5QZ16TNu\")"
+    }
+  ],
   "instructions": [
     {
       "name": "initialize",
@@ -1807,11 +1831,6 @@ export const IDL: RenextProgram = {
           "isSigner": false
         },
         {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "rent",
           "isMut": false,
           "isSigner": false
@@ -1930,11 +1949,6 @@ export const IDL: RenextProgram = {
         },
         {
           "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
           "isMut": false,
           "isSigner": false
         },
@@ -2706,6 +2720,16 @@ export const IDL: RenextProgram = {
       "code": 6032,
       "name": "ThisIsVestingPool",
       "msg": "This is vesting pool"
+    },
+    {
+      "code": 6033,
+      "name": "WhitelistMaxSizeExceeded",
+      "msg": "Reached maximum whitelist size"
+    },
+    {
+      "code": 6034,
+      "name": "InvalidReleaseTime",
+      "msg": "Invalid release time"
     }
   ]
 };

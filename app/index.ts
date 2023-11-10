@@ -44,9 +44,9 @@ const flowNativeFairlaunchPool = async () => {
 const flowTokenFairlaunchPool = async () => {
   const mint = await createTokenMint(masterWallet, masterWallet.publicKey, 1000000);
 
-  await createTokenFairlaunchPool(masterWallet, mint, 50000, 100, new BN(1000));
+  await createTokenFairlaunchPool(masterWallet, mint, 1000000, 800000, 100, new BN(100000));
   await startLaunchPool(masterWallet, mint);
-  await buyWithReUSD(masterWallet.publicKey, mint, buyer1Wallet, 50000);
+  await buyWithReUSD(masterWallet.publicKey, mint, buyer1Wallet, 350000);
 
   await completeLaunchPool(masterWallet, mint);
   await withdrawTokenPool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
@@ -170,10 +170,37 @@ const flowNativeFairlaunchPoolWithVesting = async () => {
   await completeLaunchPool(masterWallet, mint);
   await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
 
-  await delay(6000);
+  await delay(15000);
   await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
 
-  await delay(1000);
+  await delay(30000);
+  await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
+}
+
+const flowTokenFairlaunchPoolWithVesting = async () => {
+  const mint = await createTokenMint(masterWallet, masterWallet.publicKey, 1000000);
+
+  await createTokenFairlaunchPool(masterWallet, mint, 1000000, 800000, 1, new BN(100000));
+  await updateVestingPlan(masterWallet, mint, [{
+    releaseTime: new BN(dayjs().add(1, 's').unix()),
+    amount: new BN('200000').mul(new BN(10).pow(new BN(9))),
+  }, {
+    releaseTime: new BN(dayjs().add(15, 's').unix()),
+    amount: new BN('500000').mul(new BN(10).pow(new BN(9))),
+  }, {
+    releaseTime: new BN(dayjs().add(30, 's').unix()),
+    amount: new BN('300000').mul(new BN(10).pow(new BN(9))),
+  }]);
+  await startLaunchPool(masterWallet, mint);
+  await buyWithReUSD(masterWallet.publicKey, mint, buyer1Wallet, 400000);
+
+  await completeLaunchPool(masterWallet, mint);
+  await withdrawTokenPool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
+
+  await delay(15000);
+  await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
+
+  await delay(30000);
   await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
 }
 
@@ -187,4 +214,6 @@ const flowNativeFairlaunchPoolWithVesting = async () => {
   // await flowTokenWhitelistPool();
   // await delay(1000);
   await flowNativeFairlaunchPoolWithVesting();
+  await delay(1000);
+  await flowTokenFairlaunchPoolWithVesting();
 })();

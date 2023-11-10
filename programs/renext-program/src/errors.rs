@@ -71,6 +71,10 @@ pub enum MyError {
     VestingPlanAccountNotFound,
     #[msg("This is vesting pool")]
     ThisIsVestingPool,
+    #[msg("Reached maximum whitelist size")]
+    WhitelistMaxSizeExceeded,
+    #[msg("Invalid release time")]
+    InvalidReleaseTime,
 }
 
 impl From<TryFromIntError> for MyError {

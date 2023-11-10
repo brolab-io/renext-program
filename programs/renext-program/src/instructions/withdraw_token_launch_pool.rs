@@ -1,12 +1,21 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
-use crate::{state::LaunchPool, utils::pool};
+use crate::{state::LaunchPool, utils::pool, constants::LAUNCH_POOL_SEED, REUSD_MINT};
 
 #[derive(Accounts)]
 pub struct WithdrawTokenLaunchPool<'info> {
-    #[account(mut)]
+    #[account(
+        mut, 
+        seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), launch_pool.token_mint.key().as_ref()], 
+        bump,
+        constraint = launch_pool.vault_amount > 0,
+        constraint = launch_pool.authority == authority.key()
+    )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
+    #[account(
+        address = REUSD_MINT,
+    )]
     pub currency_mint: Box<Account<'info, token::Mint>>,
     #[account(
         mut,

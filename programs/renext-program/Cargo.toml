@@ -14,9 +14,10 @@ no-idl = []
 no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
+for-testnet = []
 
 [dependencies]
-anchor-lang = { git = "https://github.com/coral-xyz/anchor", tag = "v0.20.1", version = "0.20.1", package = "anchor-lang"}
-anchor-spl = { git = "https://github.com/coral-xyz/anchor", tag = "v0.20.1", version = "0.20.1", package = "anchor-spl"}
+anchor-lang = { git = "https://github.com/coral-xyz/anchor", tag = "v0.20.1", version = "0.20.1", package = "anchor-lang" }
+anchor-spl = { git = "https://github.com/coral-xyz/anchor", tag = "v0.20.1", version = "0.20.1", package = "anchor-spl" }
 thiserror = "1.0"
 solana-program = "*"

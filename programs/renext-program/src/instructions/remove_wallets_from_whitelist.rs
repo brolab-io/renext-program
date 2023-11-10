@@ -30,13 +30,6 @@ pub fn handler(ctx: Context<RemoveWalletsFromWhitelist>, wallets: Vec<Pubkey>) -
 
     require!(wallets.len() > 0, MyError::WalletsMustNotBeEmpty);
 
-    for wallet in wallets.iter() {
-        require!(
-            whitelist.is_pubkey_in_list(&wallet) == true,
-            MyError::WalletAlreadyAdded
-        );
-    }
-
     whitelist.remove_list_pubkey(wallets)?;
 
     Ok(())

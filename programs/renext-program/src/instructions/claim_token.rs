@@ -2,17 +2,28 @@ use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
 use crate::{
-    constants::TREASURER_SEED,
+    constants::{TREASURER_SEED, USER_POOL_SEED, LAUNCH_POOL_SEED},
     errors::MyError,
     state::{LaunchPool, LaunchPoolState, Treasurer, UserPool},
 };
 
 #[derive(Accounts)]
 pub struct ClaimToken<'info> {
-    #[account(mut)]
+    #[account(
+        mut, 
+        seeds = [LAUNCH_POOL_SEED.as_ref(), launch_pool.authority.as_ref(), token_mint.key().as_ref()], 
+        bump
+    )]
     pub launch_pool: Account<'info, LaunchPool>,
+    #[account(
+        address = launch_pool.token_mint,
+    )]
     pub token_mint: Box<Account<'info, token::Mint>>,
-    #[account(mut)]
+    #[account(
+        mut,
+        seeds = [TREASURER_SEED.as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
+        bump
+    )]
     pub treasurer: Box<Account<'info, Treasurer>>,
     #[account(
          mut,
@@ -20,9 +31,14 @@ pub struct ClaimToken<'info> {
          associated_token::authority = treasurer
     )]
     pub treasury: Box<Account<'info, token::TokenAccount>>,
-    #[account(mut)]
+    #[account(
+        mut,
+        seeds = [USER_POOL_SEED.as_ref(), user.key().as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()],
+        bump
+    )]
     pub user_pool: Box<Account<'info, UserPool>>,
-    #[account(init_if_needed,
+    #[account(
+        init_if_needed,
         payer = user,
         associated_token::mint = token_mint,
         associated_token::authority = user
@@ -51,7 +67,7 @@ pub fn handler(ctx: Context<ClaimToken>) -> ProgramResult {
         launch_pool.unlock_date <= Clock::get()?.unix_timestamp,
         MyError::TimeLockNotExpired
     );
-    let (treasurer_pda, tbump) = Pubkey::find_program_address(
+    let (_, tbump) = Pubkey::find_program_address(
         &[
             TREASURER_SEED.as_ref(),
             launch_pool.key().as_ref(),
@@ -60,16 +76,16 @@ pub fn handler(ctx: Context<ClaimToken>) -> ProgramResult {
         ctx.program_id,
     );
 
-    require!(
-        treasurer_pda == *ctx.accounts.treasurer.to_account_info().key,
-        MyError::InvalidTreasurer
-    );
+    // require!(
+    //     treasurer_pda == *ctx.accounts.treasurer.to_account_info().key,
+    //     MyError::InvalidTreasurer
+    // );
 
-    require!(user_pool.amount > 0, MyError::InvalidAmount);
+    require!(user_pool.amount.gt(&0), MyError::InvalidAmount);
 
     let user_token_amount = user_pool.amount - user_pool.claimed;
 
-    require!(user_token_amount > 0, MyError::InvalidAmount);
+    require!(user_token_amount.gt(&0), MyError::InvalidAmount);
 
     msg!("User token amount: {}", user_token_amount);
     let lp_key = launch_pool.key();
@@ -95,7 +111,7 @@ pub fn handler(ctx: Context<ClaimToken>) -> ProgramResult {
         user_token_amount,
     )?;
 
-    user_pool.claimed += user_token_amount;
+    user_pool.claimed = user_pool.claimed.checked_add(user_token_amount).unwrap();
 
     msg!("User token claimed: {}", user_pool.claimed);
 

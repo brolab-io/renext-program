@@ -1,5 +1,5 @@
 use crate::constants::{DISCRIMINATOR_SIZE, PUBKEY_SIZE, U8_SIZE, VECTOR_OVERHEAD_SIZE};
-use crate::errors::*;
+use crate::{constants::MAXIMUM_WHITE_LIST_SIZE, errors::*};
 use anchor_lang::prelude::*;
 
 #[account]
@@ -21,11 +21,16 @@ impl Whitelist {
         launch_pool: Pubkey,
         max_size: u8,
         wallets: Vec<Pubkey>,
-    ) {
+    ) -> Result<()> {
+        require!(
+            max_size <= MAXIMUM_WHITE_LIST_SIZE,
+            MyError::WhitelistMaxSizeExceeded
+        );
         self.authority = authority;
         self.launch_pool = launch_pool;
         self.max_size = max_size;
         self.wallets = wallets;
+        Ok(())
     }
 
     pub fn calculate_size(wallets: u8) -> usize {

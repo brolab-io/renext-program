@@ -26,9 +26,16 @@ impl VestingPlan {
         self.schedule.clear();
     }
 
-    pub fn set_schedule(&mut self, schedule: Vec<VestingSchedule>) {
+    pub fn set_schedule(&mut self, schedule: Vec<VestingSchedule>) -> Result<(), ProgramError> {
         self.clear();
+        for sche in schedule.clone() {
+            require!(
+                sche.release_time.gt(&Clock::get()?.unix_timestamp),
+                MyError::InvalidReleaseTime
+            );
+        }
         self.schedule = schedule;
+        Ok(())
     }
 
     pub fn calculate_size(size: u8) -> usize {

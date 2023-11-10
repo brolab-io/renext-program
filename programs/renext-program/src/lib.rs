@@ -1,4 +1,6 @@
+use anchor_lang::prelude::Pubkey;
 use anchor_lang::prelude::*;
+use solana_program::pubkey;
 pub mod constants;
 pub mod errors;
 pub mod instructions;
@@ -9,6 +11,14 @@ use instructions::*;
 use state::{LaunchPoolType, VestingSchedule};
 
 declare_id!("HwG2Z2ji5xuB7THHNrwEMhYAwKi1CHJDWnP3J4HU6Svp");
+
+#[cfg(not(feature = "for-testnet"))]
+#[constant]
+pub const REUSD_MINT: Pubkey = pubkey!("4Q89182juiadeFgGw3fupnrwnnDmBhf7e7fHWxnUP3S3");
+
+#[cfg(feature = "for-testnet")]
+#[constant]
+pub const REUSD_MINT: Pubkey = pubkey!("AJABAYSrSuFCgmRnxTVBY2zfSpYx9gXrWPCP5QZ16TNu");
 
 #[program]
 pub mod renext_program {

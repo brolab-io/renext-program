@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token;
 
 use crate::{
-    constants::WHITELIST_SEED,
+    constants::{WHITELIST_SEED, LAUNCH_POOL_SEED, TREASURER_SEED},
     errors::MyError,
     state::{LaunchPool, Treasurer, Whitelist,LaunchPoolType},
     utils::pool,
@@ -13,7 +13,11 @@ use crate::{
 #[derive(Accounts)]
 #[instruction(max_size: u8)]
 pub struct StartLaunchPoolWithWhitelist<'info> {
-    #[account(mut)]
+    #[account(
+        mut, 
+        seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()], 
+        bump
+    )]
     pub launch_pool: Account<'info, LaunchPool>,
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(
@@ -22,7 +26,11 @@ pub struct StartLaunchPoolWithWhitelist<'info> {
         associated_token::authority = authority,
     )]
     pub source_token_account: Account<'info, token::TokenAccount>,
-    #[account(mut)]
+    #[account(
+        mut, 
+        seeds = [TREASURER_SEED.as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()], 
+        bump
+    )]
     pub treasurer: Box<Account<'info, Treasurer>>,
     #[account(
         mut, 
@@ -68,7 +76,7 @@ pub fn handler(ctx: Context<StartLaunchPoolWithWhitelist>, max_size: u8, wallets
         launch_pool.key(),
         max_size,
         wallets,
-    );
+    )?;
 
     Ok(pool::start_launch_pool(
         &ctx.accounts.authority,

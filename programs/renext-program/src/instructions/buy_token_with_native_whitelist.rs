@@ -2,15 +2,22 @@ use anchor_lang::{prelude::*, solana_program};
 use anchor_spl::token;
 
 use crate::{
-    constants::{USER_POOL_SEED, VAULT_SEED},
+    constants::{USER_POOL_SEED, VAULT_SEED, LAUNCH_POOL_SEED},
     errors::MyError,
     state::{CurrencyType, LaunchPool, LaunchPoolState, LaunchPoolType, UserPool, Whitelist},
 };
 
 #[derive(Accounts)]
 pub struct BuyTokenWithNativeWhitelist<'info> {
-    #[account(mut)]
+    #[account(
+        mut, 
+        seeds = [LAUNCH_POOL_SEED.as_ref(), launch_pool.authority.as_ref(), token_mint.key().as_ref()], 
+        bump
+    )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
+    #[account(
+        address = launch_pool.token_mint,
+    )]
     pub token_mint: Box<Account<'info, token::Mint>>,
     #[account(
         init_if_needed,
@@ -33,7 +40,7 @@ pub struct BuyTokenWithNativeWhitelist<'info> {
     pub vault: AccountInfo<'info>,
     #[account(
         mut,
-        constraint = whitelist.launch_pool == launch_pool.key(),
+        constraint = whitelist.launch_pool == launch_pool.key()
     )]
     pub whitelist: Box<Account<'info, Whitelist>>,
     #[account(mut)]

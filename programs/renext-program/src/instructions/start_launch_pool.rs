@@ -11,12 +11,24 @@ use crate::{
 pub struct StartLaunchPool<'info> {
     #[account(mut, seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()], bump)]
     pub launch_pool: Account<'info, LaunchPool>,
+    #[account(
+        address = launch_pool.token_mint,
+    )]
     pub token_mint: Box<Account<'info, token::Mint>>,
-    #[account(mut)]
+    #[account(
+        mut,
+        associated_token::mint = token_mint,
+        associated_token::authority = authority
+    )]
     pub source_token_account: Account<'info, token::TokenAccount>,
     #[account(mut, seeds = [TREASURER_SEED.as_ref(), launch_pool.key().as_ref(), token_mint.key().as_ref()], bump)]
     pub treasurer: Box<Account<'info, Treasurer>>,
-    #[account(mut, constraint = treasury.mint == launch_pool.token_mint)]
+    #[account(
+        mut, 
+        constraint = treasury.mint == launch_pool.token_mint,
+        associated_token::mint = treasury.mint,
+        associated_token::authority = treasurer
+    )]
     pub treasury: Box<Account<'info, token::TokenAccount>>,
     #[account(mut)]
     pub authority: Signer<'info>,

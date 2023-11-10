@@ -34,7 +34,7 @@ export async function withdrawTokenPool(payer: Wallet, creator: PublicKey, mint:
         rent: SYSVAR_RENT_PUBKEY,
     }).signers([payer.payer]).rpc();
 
-    console.log("Withdraw native in tx: ", '\n', getExplorerTxUrl(tx));
+    console.log("Withdraw token in tx: ", '\n', getExplorerTxUrl(tx));
     console.log('********************************')
 
 }

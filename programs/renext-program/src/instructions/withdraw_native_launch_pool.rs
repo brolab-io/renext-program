@@ -1,12 +1,17 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token;
 
-use crate::{constants::VAULT_SEED, state::LaunchPool, utils::pool};
+use crate::{
+    constants::{LAUNCH_POOL_SEED, VAULT_SEED},
+    state::LaunchPool,
+    utils::pool,
+};
 
 #[derive(Accounts)]
 pub struct WithdrawNativeLaunchPool<'info> {
     #[account(
         mut,
+        seeds = [LAUNCH_POOL_SEED.as_ref(), authority.key().as_ref(), token_mint.key().as_ref()], bump,
         constraint = launch_pool.vault_amount > 0,
         constraint = launch_pool.authority == *authority.key,
     )]

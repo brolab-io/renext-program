@@ -171,7 +171,7 @@ pub fn withdraw_token<'info>(
         MyError::InvalidTokenMint
     );
 
-    let (lp_pda, lbump) = Pubkey::find_program_address(
+    let (_, lbump) = Pubkey::find_program_address(
         &[
             LAUNCH_POOL_SEED.as_ref(),
             authority.to_account_info().key.as_ref(),
@@ -180,10 +180,10 @@ pub fn withdraw_token<'info>(
         program_id,
     );
 
-    require!(
-        lp_pda.eq(launch_pool.to_account_info().key),
-        MyError::InvalidLaunchPool
-    );
+    // require!(
+    //     lp_pda.eq(launch_pool.to_account_info().key),
+    //     MyError::InvalidLaunchPool
+    // );
 
     let amount = launch_pool.vault_amount;
 

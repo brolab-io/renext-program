@@ -24,6 +24,7 @@ import { buyWithReUSDAnWhitelist } from "./03_4_buy_token_pool_whitelist";
 import { updateVestingPlan } from "./07_update_vesting_plan";
 import dayjs from "dayjs";
 import { claimTokenVesting } from "./05_claim_token_vesting";
+import { collectRemainToken } from "./08_collect_remain_token";
 dotenv.config();
 
 
@@ -39,6 +40,9 @@ const flowNativeFairlaunchPool = async () => {
 
   await delay(6000);
   await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
+
+  await delay(1000);
+  await collectRemainToken(masterWallet, mint);
 }
 
 const flowTokenFairlaunchPool = async () => {
@@ -53,6 +57,9 @@ const flowTokenFairlaunchPool = async () => {
 
   await delay(6000);
   await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
+
+  await delay(1000);
+  await collectRemainToken(masterWallet, mint);
 }
 
 const flowNativeWhitelistPool = async () => {
@@ -99,6 +106,9 @@ const flowNativeWhitelistPool = async () => {
 
   await delay(6000);
   await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
+
+  await delay(1000);
+  await collectRemainToken(masterWallet, mint);
 
 }
 
@@ -147,6 +157,8 @@ const flowTokenWhitelistPool = async () => {
   await delay(6000);
   await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
 
+  await delay(1000);
+  await collectRemainToken(masterWallet, mint);
 }
 
 
@@ -175,6 +187,9 @@ const flowNativeFairlaunchPoolWithVesting = async () => {
 
   await delay(30000);
   await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
+
+  await delay(1000);
+  await collectRemainToken(masterWallet, mint);
 }
 
 const flowTokenFairlaunchPoolWithVesting = async () => {
@@ -202,6 +217,9 @@ const flowTokenFairlaunchPoolWithVesting = async () => {
 
   await delay(30000);
   await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
+
+  await delay(1000);
+  await collectRemainToken(masterWallet, mint);
 }
 
 (async () => {

@@ -39,3 +39,9 @@ pub struct VestingPlanUpdatedEvent {
     pub launch_pool: Pubkey,
     pub schedule: Vec<VestingSchedule>,
 }
+
+#[event]
+pub struct RemainTokenCollectedEvent {
+    pub launch_pool: Pubkey,
+    pub amount: u64,
+}

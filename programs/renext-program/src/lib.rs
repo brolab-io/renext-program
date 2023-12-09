@@ -145,4 +145,8 @@ pub mod renext_program {
     ) -> ProgramResult {
         instructions::update_vesting_plan::handler(ctx, size, schedule)
     }
+
+    pub fn collect_remain_token(ctx: Context<CollectRemainToken>) -> ProgramResult {
+        instructions::collect_remain_token::handler(ctx)
+    }
 }

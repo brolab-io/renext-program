@@ -20,4 +20,5 @@ pub const WHITELIST_SEED: &[u8] = b"whitelist";
 pub const VESTING_PLAN_SEED: &[u8] = b"vestingplan";
 pub const CURRENCY_DECIMALS: u32 = 9;
 pub const MAXIMUM_WHITE_LIST_SIZE: u8 = 254;
+pub const MAXIMUM_TOKEN_DECIMALS: u8 = 15;
 // pub const REUSD_MINT: Pubkey = pubkey!("AJABAYSrSuFCgmRnxTVBY2zfSpYx9gXrWPCP5QZ16TNu");

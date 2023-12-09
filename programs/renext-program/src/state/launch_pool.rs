@@ -1,10 +1,9 @@
-use std::ops::{Div, Mul};
-
 use anchor_lang::prelude::*;
 
 use crate::{
     constants::{
-        BOOL_SIZE, CURRENCY_DECIMALS, DISCRIMINATOR_SIZE, I64_SIZE, PUBKEY_SIZE, U64_SIZE, U8_SIZE,
+        BOOL_SIZE, CURRENCY_DECIMALS, DISCRIMINATOR_SIZE, I64_SIZE, MAXIMUM_TOKEN_DECIMALS,
+        PUBKEY_SIZE, U64_SIZE, U8_SIZE,
     },
     errors::MyError,
 };
@@ -111,9 +110,15 @@ impl LaunchPool {
         currency: CurrencyType,
         pool_type: LaunchPoolType,
     ) -> ProgramResult {
+        require!(pool_size.gt(&0), MyError::InvalidPoolSize);
         require!(
             unlock_date.gt(&Clock::get()?.unix_timestamp),
             MyError::InvalidUnlockDate
+        );
+
+        require!(
+            token_mint_decimals.le(&MAXIMUM_TOKEN_DECIMALS),
+            MyError::InvalidTokenMintDecimals
         );
 
         self.unlock_date = unlock_date;
@@ -133,16 +138,19 @@ impl LaunchPool {
         Ok(())
     }
 
+    //*
+    // Calculate the amount of tokens that the user must pay to get the desired amount
+    //
+    // @param amount: amount of tokens that the user wants to buy
+    // @return amount of tokens that the user must pay
+    //*
     pub fn calculate_user_must_pay(&self, amount: u64) -> u64 {
-        // calculate the amount of tokens the user will receive
         ((amount
-            .div(self.rate)
-            .mul(10_i32.pow(CURRENCY_DECIMALS) as u64)) as u128)
-            .div(10_i32.pow(self.token_mint_decimals as u32) as u128) as u64
-        // amount
-        //     .div(10_i32.pow(self.token_mint_decimals as u32) as u64)
-        //     .mul(self.rate)
-        //     .mul(10_i32.pow(CURRENCY_DECIMALS) as u64)
-        //     .div(10000_u64)
+            .checked_div(self.rate)
+            .unwrap()
+            .checked_mul(10_i32.pow(CURRENCY_DECIMALS) as u64))
+        .unwrap() as u128)
+            .checked_div(10_i32.pow(self.token_mint_decimals as u32) as u128)
+            .unwrap() as u64
     }
 }

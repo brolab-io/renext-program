@@ -3,6 +3,7 @@ use anchor_lang::prelude::*;
 use crate::{
     constants::{LAUNCH_POOL_SEED, VESTING_PLAN_SEED},
     errors::MyError,
+    events::VestingPlanUpdatedEvent,
     state::{LaunchPool, VestingPlan, VestingSchedule},
 };
 
@@ -42,7 +43,12 @@ pub fn handler(
     );
     launch_pool.is_vesting = true;
     vesting_plan.launch_pool = launch_pool.key();
-    vesting_plan.set_schedule(schedule)?;
+    vesting_plan.set_schedule((*schedule).to_vec())?;
+
+    emit!(VestingPlanUpdatedEvent {
+        schedule: schedule,
+        launch_pool: launch_pool.key(),
+    });
 
     Ok(())
 }

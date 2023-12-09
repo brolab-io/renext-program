@@ -5,6 +5,7 @@ use crate::{
     constants::{LAUNCH_POOL_SEED, TREASURER_SEED},
     state::{LaunchPool, Treasurer},
     utils::pool,
+    events::PoolStartedEvent
 };
 
 #[derive(Accounts)]
@@ -43,7 +44,7 @@ pub fn handler(ctx: Context<StartLaunchPool>) -> ProgramResult {
     let source_token_account = &mut ctx.accounts.source_token_account;
     let treasury = &mut ctx.accounts.treasury;
 
-    Ok(pool::start_launch_pool(
+    pool::start_launch_pool(
         &ctx.accounts.authority,
         launch_pool,
         source_token_account,
@@ -51,5 +52,14 @@ pub fn handler(ctx: Context<StartLaunchPool>) -> ProgramResult {
         &ctx.accounts.token_mint,
         treasury,
         &ctx.accounts.token_program,
-    )?)
+    )?;
+
+    emit!(PoolStartedEvent{
+        launch_pool: launch_pool.key(),
+        treasurer: treasurer.key(),
+        treasury: treasury.key(),
+        whitelist: None,
+    });
+
+    Ok(())
 }

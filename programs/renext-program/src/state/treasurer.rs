@@ -1,6 +1,9 @@
 use anchor_lang::prelude::*;
 
-use crate::constants::{DISCRIMINATOR_SIZE, PUBKEY_SIZE, U64_SIZE};
+use crate::{
+    constants::{DISCRIMINATOR_SIZE, PUBKEY_SIZE, U64_SIZE},
+    errors::MyError,
+};
 
 #[account]
 pub struct Treasurer {
@@ -13,10 +16,18 @@ pub struct Treasurer {
 impl Treasurer {
     pub const LEN: usize = DISCRIMINATOR_SIZE + PUBKEY_SIZE + PUBKEY_SIZE + PUBKEY_SIZE + U64_SIZE;
 
-    pub fn initialize(&mut self, authority: Pubkey, launch_pool: Pubkey, token_mint: Pubkey) {
+    pub fn initialize(
+        &mut self,
+        authority: Pubkey,
+        launch_pool: Pubkey,
+        token_mint: Pubkey,
+    ) -> ProgramResult {
+        require!(authority != Pubkey::default(), MyError::Initialized);
+
         self.authority = authority;
         self.launch_pool = launch_pool;
         self.token_mint = token_mint;
         self.amount = 0;
+        Ok(())
     }
 }

@@ -5,6 +5,7 @@ use crate::{
     constants::{TREASURER_SEED, USER_POOL_SEED, LAUNCH_POOL_SEED},
     errors::MyError,
     state::{LaunchPool, LaunchPoolState, Treasurer, UserPool},
+    events::ClaimTokenEvent,
 };
 
 #[derive(Accounts)]
@@ -76,18 +77,12 @@ pub fn handler(ctx: Context<ClaimToken>) -> ProgramResult {
         ctx.program_id,
     );
 
-    // require!(
-    //     treasurer_pda == *ctx.accounts.treasurer.to_account_info().key,
-    //     MyError::InvalidTreasurer
-    // );
-
     require!(user_pool.amount.gt(&0), MyError::InvalidAmount);
 
-    let user_token_amount = user_pool.amount - user_pool.claimed;
+    let user_token_amount = user_pool.amount.checked_sub(user_pool.claimed).unwrap();
 
     require!(user_token_amount.gt(&0), MyError::InvalidAmount);
 
-    msg!("User token amount: {}", user_token_amount);
     let lp_key = launch_pool.key();
     let token_mint = ctx.accounts.token_mint.key();
 
@@ -113,7 +108,10 @@ pub fn handler(ctx: Context<ClaimToken>) -> ProgramResult {
 
     user_pool.claimed = user_pool.claimed.checked_add(user_token_amount).unwrap();
 
-    msg!("User token claimed: {}", user_pool.claimed);
+    emit!(ClaimTokenEvent {
+        user: *ctx.accounts.user.key,
+        amount: user_token_amount,
+    });
 
     Ok(())
 }

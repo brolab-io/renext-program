@@ -5,6 +5,7 @@ use crate::{
     errors::MyError,
     state::{LaunchPool, LaunchPoolState},
     constants::LAUNCH_POOL_SEED,
+    events::PoolCompletedEvent,
 };
 
 #[derive(Accounts)]
@@ -37,7 +38,13 @@ pub fn handler(ctx: Context<CompleteLaunchPool>) -> ProgramResult {
 
     launch_pool.status = LaunchPoolState::Completed;
 
-    msg!("Launch pool completed");
+    emit!(
+        PoolCompletedEvent {
+            launch_pool: launch_pool.key(),
+            token_remaining: launch_pool.pool_size_remaining,
+            vault_amount: launch_pool.vault_amount,
+        }
+    );
 
     Ok(())
 }

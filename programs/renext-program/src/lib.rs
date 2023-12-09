@@ -3,6 +3,7 @@ use anchor_lang::prelude::*;
 use solana_program::pubkey;
 pub mod constants;
 pub mod errors;
+pub mod events;
 pub mod instructions;
 pub mod state;
 pub mod utils;
@@ -10,7 +11,7 @@ pub mod utils;
 use instructions::*;
 use state::{LaunchPoolType, VestingSchedule};
 
-declare_id!("HwG2Z2ji5xuB7THHNrwEMhYAwKi1CHJDWnP3J4HU6Svp");
+declare_id!("8WyeZ39ryqnw74EQ5TCFMS4dsKzzrmnjLQRrmFx448qp");
 
 #[cfg(not(feature = "for-testnet"))]
 #[constant]
@@ -24,9 +25,6 @@ pub const REUSD_MINT: Pubkey = pubkey!("AJABAYSrSuFCgmRnxTVBY2zfSpYx9gXrWPCP5QZ1
 pub mod renext_program {
 
     use super::*;
-    pub fn initialize(_ctx: Context<Initialize>) -> ProgramResult {
-        Ok(())
-    }
 
     pub fn create_token_pool(
         ctx: Context<CreateTokenPool>,
@@ -148,6 +146,3 @@ pub mod renext_program {
         instructions::update_vesting_plan::handler(ctx, size, schedule)
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}

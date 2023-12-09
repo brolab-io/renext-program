@@ -5,6 +5,7 @@ use crate::{
     constants::{TREASURER_SEED, VESTING_PLAN_SEED, LAUNCH_POOL_SEED, USER_POOL_SEED},
     errors::MyError,
     state::{LaunchPool, LaunchPoolState, Treasurer, UserPool, VestingPlan},
+    events::ClaimTokenEvent,
 };
 
 #[derive(Accounts)]
@@ -89,16 +90,6 @@ pub fn handler(ctx: Context<ClaimTokenVesting>) -> ProgramResult {
 
     require!(user_pool.amount.gt(&0), MyError::InvalidAmount);
 
-    // let (vesting_pda, _) = Pubkey::find_program_address(
-    //     &[VESTING_PLAN_SEED.as_ref(), launch_pool.key().as_ref()],
-    //     ctx.program_id,
-    // );
-
-    // require!(
-    //     vesting_pda.eq(&*ctx.accounts.vesting_plan.to_account_info().key),
-    //     MyError::InvalidVestingPlan
-    // );
-
     let vesting_plan = &ctx.accounts.vesting_plan;
 
     let user_token_amount = vesting_plan.calculate_amount_can_claim(
@@ -110,7 +101,6 @@ pub fn handler(ctx: Context<ClaimTokenVesting>) -> ProgramResult {
 
     require!(user_token_amount.gt(&0), MyError::InvalidAmount);
 
-    msg!("User token amount: {}", user_token_amount);
     let lp_key = launch_pool.key();
     let token_mint = ctx.accounts.token_mint.key();
 
@@ -134,9 +124,12 @@ pub fn handler(ctx: Context<ClaimTokenVesting>) -> ProgramResult {
         user_token_amount,
     )?;
 
-    user_pool.claimed += user_token_amount;
+    user_pool.claimed = user_pool.claimed.checked_add(user_token_amount).unwrap();
 
-    msg!("User token claimed: {}", user_pool.claimed);
+    emit!(ClaimTokenEvent {
+        user: *ctx.accounts.user.key,
+        amount: user_token_amount,
+    });
 
     Ok(())
 }

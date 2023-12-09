@@ -75,6 +75,12 @@ pub enum MyError {
     WhitelistMaxSizeExceeded,
     #[msg("Invalid release time")]
     InvalidReleaseTime,
+    #[msg("Invalid token mint decimals")]
+    InvalidTokenMintDecimals,
+    #[msg("Account in use")]
+    Initialized,
+    #[msg("Invalid pool size")]
+    InvalidPoolSize,
 }
 
 impl From<TryFromIntError> for MyError {

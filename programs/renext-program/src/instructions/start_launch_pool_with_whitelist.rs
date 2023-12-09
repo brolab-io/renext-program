@@ -6,6 +6,7 @@ use crate::{
     errors::MyError,
     state::{LaunchPool, Treasurer, Whitelist,LaunchPoolType},
     utils::pool,
+    events::PoolStartedEvent,
 };
 
 
@@ -62,12 +63,12 @@ pub fn handler(ctx: Context<StartLaunchPoolWithWhitelist>, max_size: u8, wallets
     let treasury = &mut ctx.accounts.treasury;
 
     require!(
-        launch_pool.pool_type == LaunchPoolType::WhiteList,
+        launch_pool.pool_type.eq(&LaunchPoolType::WhiteList),
         MyError::InvalidLaunchPoolType
     );
 
     require!(
-        wallets.len() > 0,
+        wallets.len() > 0 && wallets.len() <= max_size as usize,
         MyError::InvalidWhitelist
     );
 
@@ -78,7 +79,7 @@ pub fn handler(ctx: Context<StartLaunchPoolWithWhitelist>, max_size: u8, wallets
         wallets,
     )?;
 
-    Ok(pool::start_launch_pool(
+    pool::start_launch_pool(
         &ctx.accounts.authority,
         launch_pool,
         source_token_account,
@@ -86,5 +87,15 @@ pub fn handler(ctx: Context<StartLaunchPoolWithWhitelist>, max_size: u8, wallets
         &ctx.accounts.token_mint,
         treasury,
         &ctx.accounts.token_program,
-    )?)
+    )?;
+
+
+    emit!(PoolStartedEvent{
+        launch_pool: launch_pool.key(),
+        treasurer: treasurer.key(),
+        treasury: treasury.key(),
+        whitelist: Some(whitelist.key()),
+    });
+
+    Ok(())
 }

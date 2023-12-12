@@ -25,6 +25,7 @@ import { updateVestingPlan } from "./07_update_vesting_plan";
 import dayjs from "dayjs";
 import { claimTokenVesting } from "./05_claim_token_vesting";
 import { collectRemainToken } from "./08_collect_remain_token";
+import { cancelLaunchPool } from "./09_cancel_launch_pool";
 dotenv.config();
 
 
@@ -222,16 +223,30 @@ const flowTokenFairlaunchPoolWithVesting = async () => {
   await collectRemainToken(masterWallet, mint);
 }
 
+
+const flowCancelNativeFairlaunchPool = async () => {
+  const mint = await createTokenMint(masterWallet, masterWallet.publicKey, 1000000);
+
+  await createNativeFairlaunchPool(masterWallet, mint, 1000000, 800000, 1, new BN(100000));
+
+  await startLaunchPool(masterWallet, mint);
+  await delay(3000);
+
+  await cancelLaunchPool(masterWallet, mint);
+}
+
 (async () => {
-  await flowNativeFairlaunchPool();
-  await delay(1000);
-  await flowTokenFairlaunchPool();
-  await delay(1000);
-  await flowNativeWhitelistPool();
-  await delay(1000);
-  await flowTokenWhitelistPool();
-  await delay(1000);
-  await flowNativeFairlaunchPoolWithVesting();
-  await delay(1000);
-  await flowTokenFairlaunchPoolWithVesting();
+  // await flowNativeFairlaunchPool();
+  // await delay(1000);
+  // await flowTokenFairlaunchPool();
+  // await delay(1000);
+  // await flowNativeWhitelistPool();
+  // await delay(1000);
+  // await flowTokenWhitelistPool();
+  // await delay(1000);
+  // await flowNativeFairlaunchPoolWithVesting();
+  // await delay(1000);
+  // await flowTokenFairlaunchPoolWithVesting();
+  // await delay(1000);
+  await flowCancelNativeFairlaunchPool();
 })();

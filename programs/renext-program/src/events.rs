@@ -45,3 +45,8 @@ pub struct RemainTokenCollectedEvent {
     pub launch_pool: Pubkey,
     pub amount: u64,
 }
+
+#[event]
+pub struct PoolCancelledEvent {
+    pub launch_pool: Pubkey,
+}

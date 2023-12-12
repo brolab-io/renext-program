@@ -149,4 +149,8 @@ pub mod renext_program {
     pub fn collect_remain_token(ctx: Context<CollectRemainToken>) -> ProgramResult {
         instructions::collect_remain_token::handler(ctx)
     }
+
+    pub fn cancel_launch_pool(ctx: Context<CancelLaunchPool>) -> ProgramResult {
+        instructions::cancel_launch_pool::handler(ctx)
+    }
 }

@@ -81,6 +81,10 @@ pub enum MyError {
     Initialized,
     #[msg("Invalid pool size")]
     InvalidPoolSize,
+    #[msg("Invalid fee value")]
+    InvalidFeeValue,
+    #[msg("Invalid account")]
+    InvalidAccount,
 }
 
 impl From<TryFromIntError> for MyError {

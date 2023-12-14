@@ -98,7 +98,7 @@ const flowNativeWhitelistPool = async () => {
     ],
   ];
 
-  await removeWalletsToWhitelist(masterWallet, mint, removeWallets);
+  // await removeWalletsToWhitelist(masterWallet, mint, removeWallets);
 
   await buyWithRenecAndWhitelist(masterWallet.publicKey, mint, buyer1Wallet, 10);
 
@@ -148,7 +148,7 @@ const flowTokenWhitelistPool = async () => {
     ],
   ];
 
-  await removeWalletsToWhitelist(masterWallet, mint, removeWallets);
+  // await removeWalletsToWhitelist(masterWallet, mint, removeWallets);
 
   await buyWithReUSDAnWhitelist(masterWallet.publicKey, mint, buyer1Wallet, 10);
 
@@ -248,5 +248,5 @@ const flowCancelNativeFairlaunchPool = async () => {
   // await delay(1000);
   // await flowTokenFairlaunchPoolWithVesting();
   // await delay(1000);
-  await flowCancelNativeFairlaunchPool();
+  // await flowCancelNativeFairlaunchPool();
 })();

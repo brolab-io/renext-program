@@ -15,6 +15,7 @@ pub struct CancelLaunchPool<'info> {
         constraint = launch_pool.authority == *authority.key,
         constraint = launch_pool.status == LaunchPoolState::Active,
         constraint = launch_pool.pool_size == launch_pool.pool_size_remaining,
+        close = authority,
     )]
     pub launch_pool: Box<Account<'info, LaunchPool>>,
     #[account(

@@ -16,6 +16,9 @@ pub mod update_vesting_plan;
 pub mod withdraw_native_launch_pool;
 pub mod withdraw_token_launch_pool;
 
+pub mod cancel_launch_pool;
+pub mod collect_remain_token;
+
 pub use add_wallets_to_whitelist::*;
 pub use buy_token_with_native::*;
 pub use buy_token_with_native_whitelist::*;
@@ -33,3 +36,6 @@ pub use update_vesting_plan::*;
 
 pub use withdraw_native_launch_pool::*;
 pub use withdraw_token_launch_pool::*;
+
+pub use cancel_launch_pool::*;
+pub use collect_remain_token::*;

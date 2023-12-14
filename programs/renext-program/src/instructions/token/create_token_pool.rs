@@ -16,15 +16,6 @@ pub fn handler(
     let launch_pool = &mut ctx.accounts.launch_pool;
     let treasurer = &mut ctx.accounts.treasurer;
 
-    msg!(
-        "Creating a token {} fairlaunch pool {} of token mint {} by {} with treasurer {} and treasury {}",
-        ctx.accounts.currency_mint.to_account_info().key(),
-        launch_pool.to_account_info().key(),
-        ctx.accounts.token_mint.to_account_info().key(),
-        ctx.accounts.authority.key(),
-        treasurer.to_account_info().key(),
-        ctx.accounts.treasury.to_account_info().key()
-    );
     Ok(pool::init_launch_pool(
         &ctx.accounts.authority,
         launch_pool,

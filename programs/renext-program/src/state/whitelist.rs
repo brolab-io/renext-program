@@ -79,7 +79,6 @@ impl Whitelist {
 
         for wallet in wallets {
             self.add_pubkey(wallet)?;
-            msg!("Added {} to whitelist", wallet);
         }
         Ok(())
     }
@@ -87,7 +86,6 @@ impl Whitelist {
     pub fn remove_list_pubkey(&mut self, wallets: Vec<Pubkey>) -> Result<()> {
         for wallet in wallets {
             self.remove_pubkey(&wallet)?;
-            msg!("Removed {} from whitelist", wallet);
         }
         Ok(())
     }

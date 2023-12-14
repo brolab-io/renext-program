@@ -43,21 +43,15 @@ pub struct WithdrawNativeLaunchPool<'info> {
 
 pub fn handler(ctx: Context<WithdrawNativeLaunchPool>) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
-    // let vault = &mut ctx.accounts.vault;
-    let amount = launch_pool.vault_amount;
-    msg!(
-        "Authority: {} withdraw {} to {}",
-        ctx.accounts.authority.key(),
-        amount,
-        ctx.accounts.beneficiary.key()
-    );
 
-    Ok(pool::withdraw_native(
+    pool::withdraw_native(
         ctx.program_id,
         &ctx.accounts.authority,
         launch_pool,
         &mut ctx.accounts.vault,
         &mut ctx.accounts.beneficiary,
         &ctx.accounts.system_program,
-    )?)
+    )?;
+
+    Ok(())
 }

@@ -5,6 +5,7 @@ use crate::{
     constants::{USER_POOL_SEED, VAULT_SEED, LAUNCH_POOL_SEED},
     errors::MyError,
     state::{CurrencyType, LaunchPool, LaunchPoolState, LaunchPoolType, UserPool, Whitelist},
+    events::BuyTokenEvent,
 };
 
 #[derive(Accounts)]
@@ -55,6 +56,8 @@ pub fn handler(ctx: Context<BuyTokenWithNativeWhitelist>, amount: u64) -> Progra
     let user_pool = &mut ctx.accounts.user_pool;
     let vault = &mut ctx.accounts.vault;
 
+    require!(amount.gt(&0), MyError::InvalidAmount);
+
     require!(
         launch_pool.status == LaunchPoolState::Active,
         MyError::InvalidLaunchPoolStatus
@@ -69,17 +72,17 @@ pub fn handler(ctx: Context<BuyTokenWithNativeWhitelist>, amount: u64) -> Progra
         MyError::InvalidCurrencyType
     );
     require!(
-        launch_pool.pool_size_remaining > 0,
+        launch_pool.pool_size_remaining.ge(&amount),
         MyError::PoolSizeRemainingNotEnough
     );
 
     require!(
-        amount >= launch_pool.minimum_token_amount,
+        user_pool.amount.checked_add(amount).unwrap().ge(&launch_pool.minimum_token_amount),
         MyError::MinimumTokenAmountNotReached
     );
 
     require!(
-        user_pool.amount.checked_add(amount).unwrap() <= launch_pool.maximum_token_amount,
+        user_pool.amount.checked_add(amount).unwrap().le(&launch_pool.maximum_token_amount),
         MyError::MaximumTokenAmountReached
     );
 
@@ -91,15 +94,10 @@ pub fn handler(ctx: Context<BuyTokenWithNativeWhitelist>, amount: u64) -> Progra
         MyError::UserNotInWhiteList
     );
 
-    let pool_size_remaining = launch_pool.pool_size_remaining;
-    require!(amount > 0, MyError::InvalidAmount);
-    require!(pool_size_remaining >= amount, MyError::PoolNotEnough);
-
     let user_must_pay = launch_pool.calculate_user_must_pay(amount);
 
-    require!(user_must_pay > 0, MyError::InvalidAmount);
+    require!(user_must_pay.gt(&0), MyError::InvalidAmount);
 
-    msg!("user_must_pay: {}", user_must_pay);
 
     let ix = solana_program::system_instruction::transfer(
         &ctx.accounts.user.key(),
@@ -116,17 +114,17 @@ pub fn handler(ctx: Context<BuyTokenWithNativeWhitelist>, amount: u64) -> Progra
         ],
     )?;
 
-    msg!(
-        "User buy {} token {} with {} RENEC",
-        amount,
-        launch_pool.token_mint,
-        user_must_pay
-    );
-
     user_pool.amount = user_pool.amount.checked_add(amount).unwrap();
-    user_pool.currency_amount = user_must_pay;
+    user_pool.currency_amount = user_pool.currency_amount.checked_add(user_must_pay).unwrap();
     launch_pool.pool_size_remaining = launch_pool.pool_size_remaining.checked_sub(amount).unwrap();
     launch_pool.vault_amount = launch_pool.vault_amount.checked_add(user_must_pay).unwrap();
+
+    emit!(BuyTokenEvent {
+        buyer: *ctx.accounts.user.key,
+        amount,
+        total_user_amount: user_pool.amount,
+        vault_amount: launch_pool.vault_amount,
+    });
 
     Ok(())
 }

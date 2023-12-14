@@ -29,7 +29,7 @@ pub fn init_launch_pool<'info>(
         *authority.to_account_info().key,
         *launch_pool.to_account_info().key,
         *token_mint.to_account_info().key,
-    );
+    )?;
     Ok(launch_pool.initialize(
         unlock_date,
         pool_size,
@@ -54,11 +54,11 @@ pub fn start_launch_pool<'info>(
     token_program: &Program<'info, token::Token>,
 ) -> Result<(), ProgramError> {
     require!(
-        launch_pool.status == LaunchPoolState::Pending,
+        launch_pool.status.eq(&LaunchPoolState::Pending),
         MyError::InvalidLaunchPoolStatus
     );
     require!(
-        launch_pool.authority == *authority.key,
+        launch_pool.authority.eq(authority.key),
         MyError::InvalidAuthority
     );
 
@@ -71,8 +71,6 @@ pub fn start_launch_pool<'info>(
     launch_pool.pool_size_remaining = transfer_amount;
     launch_pool.status = LaunchPoolState::Active;
     treasurer.amount = transfer_amount;
-
-    msg!("Transfering {} tokens to treasury", transfer_amount);
 
     let cpi_context = CpiContext::new(
         token_program.to_account_info(),
@@ -94,18 +92,22 @@ pub fn withdraw_native<'info>(
     system_program: &Program<'info, System>,
 ) -> Result<(), ProgramError> {
     require!(
-        launch_pool.status == LaunchPoolState::Completed,
+        launch_pool.status.eq(&LaunchPoolState::Completed),
         MyError::InvalidLaunchPoolStatus
     );
 
     require!(
-        launch_pool.authority == *authority.key,
+        launch_pool.authority.eq(authority.key),
         MyError::InvalidAuthority
     );
     require!(
-        launch_pool.currency == CurrencyType::RENEC,
+        launch_pool.currency.eq(&CurrencyType::RENEC),
         MyError::InvalidCurrencyType
     );
+
+    let amount = launch_pool.vault_amount;
+
+    require!(amount.gt(&0), MyError::InvalidAmount);
 
     let (_, vbump) = Pubkey::find_program_address(
         &[
@@ -115,10 +117,6 @@ pub fn withdraw_native<'info>(
         ],
         program_id,
     );
-
-    // require!(vault_pda == *vault.key, MyError::InvalidVault);
-
-    let amount = launch_pool.vault_amount;
 
     let ix = solana_program::system_instruction::transfer(
         &vault.to_account_info().key,
@@ -180,12 +178,9 @@ pub fn withdraw_token<'info>(
         program_id,
     );
 
-    // require!(
-    //     lp_pda.eq(launch_pool.to_account_info().key),
-    //     MyError::InvalidLaunchPool
-    // );
-
     let amount = launch_pool.vault_amount;
+
+    require!(amount.gt(&0), MyError::InvalidAmount);
 
     let signer_seeds = [
         &LAUNCH_POOL_SEED.as_ref()[..],

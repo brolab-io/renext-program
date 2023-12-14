@@ -43,13 +43,6 @@ pub struct WithdrawTokenLaunchPool<'info> {
 
 pub fn handler(ctx: Context<WithdrawTokenLaunchPool>) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
-    let amount = launch_pool.vault_amount;
-    msg!(
-        "Authority: {} withdraw {} to {}",
-        ctx.accounts.authority.key(),
-        amount,
-        ctx.accounts.beneficiary.key()
-    );
 
     Ok(pool::withdraw_token(
         ctx.program_id,

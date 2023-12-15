@@ -2,7 +2,7 @@ use crate::REUSD_MINT;
 use crate::{
     constants::{LAUNCH_POOL_SEED, VAULT_SEED},
     errors::MyError,
-    state::{CurrencyType, LaunchPool, LaunchPoolState, LaunchPoolType, Treasurer},
+    state::{CurrencyType, LaunchPool, LaunchPoolState, LaunchPoolType, SystemInfo, Treasurer},
 };
 use anchor_lang::{prelude::*, solana_program};
 use anchor_spl::token;
@@ -90,6 +90,8 @@ pub fn withdraw_native<'info>(
     vault: &mut AccountInfo<'info>,
     beneficiary: &mut AccountInfo<'info>,
     system_program: &Program<'info, System>,
+    system_info: &Account<'info, SystemInfo>,
+    fee_receiver: &mut AccountInfo<'info>,
 ) -> Result<(), ProgramError> {
     require!(
         launch_pool.status.eq(&LaunchPoolState::Completed),
@@ -109,6 +111,8 @@ pub fn withdraw_native<'info>(
 
     require!(amount.gt(&0), MyError::InvalidAmount);
 
+    let (ret, fee) = system_info.calculate_fee(amount);
+
     let (_, vbump) = Pubkey::find_program_address(
         &[
             VAULT_SEED.as_ref(),
@@ -121,7 +125,7 @@ pub fn withdraw_native<'info>(
     let ix = solana_program::system_instruction::transfer(
         &vault.to_account_info().key,
         &beneficiary.to_account_info().key,
-        amount,
+        ret,
     );
 
     let signer_seeds = [
@@ -141,6 +145,20 @@ pub fn withdraw_native<'info>(
         &[&signer_seeds],
     )?;
 
+    solana_program::program::invoke_signed(
+        &solana_program::system_instruction::transfer(
+            &vault.to_account_info().key,
+            &system_info.fee_receiver,
+            fee,
+        ),
+        &[
+            vault.to_account_info(),
+            fee_receiver.to_account_info(),
+            system_program.to_account_info(),
+        ],
+        &[&signer_seeds],
+    )?;
+
     launch_pool.vault_amount = 0;
 
     Ok(())
@@ -153,6 +171,8 @@ pub fn withdraw_token<'info>(
     launch_pool_token_account: &mut Account<'info, token::TokenAccount>,
     user_token_account: &mut Account<'info, token::TokenAccount>,
     token_program: &Program<'info, token::Token>,
+    system_info: &Account<'info, SystemInfo>,
+    fee_token_account: &mut Account<'info, token::TokenAccount>,
 ) -> Result<(), ProgramError> {
     require!(
         authority.to_account_info().key.eq(&launch_pool.authority),
@@ -182,6 +202,8 @@ pub fn withdraw_token<'info>(
 
     require!(amount.gt(&0), MyError::InvalidAmount);
 
+    let (ret, fee) = system_info.calculate_fee(amount);
+
     let signer_seeds = [
         &LAUNCH_POOL_SEED.as_ref()[..],
         authority.to_account_info().key.as_ref(),
@@ -199,7 +221,20 @@ pub fn withdraw_token<'info>(
             },
             &[&signer_seeds],
         ),
-        amount,
+        ret,
+    )?;
+
+    token::transfer(
+        CpiContext::new_with_signer(
+            token_program.to_account_info(),
+            token::Transfer {
+                from: launch_pool_token_account.to_account_info(),
+                to: fee_token_account.to_account_info(),
+                authority: launch_pool.to_account_info(),
+            },
+            &[&signer_seeds],
+        ),
+        fee,
     )?;
 
     launch_pool.vault_amount = 0;

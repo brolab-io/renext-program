@@ -18,6 +18,8 @@ pub mod withdraw_token_launch_pool;
 
 pub mod cancel_launch_pool;
 pub mod collect_remain_token;
+pub mod init_system;
+pub mod update_system_info;
 
 pub use add_wallets_to_whitelist::*;
 pub use buy_token_with_native::*;
@@ -39,3 +41,6 @@ pub use withdraw_token_launch_pool::*;
 
 pub use cancel_launch_pool::*;
 pub use collect_remain_token::*;
+
+pub use init_system::*;
+pub use update_system_info::*;

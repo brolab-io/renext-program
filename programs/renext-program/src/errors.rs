@@ -77,8 +77,10 @@ pub enum MyError {
     InvalidReleaseTime,
     #[msg("Invalid token mint decimals")]
     InvalidTokenMintDecimals,
-    #[msg("Account in use")]
+    #[msg("Account is initialized")]
     Initialized,
+    #[msg("Account is not initialized")]
+    NotInitialized,
     #[msg("Invalid pool size")]
     InvalidPoolSize,
     #[msg("Invalid fee value")]

@@ -2,7 +2,7 @@
 
 import * as dotenv from "dotenv";
 import { createNativeFairlaunchPool } from "./01_1_create_native_fairlaunch_pool";
-import { TOKEN_MINT, benWallet, buyer1Wallet, masterWallet, program } from "./00_init_program";
+import { FEE_RECEIVER, TOKEN_MINT, benWallet, buyer1Wallet, initSystemInfo, masterWallet, program, updateFeeReceiver, updateSystemInfoFee } from "./00_init_program";
 import { createTokenMint, delay } from "./utils";
 import { startLaunchPool } from "./02_1_start_launch_pool";
 import { completeLaunchPool } from "./04_complete_launch_pool";
@@ -37,7 +37,7 @@ const flowNativeFairlaunchPool = async () => {
   await buyWithRenec(masterWallet.publicKey, mint, buyer1Wallet, 350000);
 
   await completeLaunchPool(masterWallet, mint);
-  await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
+  await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey, FEE_RECEIVER);
 
   await delay(6000);
   await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
@@ -54,7 +54,7 @@ const flowTokenFairlaunchPool = async () => {
   await buyWithReUSD(masterWallet.publicKey, mint, buyer1Wallet, 350000);
 
   await completeLaunchPool(masterWallet, mint);
-  await withdrawTokenPool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
+  await withdrawTokenPool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey, FEE_RECEIVER);
 
   await delay(6000);
   await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
@@ -103,7 +103,7 @@ const flowNativeWhitelistPool = async () => {
   await buyWithRenecAndWhitelist(masterWallet.publicKey, mint, buyer1Wallet, 10);
 
   await completeLaunchPool(masterWallet, mint);
-  await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
+  await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey, FEE_RECEIVER);
 
   await delay(6000);
   await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
@@ -153,7 +153,7 @@ const flowTokenWhitelistPool = async () => {
   await buyWithReUSDAnWhitelist(masterWallet.publicKey, mint, buyer1Wallet, 10);
 
   await completeLaunchPool(masterWallet, mint);
-  await withdrawTokenPool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
+  await withdrawTokenPool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey, FEE_RECEIVER);
 
   await delay(6000);
   await claimToken(masterWallet.publicKey, mint, buyer1Wallet);
@@ -181,7 +181,10 @@ const flowNativeFairlaunchPoolWithVesting = async () => {
   await buyWithRenec(masterWallet.publicKey, mint, buyer1Wallet, 400000);
 
   await completeLaunchPool(masterWallet, mint);
-  await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
+  await withdrawNativePool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey, FEE_RECEIVER);
+
+  await delay(1000);
+  await collectRemainToken(masterWallet, mint);
 
   await delay(15000);
   await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
@@ -189,8 +192,7 @@ const flowNativeFairlaunchPoolWithVesting = async () => {
   await delay(30000);
   await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
 
-  await delay(1000);
-  await collectRemainToken(masterWallet, mint);
+
 }
 
 const flowTokenFairlaunchPoolWithVesting = async () => {
@@ -211,7 +213,10 @@ const flowTokenFairlaunchPoolWithVesting = async () => {
   await buyWithReUSD(masterWallet.publicKey, mint, buyer1Wallet, 400000);
 
   await completeLaunchPool(masterWallet, mint);
-  await withdrawTokenPool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey);
+  await withdrawTokenPool(masterWallet, masterWallet.publicKey, mint, benWallet.publicKey, FEE_RECEIVER);
+
+  await delay(1000);
+  await collectRemainToken(masterWallet, mint);
 
   await delay(15000);
   await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
@@ -219,8 +224,7 @@ const flowTokenFairlaunchPoolWithVesting = async () => {
   await delay(30000);
   await claimTokenVesting(masterWallet.publicKey, mint, buyer1Wallet);
 
-  await delay(1000);
-  await collectRemainToken(masterWallet, mint);
+
 }
 
 
@@ -236,6 +240,9 @@ const flowCancelNativeFairlaunchPool = async () => {
 }
 
 (async () => {
+  // await initSystemInfo(masterWallet, masterWallet.publicKey, 1);
+  // await updateSystemInfoFee(masterWallet, 10);
+  // await updateFeeReceiver(masterWallet, FEE_RECEIVER);
   // await flowNativeFairlaunchPool();
   // await delay(1000);
   // await flowTokenFairlaunchPool();
@@ -244,9 +251,9 @@ const flowCancelNativeFairlaunchPool = async () => {
   // await delay(1000);
   // await flowTokenWhitelistPool();
   // await delay(1000);
-  // await flowNativeFairlaunchPoolWithVesting();
-  // await delay(1000);
-  // await flowTokenFairlaunchPoolWithVesting();
+  await flowNativeFairlaunchPoolWithVesting();
+  await delay(1000);
+  await flowTokenFairlaunchPoolWithVesting();
   // await delay(1000);
   // await flowCancelNativeFairlaunchPool();
 })();

@@ -18,6 +18,7 @@ pub const VAULT_SEED: &[u8] = b"vault";
 pub const USER_POOL_SEED: &[u8] = b"userpool";
 pub const WHITELIST_SEED: &[u8] = b"whitelist";
 pub const VESTING_PLAN_SEED: &[u8] = b"vestingplan";
+pub const SYSTEM_INFO_SEED: &[u8] = b"renext-systeminfo";
 pub const CURRENCY_DECIMALS: u32 = 9;
 pub const MAXIMUM_WHITE_LIST_SIZE: u8 = 254;
 pub const MAXIMUM_TOKEN_DECIMALS: u8 = 15;

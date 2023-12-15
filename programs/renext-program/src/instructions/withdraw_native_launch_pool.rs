@@ -2,8 +2,8 @@ use anchor_lang::prelude::*;
 use anchor_spl::token;
 
 use crate::{
-    constants::{LAUNCH_POOL_SEED, VAULT_SEED},
-    state::LaunchPool,
+    constants::{LAUNCH_POOL_SEED, SYSTEM_INFO_SEED, VAULT_SEED},
+    state::{LaunchPool, SystemInfo},
     utils::pool,
 };
 
@@ -34,6 +34,16 @@ pub struct WithdrawNativeLaunchPool<'info> {
     #[account(mut)]
     /// CHECK: Just a pure account
     pub beneficiary: AccountInfo<'info>,
+    #[account(
+        seeds = [SYSTEM_INFO_SEED.as_ref()],
+        bump,
+    )]
+    pub system_info: Account<'info, SystemInfo>,
+    #[account(
+        mut,
+        address = system_info.fee_receiver,
+    )]
+    pub fee_receiver: AccountInfo<'info>,
     #[account(mut)]
     pub authority: Signer<'info>,
     pub token_program: Program<'info, token::Token>,
@@ -51,6 +61,8 @@ pub fn handler(ctx: Context<WithdrawNativeLaunchPool>) -> ProgramResult {
         &mut ctx.accounts.vault,
         &mut ctx.accounts.beneficiary,
         &ctx.accounts.system_program,
+        &ctx.accounts.system_info,
+        &mut ctx.accounts.fee_receiver,
     )?;
 
     Ok(())

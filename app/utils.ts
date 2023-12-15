@@ -6,6 +6,14 @@ import { TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 import { BN, Wallet } from "@project-serum/anchor";
 import { connection } from './00_init_program'
 
+export function findSystemInfoAccount(programId: PublicKey) {
+    return PublicKey.findProgramAddressSync(
+        [Buffer.from("renext-systeminfo")],
+        programId
+    );
+}
+
+
 export function findVestingPlanAccount(pool: PublicKey, programId: PublicKey) {
     return PublicKey.findProgramAddressSync(
         [Buffer.from("vestingplan"), pool.toBuffer()],

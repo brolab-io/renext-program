@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token, token};
 
-use crate::{state::LaunchPool, utils::pool, constants::LAUNCH_POOL_SEED, REUSD_MINT};
+use crate::{state::{LaunchPool, SystemInfo}, utils::pool, constants::{LAUNCH_POOL_SEED,SYSTEM_INFO_SEED}, REUSD_MINT};
 
 #[derive(Accounts)]
 pub struct WithdrawTokenLaunchPool<'info> {
@@ -33,6 +33,22 @@ pub struct WithdrawTokenLaunchPool<'info> {
         associated_token::authority = beneficiary
     )]
     pub user_token_account: Account<'info, token::TokenAccount>,
+    #[account(
+        seeds = [SYSTEM_INFO_SEED.as_ref()],
+        bump,
+    )]
+    pub system_info: Account<'info, SystemInfo>,
+    #[account(
+        address = system_info.fee_receiver,
+    )]
+    pub fee_receiver: AccountInfo<'info>,
+    #[account(
+        init_if_needed,
+        payer = authority,
+        associated_token::mint = currency_mint,
+        associated_token::authority = fee_receiver
+    )]
+    pub fee_token_account: Account<'info, token::TokenAccount>,
     #[account(mut)]
     pub authority: Signer<'info>,
     pub token_program: Program<'info, token::Token>,
@@ -44,12 +60,16 @@ pub struct WithdrawTokenLaunchPool<'info> {
 pub fn handler(ctx: Context<WithdrawTokenLaunchPool>) -> ProgramResult {
     let launch_pool = &mut ctx.accounts.launch_pool;
 
-    Ok(pool::withdraw_token(
+    pool::withdraw_token(
         ctx.program_id,
         &ctx.accounts.authority,
         launch_pool,
         &mut ctx.accounts.launch_pool_token_account,
         &mut ctx.accounts.user_token_account,
         &ctx.accounts.token_program,
-    )?)
+        &ctx.accounts.system_info,
+        &mut ctx.accounts.fee_token_account,
+    )?;
+
+    Ok(())
 }

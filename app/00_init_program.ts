@@ -6,6 +6,7 @@ import { Keypair, PublicKey } from "@solana/web3.js";
 import * as dotenv from "dotenv";
 import idl from "./artifacts/renext_program.json";
 import { RenextProgram } from "./artifacts/renext_program";
+import { findSystemInfoAccount } from "./utils";
 dotenv.config();
 
 export const EXPLORER_URL = "https://explorer.renec.foundation/";
@@ -16,6 +17,7 @@ export const PROGRAM_ID = new PublicKey(process.env.PROGRAM_ID);
 export const TOKEN_MINT_DECIMALS = 9;
 export const TOKEN_MINT = new PublicKey(process.env.TOKEN_MINT);
 export const REUSD_MINT = new PublicKey(process.env.REUSD_MINT);
+export const FEE_RECEIVER = new PublicKey(process.env.FEE_RECEIVER);
 
 console.log("Wallet: ", SIGNER_WALLET.publicKey.toBase58());
 
@@ -35,6 +37,47 @@ const program = new Program(
 console.log("Program loaded", program.programId.toBase58());
 console.log("Master wallet: ", masterWallet.publicKey.toBase58());
 console.log('********************************')
+
+export async function initSystemInfo(creator: Wallet, fee_receiver: PublicKey, fee_in_percent: number) {
+    const [systemInfoAccount,] = findSystemInfoAccount(program.programId);
+    const tx = await program.methods
+        .initSystem(fee_receiver, fee_in_percent)
+        .accounts({
+            systemInfo: systemInfoAccount,
+            authority: creator.publicKey,
+            systemProgram: web3.SystemProgram.programId,
+            rent: web3.SYSVAR_RENT_PUBKEY,
+        })
+        .signers([creator.payer]).rpc();
+
+    console.log("Init system info in tx: ", '\n', tx)
+}
+
+export async function updateSystemInfoFee(creator: Wallet, fee_in_percent: number) {
+    const [systemInfoAccount,] = findSystemInfoAccount(program.programId);
+    const tx = await program.methods
+        .updateFeeInPercent(fee_in_percent)
+        .accounts({
+            systemInfo: systemInfoAccount,
+            authority: creator.publicKey,
+        })
+        .signers([creator.payer]).rpc();
+
+    console.log("Updated fee info in tx: ", '\n', tx)
+}
+
+export async function updateFeeReceiver(creator: Wallet, fee_receiver: PublicKey) {
+    const [systemInfoAccount,] = findSystemInfoAccount(program.programId);
+    const tx = await program.methods
+        .updateFeeRecevier(fee_receiver)
+        .accounts({
+            systemInfo: systemInfoAccount,
+            authority: creator.publicKey,
+        })
+        .signers([creator.payer]).rpc();
+
+    console.log("Updated fee receiver in tx: ", '\n', tx)
+}
 
 export {
     masterWallet,

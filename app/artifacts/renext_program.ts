@@ -616,6 +616,16 @@ export type RenextProgram = {
           "isSigner": false
         },
         {
+          "name": "systemInfo",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "feeReceiver",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "authority",
           "isMut": true,
           "isSigner": true
@@ -663,6 +673,21 @@ export type RenextProgram = {
         },
         {
           "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemInfo",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "feeReceiver",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "feeTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -977,6 +1002,83 @@ export type RenextProgram = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "initSystem",
+      "accounts": [
+        {
+          "name": "systemInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "feeReceiver",
+          "type": "publicKey"
+        },
+        {
+          "name": "feeInPercent",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "updateFeeRecevier",
+      "accounts": [
+        {
+          "name": "systemInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "feeReceiver",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "updateFeeInPercent",
+      "accounts": [
+        {
+          "name": "systemInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "feeInPercent",
+          "type": "u8"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -1046,6 +1148,26 @@ export type RenextProgram = {
             "type": {
               "defined": "LaunchPoolState"
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "systemInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "publicKey"
+          },
+          {
+            "name": "feeReceiver",
+            "type": "publicKey"
+          },
+          {
+            "name": "feeInPercent",
+            "type": "u8"
           }
         ]
       }
@@ -1568,12 +1690,27 @@ export type RenextProgram = {
     {
       "code": 6036,
       "name": "Initialized",
-      "msg": "Account in use"
+      "msg": "Account is initialized"
     },
     {
       "code": 6037,
+      "name": "NotInitialized",
+      "msg": "Account is not initialized"
+    },
+    {
+      "code": 6038,
       "name": "InvalidPoolSize",
       "msg": "Invalid pool size"
+    },
+    {
+      "code": 6039,
+      "name": "InvalidFeeValue",
+      "msg": "Invalid fee value"
+    },
+    {
+      "code": 6040,
+      "name": "InvalidAccount",
+      "msg": "Invalid account"
     }
   ]
 };
@@ -2196,6 +2333,16 @@ export const IDL: RenextProgram = {
           "isSigner": false
         },
         {
+          "name": "systemInfo",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "feeReceiver",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "authority",
           "isMut": true,
           "isSigner": true
@@ -2243,6 +2390,21 @@ export const IDL: RenextProgram = {
         },
         {
           "name": "userTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemInfo",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "feeReceiver",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "feeTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -2557,6 +2719,83 @@ export const IDL: RenextProgram = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "initSystem",
+      "accounts": [
+        {
+          "name": "systemInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "feeReceiver",
+          "type": "publicKey"
+        },
+        {
+          "name": "feeInPercent",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "updateFeeRecevier",
+      "accounts": [
+        {
+          "name": "systemInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "feeReceiver",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "updateFeeInPercent",
+      "accounts": [
+        {
+          "name": "systemInfo",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "feeInPercent",
+          "type": "u8"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -2626,6 +2865,26 @@ export const IDL: RenextProgram = {
             "type": {
               "defined": "LaunchPoolState"
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "systemInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "publicKey"
+          },
+          {
+            "name": "feeReceiver",
+            "type": "publicKey"
+          },
+          {
+            "name": "feeInPercent",
+            "type": "u8"
           }
         ]
       }
@@ -3148,12 +3407,27 @@ export const IDL: RenextProgram = {
     {
       "code": 6036,
       "name": "Initialized",
-      "msg": "Account in use"
+      "msg": "Account is initialized"
     },
     {
       "code": 6037,
+      "name": "NotInitialized",
+      "msg": "Account is not initialized"
+    },
+    {
+      "code": 6038,
       "name": "InvalidPoolSize",
       "msg": "Invalid pool size"
+    },
+    {
+      "code": 6039,
+      "name": "InvalidFeeValue",
+      "msg": "Invalid fee value"
+    },
+    {
+      "code": 6040,
+      "name": "InvalidAccount",
+      "msg": "Invalid account"
     }
   ]
 };

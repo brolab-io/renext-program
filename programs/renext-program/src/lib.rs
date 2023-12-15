@@ -153,4 +153,26 @@ pub mod renext_program {
     pub fn cancel_launch_pool(ctx: Context<CancelLaunchPool>) -> ProgramResult {
         instructions::cancel_launch_pool::handler(ctx)
     }
+
+    pub fn init_system(
+        ctx: Context<InitSystem>,
+        fee_receiver: Pubkey,
+        fee_in_percent: u8,
+    ) -> ProgramResult {
+        instructions::init_system::handler(ctx, fee_receiver, fee_in_percent)
+    }
+
+    pub fn update_fee_recevier(
+        ctx: Context<UpdateSystemInfo>,
+        fee_receiver: Pubkey,
+    ) -> ProgramResult {
+        instructions::update_system_info::update_fee_receiver(ctx, fee_receiver)
+    }
+
+    pub fn update_fee_in_percent(
+        ctx: Context<UpdateSystemInfo>,
+        fee_in_percent: u8,
+    ) -> ProgramResult {
+        instructions::update_system_info::update_fee_in_percent(ctx, fee_in_percent)
+    }
 }

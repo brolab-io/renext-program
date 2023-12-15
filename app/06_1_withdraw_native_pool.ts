@@ -1,12 +1,14 @@
 import { Wallet } from "@project-serum/anchor";
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram } from "@solana/web3.js";
-import { findLaunchPoolAccount, findVaultAccount, getExplorerTxUrl } from "./utils";
+import { findLaunchPoolAccount, findSystemInfoAccount, findVaultAccount, getExplorerTxUrl } from "./utils";
 import { connection, program } from "./00_init_program";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
-export async function withdrawNativePool(payer: Wallet, creator: PublicKey, mint: PublicKey, beneficiary: PublicKey) {
+export async function withdrawNativePool(payer: Wallet, creator: PublicKey, mint: PublicKey, beneficiary: PublicKey, feeReceiver: PublicKey) {
     const [launch_pool] = findLaunchPoolAccount(creator, mint, program.programId);
     const [vault, vault_bump] = findVaultAccount(launch_pool, creator, program.programId);
+    const [systemInfoAccount,] = findSystemInfoAccount(program.programId);
+
 
     const accountInfo = await connection.getAccountInfo(vault);
 
@@ -19,6 +21,8 @@ export async function withdrawNativePool(payer: Wallet, creator: PublicKey, mint
         authority: creator,
         beneficiary,
         tokenMint: mint,
+        systemInfo: systemInfoAccount,
+        feeReceiver,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: SystemProgram.programId,
     }).signers([payer.payer]).rpc();

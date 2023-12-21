@@ -6,3 +6,5 @@ target
 node_modules
 .wallets
 .env
+recover.json
+*-key.json

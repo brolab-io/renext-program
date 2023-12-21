@@ -81,7 +81,7 @@ pub fn handler(ctx: Context<ClaimToken>) -> ProgramResult {
 
     let user_token_amount = user_pool.amount.checked_sub(user_pool.claimed).unwrap();
 
-    require!(user_token_amount.gt(&0), MyError::InvalidAmount);
+    require!(user_token_amount.gt(&0), MyError::NotHaveToken);
 
     let lp_key = launch_pool.key();
     let token_mint = ctx.accounts.token_mint.key();

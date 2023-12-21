@@ -11,7 +11,7 @@ pub mod utils;
 use instructions::*;
 use state::{LaunchPoolType, VestingSchedule};
 
-declare_id!("8WyeZ39ryqnw74EQ5TCFMS4dsKzzrmnjLQRrmFx448qp");
+declare_id!("HVkuaP3hB997UupdQ9Wc9McurAYBPMDAkw5WS8EahgZw");
 
 #[cfg(not(feature = "for-testnet"))]
 #[constant]

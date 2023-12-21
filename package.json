@@ -15,6 +15,7 @@
     "typescript": "^5.1.6"
   },
   "scripts": {
-    "dev": "ts-node app/index.ts"
+    "dev": "ts-node app/index.ts",
+    "deploy-mainet": "solana program deploy target/deploy/renext_program.so --keypair .wallets/xxx.json --url https://api-mainnet-beta.renec.foundation:8899/"
   }
 }

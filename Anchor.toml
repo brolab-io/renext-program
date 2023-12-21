@@ -1,5 +1,8 @@
 [programs.localnet]
-renext_program = "8WyeZ39ryqnw74EQ5TCFMS4dsKzzrmnjLQRrmFx448qp"
+renext_program = "HVkuaP3hB997UupdQ9Wc9McurAYBPMDAkw5WS8EahgZw"
+
+[programs.mainnet]
+renext_program = "CSUHMpN2gikudkdcJ3rNcbaXUiUi5LSmKc6YsNviUSpx"
 
 [registry]
 url = "https://anchor.projectserum.com"

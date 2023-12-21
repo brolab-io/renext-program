@@ -40,6 +40,7 @@ fi
 
 # Build the program 
 anchor build -- --features "for-testnet"
+# anchor build
 
 # Copy the artifacts into the app's artifacts folder
 cp target/idl/$PROGRAM_NAME_UNDERSCORE.json app/artifacts/

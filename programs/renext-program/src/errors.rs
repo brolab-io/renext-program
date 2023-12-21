@@ -87,6 +87,8 @@ pub enum MyError {
     InvalidFeeValue,
     #[msg("Invalid account")]
     InvalidAccount,
+    #[msg("You don't have token")]
+    NotHaveToken,
 }
 
 impl From<TryFromIntError> for MyError {

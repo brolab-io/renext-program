@@ -99,7 +99,7 @@ pub fn handler(ctx: Context<ClaimTokenVesting>) -> ProgramResult {
         launch_pool.token_mint_decimals,
     )?;
 
-    require!(user_token_amount.gt(&0), MyError::InvalidAmount);
+    require!(user_token_amount.gt(&0), MyError::NotHaveToken);
 
     let lp_key = launch_pool.key();
     let token_mint = ctx.accounts.token_mint.key();

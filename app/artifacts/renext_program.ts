@@ -1711,6 +1711,11 @@ export type RenextProgram = {
       "code": 6040,
       "name": "InvalidAccount",
       "msg": "Invalid account"
+    },
+    {
+      "code": 6041,
+      "name": "NotHaveToken",
+      "msg": "You don't have token"
     }
   ]
 };
@@ -3428,6 +3433,11 @@ export const IDL: RenextProgram = {
       "code": 6040,
       "name": "InvalidAccount",
       "msg": "Invalid account"
+    },
+    {
+      "code": 6041,
+      "name": "NotHaveToken",
+      "msg": "You don't have token"
     }
   ]
 };
